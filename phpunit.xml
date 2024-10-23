@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit
+colors="true"
+processIsolation="false"
+stopOnDefect="false"
+stopOnError="false"
+stopOnFailure="false"
+stopOnIncomplete="false"
+stopOnSkipped="false"
+displayDetailsOnTestsThatTriggerDeprecations="true"
+displayDetailsOnTestsThatTriggerErrors="true"
+displayDetailsOnTestsThatTriggerNotices="true"
+displayDetailsOnTestsThatTriggerWarnings="true"
+cacheDirectory=".phpunit.cache"
+backupStaticProperties="false"
+requireCoverageMetadata="false"
+>
+ <coverage>
+  <include>
+   <directory suffix=".php">src</directory>
+  </include>
+ </coverage>
+ <testsuites>
+  <testsuite name="AllTests">
+   <directory>tests</directory>
+  </testsuite>
+ </testsuites>
+</phpunit>

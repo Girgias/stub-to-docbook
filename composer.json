@@ -1,0 +1,25 @@
+{
+    "name": "girgias/stub-to-docbook",
+    "description": "Parses php-src stub files to generate DocBook documentation",
+    "type": "project",
+    "require": {
+        "roave/better-reflection": "^6.42",
+        "ext-dom": "*",
+        "ext-libxml": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.4"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Girgias\\StubToDocbook\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Gina Peter Banyard",
+            "email": "girgias@php.net"
+        }
+    ]
+}
