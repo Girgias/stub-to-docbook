@@ -40,11 +40,27 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 $php_src_repo = dirname(__DIR__, 2) . '/php-src/';
 $doc_en_repo = dirname(__DIR__, 2) . '/docs-php/en/';
 
+$IGNORE_DOC_CONSTANT_FILES = [
+    // Table of constants which is whatever also external extension
+    $doc_en_repo . 'reference/mqseries/constants.xml',
+    // Outdated extension so whatever
+    $doc_en_repo . 'reference/mysql/constants.xml',
+    // External extensions, use table for constants and low prio to fix
+    $doc_en_repo . 'reference/cubrid/constants.xml',
+    $doc_en_repo . 'reference/pdo_cubrid/constants.xml',
+    $doc_en_repo . 'reference/win32service/constants.xml',
+    $doc_en_repo . 'reference/ps/constants.xml',
+    $doc_en_repo . 'reference/memcache/constants.xml',
+];
 
 $doc_constants = [
     ...glob($doc_en_repo . 'reference/*/constants.xml'),
+    ...glob($doc_en_repo . 'reference/*/constants_*.xml'),
     $doc_en_repo . 'appendices/reserved.constants.core.xml',
 ];
+
+$doc_constants = array_diff($doc_constants, $IGNORE_DOC_CONSTANT_FILES);
+
 $doc_constants = array_map(file_to_doc_constants(...), $doc_constants);
 $doc_constants = array_merge(...$doc_constants);
 $doc_constants = new DocumentedConstantList(
@@ -55,7 +71,7 @@ $doc_constants = new DocumentedConstantList(
 
 $stubs = [
     ...glob($php_src_repo . '*/*.stub.php'),
-    //...glob($php_src_repo . '*/*/*.stub.php'),
+    ...glob($php_src_repo . '*/*/*.stub.php'),
 ];
 $astLocator = (new BetterReflection())->astLocator();
 $file_locators = array_map(
@@ -75,3 +91,6 @@ echo 'There are currently:', PHP_EOL,
     count($status->valid), ' valid constants', PHP_EOL;
 echo "Total doc constants parsed = $totalDocConst\n";
 echo "Total stub constants parsed = ", count($constants), "\n";
+
+//var_dump(array_keys($status->missing->constants));
+//var_dump(array_keys($status->incorrectType->constants));
