@@ -3,6 +3,7 @@
     "description": "Parses php-src stub files to generate DocBook documentation",
     "type": "project",
     "require": {
+        "php": "8.2",
         "roave/better-reflection": "^6.42",
         "ext-dom": "*",
         "ext-libxml": "*"
