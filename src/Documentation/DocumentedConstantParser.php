@@ -19,7 +19,6 @@ class DocumentedConstantParser
                 $terms = $entry->getElementsByTagName("term");
                 assert(count($terms) === 1);
 
-                // TODO This may be false for the true/false/null constants
                 $manualConstantTags = $terms[0]->getElementsByTagName("constant");
                 assert(count($manualConstantTags) === 1);
                 $manualConstantName = $manualConstantTags[0]->textContent;

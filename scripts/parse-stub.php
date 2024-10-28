@@ -12,6 +12,19 @@ use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
 $totalDocConst = 0;
 function file_to_doc_constants(string $path) {
     $content = file_get_contents($path);
+    $content = str_replace(
+        [
+            '&true;',
+            '&false;',
+            '&null;',
+        ],
+        [
+            '<constant xmlns="http://docbook.org/ns/docbook">true</constant>',
+            '<constant xmlns="http://docbook.org/ns/docbook">false</constant>',
+            '<constant xmlns="http://docbook.org/ns/docbook">null</constant>',
+        ],
+        $content,
+    );
     $content = str_replace('&', '&amp;', $content);
     $dom = new DOMDocument();
     $dom->loadXML($content);
@@ -30,6 +43,7 @@ $doc_en_repo = dirname(__DIR__, 2) . '/docs-php/en/';
 
 $doc_constants = [
     ...glob($doc_en_repo . 'reference/*/constants.xml'),
+    $doc_en_repo . 'appendices/reserved.constants.core.xml',
 ];
 $doc_constants = array_map(file_to_doc_constants(...), $doc_constants);
 $doc_constants = array_merge(...$doc_constants);
