@@ -73,6 +73,17 @@ $stubs = [
     ...glob($php_src_repo . '*/*.stub.php'),
     ...glob($php_src_repo . '*/*/*.stub.php'),
 ];
+
+$IGNORE_STUB_CONSTANT_FILES = [
+    // Zend_test stubs
+    $php_src_repo . 'ext/zend_test/fiber.stub.php',
+    $php_src_repo . 'ext/zend_test/iterators.stub.php',
+    $php_src_repo . 'ext/zend_test/object_handlers.stub.php',
+    $php_src_repo . 'ext/zend_test/test.stub.php',
+];
+
+$stubs = array_diff($stubs, $IGNORE_STUB_CONSTANT_FILES);
+
 $astLocator = (new BetterReflection())->astLocator();
 $file_locators = array_map(
     fn (string $file) => new SingleFileSourceLocator($file, $astLocator),
