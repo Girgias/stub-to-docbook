@@ -113,12 +113,6 @@ class DocumentedConstantParser
             return new DocumentedConstantList(DocumentedConstantListType::Table, $constants);
         }
 
-        // TODO Readline removed the varentry when the constant was removed.
-        // TODO en/reference/stream/constants.xml should use a varlist instead of informaltable
-        if (count($doc->getElementsByTagName('informaltable'))) {
-            return new DocumentedConstantList(DocumentedConstantListType::Table, []);
-        }
-
         throw new \Exception("No <varlistentry> or <row> tags");
     }
 }
