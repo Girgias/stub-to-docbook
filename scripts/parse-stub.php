@@ -29,10 +29,13 @@ function file_to_doc_constants(string $path) {
     $dom = new DOMDocument();
     $dom->loadXML($content);
     //echo "File $path\n";
-    $list = DocumentedConstantParser::parse($dom);
+    $listOfDocumentedConstantList = DocumentedConstantParser::parse($dom);
+    $list = array_reduce($listOfDocumentedConstantList, function ($carry, DocumentedConstantList $constantList) {
+        return [...$carry, ...($constantList->constants)];
+    }, []);
     global $totalDocConst;
     $totalDocConst += count($list);
-    return $list->constants;
+    return $list;
 }
 
 require dirname(__DIR__) . '/vendor/autoload.php';
