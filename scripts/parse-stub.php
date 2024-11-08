@@ -83,6 +83,8 @@ $IGNORE_STUB_CONSTANT_FILES = [
     $php_src_repo . 'ext/zend_test/iterators.stub.php',
     $php_src_repo . 'ext/zend_test/object_handlers.stub.php',
     $php_src_repo . 'ext/zend_test/test.stub.php',
+    // DL Extension test
+    $php_src_repo . 'ext/dl_test/dl_test.stub.php',
 ];
 
 $stubs = array_diff($stubs, $IGNORE_STUB_CONSTANT_FILES);
