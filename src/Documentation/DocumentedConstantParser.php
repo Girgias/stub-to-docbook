@@ -42,6 +42,11 @@ class DocumentedConstantParser
                 assert(count($terms) === 1);
 
                 $manualConstantTags = $terms[0]->getElementsByTagName("constant");
+                /* See reference/filter/constants.xml with Available options variable lists */
+                if ($manualConstantTags->length === 0) {
+                    /* Break out of the inner list dealing with the constants */
+                    continue 2;
+                }
                 assert(count($manualConstantTags) === 1);
                 $manualConstantName = $manualConstantTags[0]->textContent;
 
