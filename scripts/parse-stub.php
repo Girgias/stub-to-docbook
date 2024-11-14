@@ -4,6 +4,7 @@ use Girgias\StubToDocbook\Differ\ConstantListDiffer;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantParser;
+use Girgias\StubToDocbook\Reports\ConstantReport;
 use Girgias\StubToDocbook\Stubs\StubConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Roave\BetterReflection\BetterReflection;
@@ -113,6 +114,8 @@ echo 'There are currently:', PHP_EOL,
     count($status->valid), ' valid constants', PHP_EOL;
 echo "Total doc constants parsed = $totalDocConst\n";
 echo "Total stub constants parsed = ", count($constants), "\n";
+
+ConstantReport::generateHtmlReport($status, __DIR__ . '/constant-report.html');
 
 //var_dump(array_keys($status->missing->constants));
 //var_dump(array_keys($status->incorrectType->constants));
