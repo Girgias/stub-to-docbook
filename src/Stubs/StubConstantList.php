@@ -13,10 +13,12 @@ final readonly class StubConstantList implements Countable
 
     /**
      * @param list<ReflectionConstant> $reflectionData
+     * @param list<string> $ignoredConstants
      * @return self
      */
-    public static function fromReflectionDataArray(array $reflectionData): self
+    public static function fromReflectionDataArray(array $reflectionData, array $ignoredConstants = []): self
     {
+        $ignoredConstants[] = 'UNKNOWN';
         return new self(
             array_values(
                 array_filter(
@@ -24,7 +26,7 @@ final readonly class StubConstantList implements Countable
                         StubConstant::fromReflectionData(...),
                         $reflectionData
                     ),
-                    fn (StubConstant $constant) => $constant->name != 'UNKNOWN'
+                    fn (StubConstant $constant) => !in_array($constant->name, $ignoredConstants)
                 )
             )
         );

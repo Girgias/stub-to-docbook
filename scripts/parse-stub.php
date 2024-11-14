@@ -62,6 +62,12 @@ $doc_constants = [
     $doc_en_repo . 'appendices/reserved.constants.core.xml',
 ];
 
+// Ignored because they are useless or Zend debug specific
+const IGNORED_CONSTANTS = [
+    'ZEND_VERIFY_TYPE_INFERENCE',
+    'MYSQLI_SET_CHARSET_DIR',
+];
+
 $doc_constants = array_diff($doc_constants, $IGNORE_DOC_CONSTANT_FILES);
 
 $doc_constants = array_map(file_to_doc_constants(...), $doc_constants);
@@ -96,7 +102,7 @@ $file_locators = array_map(
 );
 
 $reflector = ZendEngineReflector::newZendEngineReflector($file_locators);
-$constants = StubConstantList::fromReflectionDataArray($reflector->reflectAllConstants());
+$constants = StubConstantList::fromReflectionDataArray($reflector->reflectAllConstants(), IGNORED_CONSTANTS);
 //$functions = $reflector->reflectAllFunctions();
 //$classes = $reflector->reflectAllClasses();
 
