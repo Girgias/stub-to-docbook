@@ -61,6 +61,8 @@ $doc_constants = [
     ...glob($doc_en_repo . 'reference/*/constants.xml'),
     ...glob($doc_en_repo . 'reference/*/constants_*.xml'),
     $doc_en_repo . 'appendices/reserved.constants.core.xml',
+    // TODO Handle properly the table parsing
+    $doc_en_repo . 'appendices/tokens.xml',
 ];
 
 // Ignored because they are useless or Zend debug specific
