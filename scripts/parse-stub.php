@@ -7,8 +7,8 @@ use Girgias\StubToDocbook\Documentation\DocumentedConstantParser;
 use Girgias\StubToDocbook\Reports\ConstantReport;
 use Girgias\StubToDocbook\Stubs\StubConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
+use Girgias\StubToDocbook\Stubs\ZendEngineSingleFileSourceLocator;
 use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
 
 $totalDocConst = 0;
 function file_to_doc_constants(string $path) {
@@ -98,7 +98,7 @@ $stubs = array_diff($stubs, $IGNORE_STUB_CONSTANT_FILES);
 
 $astLocator = (new BetterReflection())->astLocator();
 $file_locators = array_map(
-    fn (string $file) => new SingleFileSourceLocator($file, $astLocator),
+    fn (string $file) => new ZendEngineSingleFileSourceLocator($file, $astLocator),
     $stubs,
 );
 
