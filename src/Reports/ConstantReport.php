@@ -26,8 +26,8 @@ HTML_START
         fputs($fp, '<p>Constants correctly documented: ' . $differ->valid . '</p>');
 
         self::generateHtmlReportMissingConstants($fp, $differ->missing);
-        self::generateHtmlReportIncorrectConstantTypes($fp, $differ->incorrectTypes);
         self::generateHtmlReportIncorrectDocumentedConstantIdsForLinking($fp, $differ->incorrectIdForLinking);
+        self::generateHtmlReportIncorrectConstantTypes($fp, $differ->incorrectTypes);
 
         fputs($fp, <<<'HTML_END'
 </body>
