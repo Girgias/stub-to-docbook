@@ -126,6 +126,19 @@ FILE;
         self::assertCount(2, $constants);
         /** Individual lists */
         self::assertCount(4, $constants[0]);
+        self::assertArrayHasKey('PHP_MAXPATHLEN', $constants[0]->constants);
+        self::assertSame('PHP_MAXPATHLEN', $constants[0]->constants['PHP_MAXPATHLEN']->name);
+        self::assertArrayHasKey('PHP_OS', $constants[0]->constants);
+        self::assertSame('PHP_OS', $constants[0]->constants['PHP_OS']->name);
+        self::assertArrayHasKey('PHP_FLOAT_EPSILON', $constants[0]->constants);
+        self::assertSame('PHP_FLOAT_EPSILON', $constants[0]->constants['PHP_FLOAT_EPSILON']->name);
+        self::assertArrayHasKey('E_ERROR', $constants[0]->constants);
+        self::assertSame('E_ERROR', $constants[0]->constants['E_ERROR']->name);
+
         self::assertCount(2, $constants[1]);
+        self::assertArrayHasKey('__COMPILER_HALT_OFFSET__', $constants[1]->constants);
+        self::assertSame('__COMPILER_HALT_OFFSET__', $constants[1]->constants['__COMPILER_HALT_OFFSET__']->name);
+        self::assertArrayHasKey('STDOUT', $constants[1]->constants);
+        self::assertSame('STDOUT', $constants[1]->constants['STDOUT']->name);
     }
 }

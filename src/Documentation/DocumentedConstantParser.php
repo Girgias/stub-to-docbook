@@ -62,7 +62,7 @@ class DocumentedConstantParser
                 assert(count($manualListItemTags) === 1);
                 $manualListItem = $manualListItemTags[0];
 
-                $individualList[] = new DocumentedConstant($manualConstantName, $manualType, $manualListItem);
+                $individualList[$manualConstantName] = new DocumentedConstant($manualConstantName, $manualType, $manualListItem);
             }
 
             $constants[] = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $individualList);
@@ -116,7 +116,7 @@ class DocumentedConstantParser
                     $manualType = $manualTypeTags[0]->textContent;
                 }
 
-                $individualList[] = new DocumentedConstant($manualConstantName, $manualType, $descriptionEntry);
+                $individualList[$manualConstantTags] = new DocumentedConstant($manualConstantName, $manualType, $descriptionEntry);
             }
             $constants[] = new DocumentedConstantList(DocumentedConstantListType::Table, $individualList);
         }

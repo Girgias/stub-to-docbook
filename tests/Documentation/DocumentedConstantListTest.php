@@ -18,8 +18,8 @@ class DocumentedConstantListTest extends TestCase
     {
         $document = new DOMDocument();
         $constants = [
-            new DocumentedConstant("HELLO", 'string', $document->createTextNode('description')),
-            new DocumentedConstant("SOME_CONSTANT", 'int', $document->createTextNode('description'))
+            "HELLO" => new DocumentedConstant("HELLO", 'string', $document->createTextNode('description')),
+            "SOME_CONSTANT" => new DocumentedConstant("SOME_CONSTANT", 'int', $document->createTextNode('description'))
         ];
 
         $list = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $constants);

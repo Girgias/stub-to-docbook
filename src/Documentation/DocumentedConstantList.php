@@ -10,7 +10,7 @@ final class DocumentedConstantList implements Countable
 {
     public function __construct(
         readonly DocumentedConstantListType $type,
-        /** @param list<DocumentedConstant> $constants */
+        /** @param array<string, DocumentedConstant> $constants */
         public array $constants,
         readonly ?string $title = null,
     ) {}
