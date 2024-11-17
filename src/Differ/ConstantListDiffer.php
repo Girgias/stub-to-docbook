@@ -11,20 +11,8 @@ class ConstantListDiffer
 {
     public static function diff(StubConstantList $fromStubs, DocumentedConstantList $fromDocs): ConstantListDiff
     {
-        $mapDocConst = array_combine(
-            array_map(
-                fn (DocumentedConstant $c) => $c->name,
-                $fromDocs->constants
-            ),
-            $fromDocs->constants
-        );
-        $mapStubConst = array_combine(
-            array_map(
-                fn (StubConstant $c) => $c->name,
-                $fromStubs->constants
-            ),
-            $fromStubs->constants
-        );
+        $mapDocConst = $fromDocs->constants;
+        $mapStubConst = $fromStubs->constants;
         $missingConsts = array_diff_key(
             $mapStubConst,
             $mapDocConst,
