@@ -44,8 +44,11 @@ STUB;
         $constants = StubConstantList::fromReflectionDataArray($constants)->constants;
 
         self::assertCount(3, $constants);
-        self::assertSame('E_ERROR', $constants[0]->name);
-        self::assertSame('E_WARNING', $constants[1]->name);
-        self::assertSame('E_PARSE', $constants[2]->name);
+        self::assertArrayHasKey('E_ERROR', $constants);
+        self::assertSame('E_ERROR', $constants['E_ERROR']->name);
+        self::assertArrayHasKey('E_WARNING', $constants);
+        self::assertSame('E_WARNING', $constants['E_WARNING']->name);
+        self::assertArrayHasKey('E_PARSE', $constants);
+        self::assertSame('E_PARSE', $constants['E_PARSE']->name);
     }
 }

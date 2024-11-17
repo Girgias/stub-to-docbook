@@ -8,6 +8,7 @@ use Roave\BetterReflection\Reflection\ReflectionConstant;
 final readonly class StubConstantList implements Countable
 {
     private function __construct(
+        /** @param array<string, StubConstant> $constants */
         readonly array $constants
     ) {}
 
@@ -19,17 +20,15 @@ final readonly class StubConstantList implements Countable
     public static function fromReflectionDataArray(array $reflectionData, array $ignoredConstants = []): self
     {
         $ignoredConstants[] = 'UNKNOWN';
-        return new self(
-            array_values(
-                array_filter(
-                    array_map(
-                        StubConstant::fromReflectionData(...),
-                        $reflectionData
-                    ),
-                    fn (StubConstant $constant) => !in_array($constant->name, $ignoredConstants)
-                )
-            )
+        $stubConstList = array_filter(
+            array_map(
+                StubConstant::fromReflectionData(...),
+                $reflectionData
+            ),
+            fn (StubConstant $constant) => !in_array($constant->name, $ignoredConstants)
         );
+        $stubConstName = array_map(fn (StubConstant $constant) => $constant->name, $stubConstList);
+        return new self(array_combine($stubConstName, $stubConstList));
     }
 
     /**
