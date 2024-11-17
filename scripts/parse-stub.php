@@ -69,7 +69,15 @@ $doc_constants = [
 // Ignored because they are useless or Zend debug specific
 const IGNORED_CONSTANTS = [
     'ZEND_VERIFY_TYPE_INFERENCE',
+    // See: https://github.com/php/php-src/pull/14724
     'MYSQLI_SET_CHARSET_DIR',
+    // See: https://github.com/php/php-src/pull/6850
+    'MYSQLI_NO_DATA',
+    'MYSQLI_DATA_TRUNCATED',
+    'MYSQLI_SERVER_QUERY_NO_GOOD_INDEX_USED',
+    'MYSQLI_SERVER_QUERY_NO_INDEX_USED',
+    'MYSQLI_SERVER_QUERY_WAS_SLOW',
+    'MYSQLI_SERVER_PS_OUT_PARAMS',
 ];
 
 $doc_constants = array_diff($doc_constants, $IGNORE_DOC_CONSTANT_FILES);
