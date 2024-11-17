@@ -64,6 +64,9 @@ class DocumentedConstantParserTest extends TestCase
     </simpara>
    </listitem>
   </varlistentry>
+ </variablelist>
+ <variablelist>
+  <title>Other constants constants</title>  
   <varlistentry>
    <term>
     <constant>__COMPILER_HALT_OFFSET__</constant>
@@ -119,7 +122,10 @@ FILE;
         $document->loadXML(self::TEST_FILE);
         $constants = DocumentedConstantParser::parse($document);
 
-        self::assertCount(6, $constants->constants);
-        // TODO More assertions?
+        /** Have 2 lists of constants */
+        self::assertCount(2, $constants);
+        /** Individual lists */
+        self::assertCount(4, $constants[0]);
+        self::assertCount(2, $constants[1]);
     }
 }
