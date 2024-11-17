@@ -41,7 +41,7 @@ function file_to_doc_constants(string $path) {
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-$php_src_repo = dirname(__DIR__, 2) . '/php-src/';
+$php_src_repo = dirname(__DIR__, 2) . '/PHP-8.4/';
 $doc_en_repo = dirname(__DIR__, 2) . '/docs-php/en/';
 
 $IGNORE_DOC_CONSTANT_FILES = [
