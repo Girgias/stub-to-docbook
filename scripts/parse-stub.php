@@ -58,11 +58,12 @@ $IGNORE_DOC_CONSTANT_FILES = [
 ];
 
 $doc_constants = [
-    ...glob($doc_en_repo . 'reference/*/constants.xml'),
-    ...glob($doc_en_repo . 'reference/*/constants_*.xml'),
+    // Need to be *before* as E_* constants are actually defined in reference/errorfunc/constants.xml
     $doc_en_repo . 'appendices/reserved.constants.core.xml',
     // TODO Handle properly the table parsing
     $doc_en_repo . 'appendices/tokens.xml',
+    ...glob($doc_en_repo . 'reference/*/constants.xml'),
+    ...glob($doc_en_repo . 'reference/*/constants_*.xml'),
 ];
 
 // Ignored because they are useless or Zend debug specific
