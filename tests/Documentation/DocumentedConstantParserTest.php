@@ -40,7 +40,7 @@ class DocumentedConstantParserTest extends TestCase
     </simpara>
    </listitem>
   </varlistentry>
-  <varlistentry xml:id="constant.php-float-epsilon">
+  <varlistentry xml:id="constant.php-float-epsilon-is-incorrect">
    <term>
     <constant>PHP_FLOAT_EPSILON</constant>
     (<type>float</type>)
@@ -128,12 +128,16 @@ FILE;
         self::assertCount(4, $constants[0]);
         self::assertArrayHasKey('PHP_MAXPATHLEN', $constants[0]->constants);
         self::assertSame('PHP_MAXPATHLEN', $constants[0]->constants['PHP_MAXPATHLEN']->name);
+        self::assertTrue($constants[0]->constants['PHP_MAXPATHLEN']->hasCorrectIdForLinking());
         self::assertArrayHasKey('PHP_OS', $constants[0]->constants);
         self::assertSame('PHP_OS', $constants[0]->constants['PHP_OS']->name);
+        self::assertTrue($constants[0]->constants['PHP_OS']->hasCorrectIdForLinking());
         self::assertArrayHasKey('PHP_FLOAT_EPSILON', $constants[0]->constants);
         self::assertSame('PHP_FLOAT_EPSILON', $constants[0]->constants['PHP_FLOAT_EPSILON']->name);
+        self::assertFalse($constants[0]->constants['PHP_FLOAT_EPSILON']->hasCorrectIdForLinking());
         self::assertArrayHasKey('E_ERROR', $constants[0]->constants);
         self::assertSame('E_ERROR', $constants[0]->constants['E_ERROR']->name);
+        self::assertFalse($constants[0]->constants['E_ERROR']->hasCorrectIdForLinking());
 
         self::assertCount(2, $constants[1]);
         self::assertArrayHasKey('__COMPILER_HALT_OFFSET__', $constants[1]->constants);

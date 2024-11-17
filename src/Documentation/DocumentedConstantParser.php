@@ -30,13 +30,10 @@ class DocumentedConstantParser
                     continue;
                 }
 
-                // TODO This should check for proper linking, but we need XInclude 1.1
-                //if (
-                //    !$entry->hasAttribute('xml:id')
-                //    || !str_starts_with($entry->getAttribute('xml:id'), 'constant.')
-                //) {
-                //    exit($entry->textContent . PHP_EOL);
-                //}
+                $id = null;
+                if ($entry->hasAttribute('xml:id')) {
+                    $id = $entry->getAttribute('xml:id');
+                }
 
                 $terms = $entry->getElementsByTagName("term");
                 assert(count($terms) === 1);
@@ -62,7 +59,7 @@ class DocumentedConstantParser
                 assert(count($manualListItemTags) === 1);
                 $manualListItem = $manualListItemTags[0];
 
-                $individualList[$manualConstantName] = new DocumentedConstant($manualConstantName, $manualType, $manualListItem);
+                $individualList[$manualConstantName] = new DocumentedConstant($manualConstantName, $manualType, $manualListItem, $id);
             }
 
             $constants[] = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $individualList);
@@ -98,6 +95,10 @@ class DocumentedConstantParser
             foreach ($tbody->getElementsByTagName("row") as $row) {
                 assert($row instanceof DOMElement);
 
+                $id = null;
+                if ($row->hasAttribute('xml:id')) {
+                    $id = $row->getAttribute('xml:id');
+                }
                 $entries = $row->getElementsByTagName("entry");
                 assert(count($entries) === 3);
                 $constantEntry = $entries[0];
@@ -116,7 +117,7 @@ class DocumentedConstantParser
                     $manualType = $manualTypeTags[0]->textContent;
                 }
 
-                $individualList[$manualConstantTags] = new DocumentedConstant($manualConstantName, $manualType, $descriptionEntry);
+                $individualList[$manualConstantName] = new DocumentedConstant($manualConstantName, $manualType, $descriptionEntry, $id);
             }
             $constants[] = new DocumentedConstantList(DocumentedConstantListType::Table, $individualList);
         }
