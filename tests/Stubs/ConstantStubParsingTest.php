@@ -2,6 +2,7 @@
 
 namespace Stubs;
 
+use Girgias\StubToDocbook\Stubs\StubConstant;
 use Girgias\StubToDocbook\Stubs\StubConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use PHPUnit\Framework\TestCase;
@@ -32,6 +33,9 @@ const E_WARNING = UNKNOWN;
  * @cvalue E_PARSE
  */
 const E_PARSE = UNKNOWN;
+
+/** @var int */
+const CRYPT_STD_DES = 1;
 STUB;
 
     public function test_can_retrieve_constants(): void
@@ -43,12 +47,20 @@ STUB;
         $constants = $reflector->reflectAllConstants();
         $constants = StubConstantList::fromReflectionDataArray($constants)->constants;
 
-        self::assertCount(3, $constants);
+        self::assertCount(4, $constants);
         self::assertArrayHasKey('E_ERROR', $constants);
-        self::assertSame('E_ERROR', $constants['E_ERROR']->name);
+        self::assertConstantIsSame($constants['E_ERROR'], 'E_ERROR', 'int');
         self::assertArrayHasKey('E_WARNING', $constants);
-        self::assertSame('E_WARNING', $constants['E_WARNING']->name);
+        self::assertConstantIsSame($constants['E_WARNING'], 'E_WARNING', 'int');
         self::assertArrayHasKey('E_PARSE', $constants);
-        self::assertSame('E_PARSE', $constants['E_PARSE']->name);
+        self::assertConstantIsSame($constants['E_PARSE'], 'E_PARSE', 'int');
+        self::assertArrayHasKey('CRYPT_STD_DES', $constants);
+        self::assertConstantIsSame($constants['CRYPT_STD_DES'], 'CRYPT_STD_DES', 'int');
+    }
+
+    private static function assertConstantIsSame(StubConstant $constant, string $name, string $type): void
+    {
+        self::assertSame($name, $constant->name);
+        self::assertSame($type, $constant->type);
     }
 }

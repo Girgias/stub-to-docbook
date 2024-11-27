@@ -43,6 +43,10 @@ final readonly class StubConstant
         }
         $startTypeAnnotation += + strlen('@var ');
         $endTypeAnnotation = strpos($docComment, "\n", $startTypeAnnotation);
+        /* Single line doc comment */
+        if ($endTypeAnnotation === false) {
+            $endTypeAnnotation = strpos($docComment, " ", $startTypeAnnotation);
+        }
         return trim(substr($docComment, $startTypeAnnotation, $endTypeAnnotation - $startTypeAnnotation));
     }
 
