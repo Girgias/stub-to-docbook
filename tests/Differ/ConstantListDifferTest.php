@@ -41,8 +41,8 @@ STUB;
 
         $document = new DOMDocument();
         $docConstants = [
-            new DocumentedConstant("WRONG_TYPE", 'string', $document->createTextNode('description')),
-            new DocumentedConstant("SOME_CONSTANT", 'int', $document->createTextNode('description'))
+            'WRONG_TYPE' => new DocumentedConstant("WRONG_TYPE", 'string', $document->createTextNode('description')),
+            'SOME_CONSTANT' => new DocumentedConstant("SOME_CONSTANT", 'int', $document->createTextNode('description'))
         ];
         $docList = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $docConstants);
 
@@ -54,10 +54,10 @@ STUB;
         $stubList = StubConstantList::fromReflectionDataArray($constants);
 
         $stubDiff = ConstantListDiffer::diff($stubList, $docList);
-        self::assertCount(1, $stubDiff->valid);
-        self::assertSame('SOME_CONSTANT', $stubDiff->valid->constants['SOME_CONSTANT']->name);
-        self::assertCount(1, $stubDiff->incorrectType);
-        self::assertSame('WRONG_TYPE', $stubDiff->incorrectType->constants['WRONG_TYPE']->name);
+        self::assertSame(1, $stubDiff->valid);
+        self::assertCount(1, $stubDiff->incorrectTypes);
+        self::assertSame('WRONG_TYPE', $stubDiff->incorrectTypes['WRONG_TYPE'][0]->name);
+        self::assertSame('string', $stubDiff->incorrectTypes['WRONG_TYPE'][1]);
         self::assertCount(1, $stubDiff->missing);
         self::assertSame('NOT_DOCUMENTED', $stubDiff->missing->constants['NOT_DOCUMENTED']->name);
     }
