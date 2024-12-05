@@ -20,6 +20,18 @@ final readonly class DocumentedParameter
         readonly array $attributes = [],
     ) {}
 
+    public function isSame(DocumentedParameter $parameter): bool
+    {
+        return $this->name === $parameter->name
+            && $this->position === $parameter->position
+            && $this->isOptional === $parameter->isOptional
+            && $this->defaultValue === $parameter->defaultValue
+            && $this->isByRef === $parameter->isByRef
+            && $this->isVariadic === $parameter->isVariadic
+            && $this->attributes == $parameter->attributes // TODO Improve?
+            && $this->type->isSame($parameter->type);
+    }
+
     /**
      * DocBook 5.2 <methodparam> documentation
      * URL: https://tdg.docbook.org/tdg/5.2/methodparam

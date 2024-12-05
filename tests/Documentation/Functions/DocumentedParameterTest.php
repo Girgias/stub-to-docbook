@@ -2,12 +2,17 @@
 
 namespace Documentation\Functions;
 
+use Girgias\StubToDocbook\Documentation\DocumentedAttribute;
 use Girgias\StubToDocbook\Documentation\Functions\DocumentedParameter;
 use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
 
 class DocumentedParameterTest extends TestCase
 {
+    private static function expected_param(mixed ...$entries): DocumentedParameter {
+        return new DocumentedParameter('param_name', 1, new SingleType('string'), ...$entries);
+    }
+
     public function test_basic_parameter_parsing(): void
     {
         $xml = '<methodparam><type>string</type><parameter>param_name</parameter></methodparam>';
@@ -15,16 +20,7 @@ class DocumentedParameterTest extends TestCase
         $document->loadXML($xml);
         $param = DocumentedParameter::parseFromDoc($document->firstChild, 1);
 
-        $expectedType = new SingleType('string');
-
-        self::assertSame('param_name', $param->name);
-        self::assertSame(1, $param->position);
-        self::assertTrue($expectedType->isSame($param->type));
-        self::assertFalse($param->isOptional);
-        self::assertNull($param->defaultValue);
-        self::assertFalse($param->isByRef);
-        self::assertFalse($param->isVariadic);
-        self::assertSame([], $param->attributes);
+        self::assertTrue($param->isSame(self::expected_param()));
     }
 
     public function test_by_ref_parameter_parsing(): void
@@ -34,16 +30,9 @@ class DocumentedParameterTest extends TestCase
         $document->loadXML($xml);
         $param = DocumentedParameter::parseFromDoc($document->firstChild, 1);
 
-        $expectedType = new SingleType('string');
-
-        self::assertTrue($param->isByRef);
-        self::assertSame('param_name', $param->name);
-        self::assertSame(1, $param->position);
-        self::assertTrue($expectedType->isSame($param->type));
-        self::assertFalse($param->isOptional);
-        self::assertNull($param->defaultValue);
-        self::assertFalse($param->isVariadic);
-        self::assertSame([], $param->attributes);
+        self::assertTrue($param->isSame(self::expected_param(
+            isByRef: true,
+        )));
     }
 
     public function test_parameter_parsing_has_attribute(): void
@@ -53,17 +42,10 @@ class DocumentedParameterTest extends TestCase
         $document->loadXML($xml);
         $param = DocumentedParameter::parseFromDoc($document->firstChild, 1);
 
-        $expectedType = new SingleType('string');
-
-        self::assertSame('param_name', $param->name);
-        self::assertSame(1, $param->position);
-        self::assertTrue($expectedType->isSame($param->type));
-        self::assertFalse($param->isOptional);
-        self::assertNull($param->defaultValue);
-        self::assertFalse($param->isByRef);
-        self::assertFalse($param->isVariadic);
+        self::assertTrue($param->isSame(self::expected_param(
+            attributes: [new DocumentedAttribute('\SensitiveParameter')],
+        )));
         self::assertCount(1, $param->attributes);
-        self::assertSame('\SensitiveParameter', $param->attributes[0]->name);
     }
 
     public function test_variadic_parameter_parsing(): void
@@ -73,16 +55,9 @@ class DocumentedParameterTest extends TestCase
         $document->loadXML($xml);
         $param = DocumentedParameter::parseFromDoc($document->firstChild, 1);
 
-        $expectedType = new SingleType('string');
-
-        self::assertTrue($param->isVariadic);
-        self::assertSame('param_name', $param->name);
-        self::assertSame(1, $param->position);
-        self::assertTrue($expectedType->isSame($param->type));
-        self::assertFalse($param->isOptional);
-        self::assertNull($param->defaultValue);
-        self::assertFalse($param->isByRef);
-        self::assertSame([], $param->attributes);
+        self::assertTrue($param->isSame(self::expected_param(
+            isVariadic: true,
+        )));
     }
 
     public function test_option_parameter_parsing_no_initializer(): void
@@ -92,16 +67,10 @@ class DocumentedParameterTest extends TestCase
         $document->loadXML($xml);
         $param = DocumentedParameter::parseFromDoc($document->firstChild, 1);
 
-        $expectedType = new SingleType('string');
-
-        self::assertTrue($param->isOptional);
-        self::assertNull($param->defaultValue);
-        self::assertSame('param_name', $param->name);
-        self::assertSame(1, $param->position);
-        self::assertTrue($expectedType->isSame($param->type));
-        self::assertFalse($param->isByRef);
-        self::assertFalse($param->isVariadic);
-        self::assertSame([], $param->attributes);
+        self::assertTrue($param->isSame(self::expected_param(
+            isOptional: true,
+            defaultValue: null,
+        )));
     }
 
     public function test_option_parameter_parsing_with_initializer(): void
@@ -111,16 +80,10 @@ class DocumentedParameterTest extends TestCase
         $document->loadXML($xml);
         $param = DocumentedParameter::parseFromDoc($document->firstChild, 1);
 
-        $expectedType = new SingleType('string');
-
-        self::assertTrue($param->isOptional);
-        // TODO Parsing of initializer tag is less than ideal.
-        self::assertSame('SOME_CONST', $param->defaultValue);
-        self::assertSame('param_name', $param->name);
-        self::assertSame(1, $param->position);
-        self::assertTrue($expectedType->isSame($param->type));
-        self::assertFalse($param->isByRef);
-        self::assertFalse($param->isVariadic);
-        self::assertSame([], $param->attributes);
+        self::assertTrue($param->isSame(self::expected_param(
+            isOptional: true,
+            // TODO Parsing of initializer tag is less than ideal.
+            defaultValue: 'SOME_CONST',
+        )));
     }
 }
