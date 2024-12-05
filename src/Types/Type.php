@@ -2,8 +2,13 @@
 
 namespace Girgias\StubToDocbook\Types;
 
-interface Type
+use Girgias\StubToDocbook\FP\Equatable;
+
+interface Type extends Equatable
 {
-    public function isSame(Type $type): bool;
+    /**
+     * @param Type $other
+     */
+    public function isSame(mixed $other): bool;
     public function toXml(): string;
 }

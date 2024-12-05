@@ -6,12 +6,15 @@ final class SingleType implements Type
 {
     public function __construct(public readonly string $name) { }
 
-    public function isSame(Type $type): bool
+    /**
+     * @param Type $other
+     */
+    public function isSame(mixed $other): bool
     {
-        if ($this::class !== $type::class) {
+        if ($this::class !== $other::class) {
             return false;
         }
-        return $this->name === $type->name;
+        return $this->name === $other->name;
     }
 
     public function toXml(): string

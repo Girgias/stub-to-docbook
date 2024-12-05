@@ -3,10 +3,11 @@
 namespace Girgias\StubToDocbook\Documentation\Functions;
 
 use Girgias\StubToDocbook\Documentation\DocumentedAttribute;
+use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\Type;
 
-final readonly class DocumentedParameter
+final readonly class DocumentedParameter implements Equatable
 {
     public function __construct(
         readonly string $name,
@@ -20,16 +21,19 @@ final readonly class DocumentedParameter
         readonly array $attributes = [],
     ) {}
 
-    public function isSame(DocumentedParameter $parameter): bool
+    /**
+     * @param DocumentedParameter $other
+     */
+    public function isSame(mixed $other): bool
     {
-        return $this->name === $parameter->name
-            && $this->position === $parameter->position
-            && $this->isOptional === $parameter->isOptional
-            && $this->defaultValue === $parameter->defaultValue
-            && $this->isByRef === $parameter->isByRef
-            && $this->isVariadic === $parameter->isVariadic
-            && $this->attributes == $parameter->attributes // TODO Improve?
-            && $this->type->isSame($parameter->type);
+        return $this->name === $other->name
+            && $this->position === $other->position
+            && $this->isOptional === $other->isOptional
+            && $this->defaultValue === $other->defaultValue
+            && $this->isByRef === $other->isByRef
+            && $this->isVariadic === $other->isVariadic
+            && $this->attributes == $other->attributes // TODO Improve?
+            && $this->type->isSame($other->type);
     }
 
     /**
