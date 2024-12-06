@@ -35,13 +35,7 @@ final class Utils
         );
     }
 
-    /**
-     * @template T of Equatable
-     * @param T $l
-     * @param T $r
-     * @return bool
-     */
-    private static function isSame(mixed $l, mixed $r): bool
+    private static function isSame(Equatable $l, Equatable $r): bool
     {
         return $l->isSame($r);
     }
