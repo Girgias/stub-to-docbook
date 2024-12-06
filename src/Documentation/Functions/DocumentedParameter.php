@@ -4,6 +4,7 @@ namespace Girgias\StubToDocbook\Documentation\Functions;
 
 use Girgias\StubToDocbook\Documentation\DocumentedAttribute;
 use Girgias\StubToDocbook\FP\Equatable;
+use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\Type;
 
@@ -17,7 +18,7 @@ final readonly class DocumentedParameter implements Equatable
         readonly ?string $defaultValue = null,
         readonly bool $isByRef = false,
         readonly bool $isVariadic = false,
-        /** @param array<string, DocumentedAttribute> $attributes */
+        /** @param list<DocumentedAttribute> $attributes */
         readonly array $attributes = [],
     ) {}
 
@@ -32,7 +33,7 @@ final readonly class DocumentedParameter implements Equatable
             && $this->defaultValue === $other->defaultValue
             && $this->isByRef === $other->isByRef
             && $this->isVariadic === $other->isVariadic
-            && $this->attributes == $other->attributes // TODO Improve?
+            && Utils::equateList($this->attributes, $other->attributes)
             && $this->type->isSame($other->type);
     }
 

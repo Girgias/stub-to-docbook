@@ -2,12 +2,19 @@
 
 namespace Girgias\StubToDocbook\Documentation;
 
-final readonly class DocumentedAttribute
+use Girgias\StubToDocbook\FP\Equatable;
+
+final readonly class DocumentedAttribute implements Equatable
 {
     public function __construct(
         readonly string $name,
         //readonly array $arguments = [],
     ) {}
+
+    public function isSame(mixed $other): bool
+    {
+        return $this->name === $other->name;
+    }
 
     public static function parseFromDoc(\DOMElement $element): DocumentedAttribute
     {
