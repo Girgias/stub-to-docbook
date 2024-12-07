@@ -6,10 +6,10 @@ use Girgias\StubToDocbook\FP\Utils;
 
 final readonly class UnionType implements Type
 {
-    /** @var list<Type> */
+    /** @var list<SingleType|IntersectionType> */
     public readonly array $types;
 
-    /** @param list<Type> $types */
+    /** @param list<SingleType|IntersectionType> $types */
     public function __construct(array $types)
     {
         usort($types, self::sortDnfTypes(...));
@@ -37,7 +37,7 @@ final readonly class UnionType implements Type
         ]);
     }
 
-    private static function sortDnfTypes(Type $a, Type $b): int
+    private static function sortDnfTypes(SingleType|IntersectionType $a, SingleType|IntersectionType $b): int
     {
         if ($a::class === $b::class) {
             return match ($a::class) {
