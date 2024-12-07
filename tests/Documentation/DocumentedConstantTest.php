@@ -3,6 +3,7 @@
 namespace Documentation;
 
 use Girgias\StubToDocbook\Documentation\DocumentedConstant;
+use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
 
 class DocumentedConstantTest extends TestCase
@@ -27,9 +28,11 @@ XML;
         $document->loadXML($xml);
         $constant = DocumentedConstant::parseFromVarListEntryTag($document->firstChild);
 
+        $expectedType = new SingleType('resource');
+
         self::assertSame('constant.stdout', $constant->id);
         self::assertSame('STDOUT', $constant->name);
-        self::assertSame('resource', $constant->type);
+        self::assertTrue($expectedType->isSame($constant->type));
     }
 
     public function test_varlistentry_constant_parsing_missing_type(): void
@@ -53,7 +56,7 @@ XML;
 
         self::assertSame('constant.stdout', $constant->id);
         self::assertSame('STDOUT', $constant->name);
-        self::assertSame('MISSING', $constant->type);
+        self::assertNull($constant->type);
     }
 
     public function test_varlistentry_constant_parsing_missing_linkage_id(): void
@@ -76,8 +79,10 @@ XML;
         $document->loadXML($xml);
         $constant = DocumentedConstant::parseFromVarListEntryTag($document->firstChild);
 
+        $expectedType = new SingleType('T');
+
         self::assertNull($constant->id);
         self::assertSame('NAME', $constant->name);
-        self::assertSame('T', $constant->type);
+        self::assertTrue($expectedType->isSame($constant->type));
     }
 }

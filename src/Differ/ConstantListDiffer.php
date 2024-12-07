@@ -5,6 +5,7 @@ namespace Girgias\StubToDocbook\Differ;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
 use Girgias\StubToDocbook\Stubs\StubConstantList;
+use Girgias\StubToDocbook\Types\SingleType;
 
 class ConstantListDiffer
 {
@@ -21,8 +22,14 @@ class ConstantListDiffer
                 $missingDocs[$name] = $constant;
                 continue;
             }
-            if ($constant->type != $docConstants[$name]->type) {
-                $incorrectTypes[$name] = [$constant, $docConstants[$name]->type];
+            if ($docConstants[$name]->type instanceof SingleType) {
+                if ($docConstants[$name]->type->name !== $constant->type) {
+                    $xmlType = $docConstants[$name]->type->toXml();
+                    $strType = substr($xmlType, strlen('<type>'), strlen($xmlType) - strlen('<type></type>'));
+                    $incorrectTypes[$name] = [$constant, $strType];
+                }
+            } else {
+                $incorrectTypes[$name] = [$constant, 'MISSING'];
             }
             if (!$docConstants[$name]->hasCorrectIdForLinking()) {
                 $incorrectIdForLinking[$name] = $docConstants[$name];

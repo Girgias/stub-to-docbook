@@ -2,11 +2,14 @@
 
 namespace Girgias\StubToDocbook\Documentation;
 
+use Girgias\StubToDocbook\Types\DocumentedTypeParser;
+use Girgias\StubToDocbook\Types\Type;
+
 final readonly class DocumentedConstant
 {
     public function __construct(
         readonly string $name,
-        readonly string $type,
+        readonly Type|null $type,
         readonly \DOMNode $description,
         readonly string|null $id = null
     ) {}
@@ -33,6 +36,7 @@ final readonly class DocumentedConstant
     public static function parseFromVarListEntryTag(\DOMElement $entry): ?DocumentedConstant
     {
         $id = null;
+        $type = null;
         if ($entry->hasAttribute('xml:id')) {
             $id = $entry->getAttribute('xml:id');
         }
@@ -49,17 +53,14 @@ final readonly class DocumentedConstant
         $manualConstantName = $manualConstantTags[0]->textContent;
 
         $manualTypeTags = $terms[0]->getElementsByTagName("type");
-        if (count($manualTypeTags) === 0) {
-            $manualType = 'MISSING';
-        } else {
-            assert(count($manualTypeTags) === 1);
-            $manualType = $manualTypeTags[0]->textContent;
+        if (count($manualTypeTags) === 1) {
+            $type = DocumentedTypeParser::parse($manualTypeTags[0]);
         }
 
         $manualListItemTags = $entry->getElementsByTagName("listitem");
         /* Guaranteed by the DocBook schema */
         assert(count($manualListItemTags) === 1);
         $manualListItem = $manualListItemTags[0];
-        return new DocumentedConstant($manualConstantName, $manualType, $manualListItem, $id);
+        return new DocumentedConstant($manualConstantName, $type, $manualListItem, $id);
     }
 }

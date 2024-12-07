@@ -20,8 +20,8 @@ final class DocumentedConstantList implements Countable
         $constantElement = $document->createElement("constant");
         $constantElement->textContent = $constant->name;
 
-        $typeElement = $document->createElement("type");
-        $typeElement->textContent = $constant->type;
+        $typeFragment = $document->createDocumentFragment();
+        $typeFragment->appendXML($constant->type->toXml());
 
         $termElement = $document->createElement("term");
         $termElement->append(
@@ -31,7 +31,7 @@ final class DocumentedConstantList implements Countable
             "\n",
             str_repeat(" ", $indentationLevel + 1),
             "(",
-            $typeElement,
+            $typeFragment,
             ")",
             "\n",
             str_repeat(" ", $indentationLevel),

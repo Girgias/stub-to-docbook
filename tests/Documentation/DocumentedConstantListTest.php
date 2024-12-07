@@ -7,6 +7,7 @@ use DOMDocument;
 use Girgias\StubToDocbook\Documentation\DocumentedConstant;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
+use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 
@@ -18,8 +19,8 @@ class DocumentedConstantListTest extends TestCase
     {
         $document = new DOMDocument();
         $constants = [
-            "HELLO" => new DocumentedConstant("HELLO", 'string', $document->createTextNode('description')),
-            "SOME_CONSTANT" => new DocumentedConstant("SOME_CONSTANT", 'int', $document->createTextNode('description'))
+            "HELLO" => new DocumentedConstant("HELLO", new SingleType('string'), $document->createTextNode('description')),
+            "SOME_CONSTANT" => new DocumentedConstant("SOME_CONSTANT", new SingleType('int'), $document->createTextNode('description'))
         ];
 
         $list = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $constants);

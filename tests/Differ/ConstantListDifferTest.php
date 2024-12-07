@@ -10,6 +10,7 @@ use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
 use Girgias\StubToDocbook\Stubs\StubConstant;
 use Girgias\StubToDocbook\Stubs\StubConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
+use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
@@ -41,8 +42,8 @@ STUB;
 
         $document = new DOMDocument();
         $docConstants = [
-            'WRONG_TYPE' => new DocumentedConstant("WRONG_TYPE", 'string', $document->createTextNode('description')),
-            'SOME_CONSTANT' => new DocumentedConstant("SOME_CONSTANT", 'int', $document->createTextNode('description'))
+            'WRONG_TYPE' => new DocumentedConstant("WRONG_TYPE", new SingleType('string'), $document->createTextNode('description')),
+            'SOME_CONSTANT' => new DocumentedConstant("SOME_CONSTANT", new SingleType('int'), $document->createTextNode('description'))
         ];
         $docList = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $docConstants);
 
