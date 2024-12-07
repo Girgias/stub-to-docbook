@@ -60,6 +60,9 @@ final readonly class DocumentedFunction implements Equatable
             if ($node instanceof \DOMText) {
                 continue;
             }
+            if (($node instanceof \DOMElement) === false) {
+                throw new \Exception("Unexpected node type: " .$node::class);
+            }
             match ($node->tagName) {
                 'type' => $returnType = DocumentedTypeParser::parse($node),
                 'modifier'  => $attributes[] = DocumentedAttribute::parseFromDoc($node),

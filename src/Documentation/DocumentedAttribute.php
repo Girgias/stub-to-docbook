@@ -18,7 +18,7 @@ final readonly class DocumentedAttribute implements Equatable
 
     public static function parseFromDoc(\DOMElement $element): DocumentedAttribute
     {
-        if ($element->attributes === null) {
+        if (!$element->hasAttributes()) {
             throw new \Exception("No attributes");
         }
         $role = $element->attributes['role'];

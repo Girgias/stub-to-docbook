@@ -75,6 +75,9 @@ final readonly class DocumentedParameter implements Equatable
             if ($node instanceof \DOMText) {
                 continue;
             }
+            if (($node instanceof \DOMElement) === false) {
+                throw new \Exception("Unexpected node type: " .$node::class);
+            }
             match ($node->tagName) {
                 'type' => $type = DocumentedTypeParser::parse($node),
                 'parameter' => [$name, $isByRef] = self::parseParameterTag($node),
