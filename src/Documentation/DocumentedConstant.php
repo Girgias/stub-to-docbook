@@ -24,4 +24,42 @@ final readonly class DocumentedConstant
     {
         return str_replace('_', '-', strtolower($label));
     }
+
+    /**
+     * DocBook 5.2 <varlistentry> documentation
+     * URL: https://tdg.docbook.org/tdg/5.2/varlistentry
+     * Returns null if no <constant> tag exist within the <term> tag
+     */
+    public static function parseFromVarListEntryTag(\DOMElement $entry): ?DocumentedConstant
+    {
+        $id = null;
+        if ($entry->hasAttribute('xml:id')) {
+            $id = $entry->getAttribute('xml:id');
+        }
+
+        $terms = $entry->getElementsByTagName("term");
+        assert(count($terms) === 1);
+
+        $manualConstantTags = $terms[0]->getElementsByTagName("constant");
+        /* See reference/filter/constants.xml with Available options variable lists */
+        if ($manualConstantTags->length === 0) {
+            return null;
+        }
+        assert(count($manualConstantTags) === 1);
+        $manualConstantName = $manualConstantTags[0]->textContent;
+
+        $manualTypeTags = $terms[0]->getElementsByTagName("type");
+        if (count($manualTypeTags) === 0) {
+            $manualType = 'MISSING';
+        } else {
+            assert(count($manualTypeTags) === 1);
+            $manualType = $manualTypeTags[0]->textContent;
+        }
+
+        $manualListItemTags = $entry->getElementsByTagName("listitem");
+        /* Guaranteed by the DocBook schema */
+        assert(count($manualListItemTags) === 1);
+        $manualListItem = $manualListItemTags[0];
+        return new DocumentedConstant($manualConstantName, $manualType, $manualListItem, $id);
+    }
 }

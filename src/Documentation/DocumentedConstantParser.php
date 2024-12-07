@@ -29,37 +29,14 @@ class DocumentedConstantParser
                 if ($entry->parentNode !== $variableList) {
                     continue;
                 }
-
-                $id = null;
-                if ($entry->hasAttribute('xml:id')) {
-                    $id = $entry->getAttribute('xml:id');
-                }
-
-                $terms = $entry->getElementsByTagName("term");
-                assert(count($terms) === 1);
-
-                $manualConstantTags = $terms[0]->getElementsByTagName("constant");
+                $constant = DocumentedConstant::parseFromVarListEntryTag($entry);
                 /* See reference/filter/constants.xml with Available options variable lists */
-                if ($manualConstantTags->length === 0) {
+                if ($constant === null) {
                     /* Break out of the inner list dealing with the constants */
                     continue 2;
                 }
-                assert(count($manualConstantTags) === 1);
-                $manualConstantName = $manualConstantTags[0]->textContent;
 
-                $manualTypeTags = $terms[0]->getElementsByTagName("type");
-                if (count($manualTypeTags) === 0) {
-                    $manualType = 'MISSING';
-                } else {
-                    assert(count($manualTypeTags) === 1);
-                    $manualType = $manualTypeTags[0]->textContent;
-                }
-
-                $manualListItemTags = $entry->getElementsByTagName("listitem");
-                assert(count($manualListItemTags) === 1);
-                $manualListItem = $manualListItemTags[0];
-
-                $individualList[$manualConstantName] = new DocumentedConstant($manualConstantName, $manualType, $manualListItem, $id);
+                $individualList[$constant->name] = $constant;
             }
 
             $constants[] = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $individualList);
