@@ -4,13 +4,13 @@ namespace Girgias\StubToDocbook\Documentation\Functions;
 
 use Dom\Element;
 use Dom\Text;
-use Girgias\StubToDocbook\Documentation\DocumentedAttribute;
+use Girgias\StubToDocbook\Documentation\AttributeMetaData;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\Type;
 
-final readonly class DocumentedParameter implements Equatable
+final readonly class ParameterMetaData implements Equatable
 {
     public function __construct(
         readonly string $name,
@@ -20,12 +20,12 @@ final readonly class DocumentedParameter implements Equatable
         readonly ?string $defaultValue = null,
         readonly bool $isByRef = false,
         readonly bool $isVariadic = false,
-        /** @param list<DocumentedAttribute> $attributes */
+        /** @param list<AttributeMetaData> $attributes */
         readonly array $attributes = [],
     ) {}
 
     /**
-     * @param DocumentedParameter $other
+     * @param ParameterMetaData $other
      */
     public function isSame(mixed $other): bool
     {
@@ -43,7 +43,7 @@ final readonly class DocumentedParameter implements Equatable
      * DocBook 5.2 <methodparam> documentation
      * URL: https://tdg.docbook.org/tdg/5.2/methodparam
      */
-    public static function parseFromDoc(Element $element, int $position): DocumentedParameter
+    public static function parseFromDoc(Element $element, int $position): ParameterMetaData
     {
         if ($element->tagName !== 'methodparam') {
             throw new \Exception('Unexpected tag "' . $element->tagName . '"');
@@ -90,13 +90,13 @@ final readonly class DocumentedParameter implements Equatable
             match ($tagName) {
                 'type' => $type = DocumentedTypeParser::parse($node),
                 'parameter' => [$name, $isByRef] = self::parseParameterTag($node),
-                'modifier'  => $attributes[] = DocumentedAttribute::parseFromDoc($node),
+                'modifier'  => $attributes[] = AttributeMetaData::parseFromDoc($node),
                 'initializer' => $defaultValue = $node->textContent, // TODO Less than ideal as it can have <constant> or <literal> tags
                 'funcparams', 'templatename' => throw new \Exception('"'.$tagName.'" child tag for <methodparam> is not supported'),
             };
         }
 
-        return new DocumentedParameter(
+        return new ParameterMetaData(
             $name,
             $position,
             $type,

@@ -3,14 +3,14 @@
 namespace Documentation\Functions;
 
 use Dom\XMLDocument;
-use Girgias\StubToDocbook\Documentation\DocumentedAttribute;
-use Girgias\StubToDocbook\Documentation\Functions\DocumentedFunction;
-use Girgias\StubToDocbook\Documentation\Functions\DocumentedParameter;
+use Girgias\StubToDocbook\Documentation\AttributeMetaData;
+use Girgias\StubToDocbook\Documentation\Functions\FunctionMetaData;
+use Girgias\StubToDocbook\Documentation\Functions\ParameterMetaData;
 use Girgias\StubToDocbook\Types\SingleType;
 use Girgias\StubToDocbook\Types\UnionType;
 use PHPUnit\Framework\TestCase;
 
-class DocumentedFunctionTest extends TestCase
+class FunctionMetaDataTest extends TestCase
 {
 
     public function test_no_param_function_parsing(): void
@@ -22,9 +22,9 @@ class DocumentedFunctionTest extends TestCase
 </methodsynopsis>
 XML;
         $document = XMLDocument::createFromString($xml);
-        $fn = DocumentedFunction::parseFromDoc($document->firstElementChild);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild);
 
-        $expectedFunction = new DocumentedFunction(
+        $expectedFunction = new FunctionMetaData(
             'test_function',
             [],
             new SingleType('string'),
@@ -43,17 +43,17 @@ XML;
 </methodsynopsis>
 XML;
         $document = XMLDocument::createFromString($xml);
-        $fn = DocumentedFunction::parseFromDoc($document->firstElementChild);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild);
 
-        $expectedFunction = new DocumentedFunction(
+        $expectedFunction = new FunctionMetaData(
             'test_variadic',
             [
-                new DocumentedParameter(
+                new ParameterMetaData(
                     'var',
                     1,
                     new SingleType('mixed'),
                 ),
-                new DocumentedParameter(
+                new ParameterMetaData(
                     'vars',
                     2,
                     new SingleType('mixed'),
@@ -76,12 +76,12 @@ XML;
 </methodsynopsis>
 XML;
         $document = XMLDocument::createFromString($xml);
-        $fn = DocumentedFunction::parseFromDoc($document->firstElementChild);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild);
 
-        $expectedFunction = new DocumentedFunction(
+        $expectedFunction = new FunctionMetaData(
             'test_attribute',
             [
-                new DocumentedParameter(
+                new ParameterMetaData(
                     'param1',
                     1,
                     new SingleType('mixed'),
@@ -89,7 +89,7 @@ XML;
             ],
             new SingleType('bool'),
             attributes: [
-                new DocumentedAttribute('\\Deprecated'),
+                new AttributeMetaData('\\Deprecated'),
             ]
         );
 
@@ -109,31 +109,31 @@ XML;
 </methodsynopsis>
 XML;
         $document = XMLDocument::createFromString($xml);
-        $fn = DocumentedFunction::parseFromDoc($document->firstElementChild);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild);
 
-        $expectedFunction = new DocumentedFunction(
+        $expectedFunction = new FunctionMetaData(
             'test_complete_function',
             [
-                new DocumentedParameter(
+                new ParameterMetaData(
                     'param_typical',
                     1,
                     new SingleType('string'),
                 ),
-                new DocumentedParameter(
+                new ParameterMetaData(
                     'param_reference',
                     2,
                     new SingleType('array'),
                     isByRef: true,
                 ),
-                new DocumentedParameter(
+                new ParameterMetaData(
                     'param_sensitive',
                     3,
                     new SingleType('string'),
                     attributes: [
-                        new DocumentedAttribute('\\SensitiveParameter'),
+                        new AttributeMetaData('\\SensitiveParameter'),
                     ],
                 ),
-                new DocumentedParameter(
+                new ParameterMetaData(
                     'param_optional',
                     4,
                     new UnionType([
@@ -149,7 +149,7 @@ XML;
                 new SingleType('false'),
             ]),
             attributes: [
-                new DocumentedAttribute('\\Deprecated'),
+                new AttributeMetaData('\\Deprecated'),
             ]
         );
 

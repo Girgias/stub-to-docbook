@@ -4,28 +4,28 @@ namespace Girgias\StubToDocbook\Documentation\Functions;
 
 use Dom\Element;
 use Dom\Text;
-use Girgias\StubToDocbook\Documentation\DocumentedAttribute;
+use Girgias\StubToDocbook\Documentation\AttributeMetaData;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\Type;
 
-final readonly class DocumentedFunction implements Equatable
+final readonly class FunctionMetaData implements Equatable
 {
     public function __construct(
         readonly string $name,
-        /** @param list<DocumentedParameter> $parameters */
+        /** @param list<ParameterMetaData> $parameters */
         readonly array $parameters,
         readonly Type $returnType,
         readonly bool $byRefReturn = false,
-        /** @param array<string, DocumentedAttribute> $attributes */
+        /** @param array<string, AttributeMetaData> $attributes */
         readonly array $attributes = [],
         readonly bool $isStatic = false,
         readonly bool $isDeprecated = false,
     ) {}
 
     /**
-     * @param DocumentedFunction $other
+     * @param FunctionMetaData $other
      */
     public function isSame(mixed $other): bool
     {
@@ -43,7 +43,7 @@ final readonly class DocumentedFunction implements Equatable
      * DocBook 5.2 <methodsynopsis> documentation
      * URL: https://tdg.docbook.org/tdg/5.2/methodsynopsis
      */
-    public static function parseFromDoc(Element $element): DocumentedFunction
+    public static function parseFromDoc(Element $element): FunctionMetaData
     {
 
         if ($element->tagName !== 'methodsynopsis') {
@@ -95,17 +95,17 @@ final readonly class DocumentedFunction implements Equatable
              */
             $tagName = $node->tagName;
             match ($tagName) {
-                'modifier'  => $attributes[] = DocumentedAttribute::parseFromDoc($node),
+                'modifier'  => $attributes[] = AttributeMetaData::parseFromDoc($node),
                 'type' => $returnType = DocumentedTypeParser::parse($node),
                 'void' => $parameters = [],
                 'methodname' => $name = $node->textContent,
-                'methodparam' => $parameters[] = DocumentedParameter::parseFromDoc($node, count($parameters)+1),
+                'methodparam' => $parameters[] = ParameterMetaData::parseFromDoc($node, count($parameters)+1),
                 'info', 'group', 'exceptionname', 'templatename', 'synopsisinfo' =>
                     throw new \Exception('"'.$tagName.'" child tag for <methodsynopsis> is not supported'),
             };
         }
 
-        return new DocumentedFunction(
+        return new FunctionMetaData(
             $name,
             $parameters,
             $returnType,

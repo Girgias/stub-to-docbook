@@ -5,7 +5,7 @@ namespace Girgias\StubToDocbook\Documentation;
 use Dom\Element;
 use Girgias\StubToDocbook\FP\Equatable;
 
-final readonly class DocumentedAttribute implements Equatable
+final readonly class AttributeMetaData implements Equatable
 {
     public function __construct(
         readonly string $name,
@@ -17,7 +17,7 @@ final readonly class DocumentedAttribute implements Equatable
         return $this->name === $other->name;
     }
 
-    public static function parseFromDoc(Element $element): DocumentedAttribute
+    public static function parseFromDoc(Element $element): AttributeMetaData
     {
         if (!$element->hasAttributes()) {
             throw new \Exception("No attributes");
@@ -32,6 +32,6 @@ final readonly class DocumentedAttribute implements Equatable
         $fullAttribute = $element->textContent;
         /* Skip initial "#[" and do not include the trailing "]# */
         $attribute = substr($fullAttribute, 2, strlen($fullAttribute) - 3);
-        return new DocumentedAttribute($attribute);
+        return new AttributeMetaData($attribute);
     }
 }
