@@ -30,7 +30,7 @@ final class DocumentedTypeParser
 
     /**
      * @param Element $type
-     * @param class-string $className
+     * @param class-string<UnionType|IntersectionType> $className
      * @return UnionType|IntersectionType
      */
     private static function parseTypeList(Element $type, string $className): UnionType|IntersectionType
