@@ -12,6 +12,9 @@ final class ConstantReport
     public static function generateHtmlReport(ConstantListDiff $differ, string $file): void
     {
         $fp = fopen($file, 'w');
+        if ($fp === false) {
+            throw new \RuntimeException("Cannot open file \"$file\".");
+        }
         fputs($fp, <<<'HTML_START'
 <!DOCTYPE html>
 <html lang="en">
