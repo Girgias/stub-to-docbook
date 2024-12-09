@@ -65,12 +65,43 @@ final readonly class DocumentedFunction implements Equatable
             if (($node instanceof Element) === false) {
                 throw new \Exception("Unexpected node type: " .$node::class);
             }
-            match ($node->tagName) {
-                'type' => $returnType = DocumentedTypeParser::parse($node),
+            /**
+             * methodsynopsis ::=
+             *   Sequence of:
+             *      info? (db.titleforbidden.info)
+             *      Zero or more of:
+             *         synopsisinfo
+             *      Zero or more of:
+             *         modifier
+             *         templatename
+             *      Optionally one of:
+             *         type
+             *         void
+             *      methodname
+             *      Zero or more of:
+             *         templatename
+             *      One of:
+             *         One or more of:
+             *             group (db.group.methodparam)
+             *             methodparam
+             *         void
+             *      Zero or more of:
+             *         exceptionname
+             *         modifier
+             *         templatename
+             *      Zero or more of:
+             *         synopsisinfo
+             * @var 'info'|'synopsisinfo'|'modifier'|'templatename'|'type'|'void'|'methodname'|'group'|'methodparam'|'exceptionname' $tagName
+             */
+            $tagName = $node->tagName;
+            match ($tagName) {
                 'modifier'  => $attributes[] = DocumentedAttribute::parseFromDoc($node),
+                'type' => $returnType = DocumentedTypeParser::parse($node),
+                'void' => $parameters = [],
                 'methodname' => $name = $node->textContent,
                 'methodparam' => $parameters[] = DocumentedParameter::parseFromDoc($node, count($parameters)+1),
-                'void' => $parameters = [],
+                'info', 'group', 'exceptionname', 'templatename', 'synopsisinfo' =>
+                    throw new \Exception('"'.$tagName.'" child tag for <methodsynopsis> is not supported'),
             };
         }
 

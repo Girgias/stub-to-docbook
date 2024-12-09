@@ -6,6 +6,10 @@ use Dom\Element;
 
 final class DocumentedTypeParser
 {
+    /**
+     * DocBook 5.2 <type> documentation
+     * URL: https://tdg.docbook.org/tdg/5.2/type
+     */
     public static function parse(Element $type): Type
     {
         if ($type->tagName !== 'type') {
@@ -16,7 +20,9 @@ final class DocumentedTypeParser
             /* Simple type */
             return new SingleType($type->textContent);
         }
-        return match ($classAttribute->value) {
+        /** @var 'union'|'intersection' $attributeValue */
+        $attributeValue = $classAttribute->value;
+        return match ($attributeValue) {
             'union' => self::parseTypeList($type, UnionType::class),
             'intersection' => self::parseTypeList($type, IntersectionType::class),
         };

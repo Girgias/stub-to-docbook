@@ -59,7 +59,9 @@ final readonly class DocumentedParameter implements Equatable
 
         $repAttribute = $element->attributes->getNamedItem('rep');
         if ($repAttribute) {
-            $isVariadic = match($repAttribute->value) {
+            /** @var 'norepeat'|'repeat' $attributeValue */
+            $attributeValue = $repAttribute->value;
+            $isVariadic = match($attributeValue) {
                 'repeat' => true,
                 'norepeat' => false,
             };
@@ -67,9 +69,12 @@ final readonly class DocumentedParameter implements Equatable
 
         $choiceAttribute = $element->attributes->getNamedItem('choice');
         if ($choiceAttribute) {
-            $isOptional = match($choiceAttribute->value) {
+            /** @var 'opt'|'req'|'plain' $attributeValue */
+            $attributeValue = $choiceAttribute->value;
+            $isOptional = match($attributeValue) {
                 'opt' => true,
                 'req' => false,
+                'plain' => throw new \Exception('"plain" attribute value for <methodparam> is not supported'),
             };
         }
 
@@ -80,11 +85,14 @@ final readonly class DocumentedParameter implements Equatable
             if (($node instanceof Element) === false) {
                 throw new \Exception("Unexpected node type: " .$node::class);
             }
-            match ($node->tagName) {
+            /** @var 'funcparams'|'initializer'|'modifier'|'parameter'|'templatename'|'type' $tagName */
+            $tagName = $node->tagName;
+            match ($tagName) {
                 'type' => $type = DocumentedTypeParser::parse($node),
                 'parameter' => [$name, $isByRef] = self::parseParameterTag($node),
                 'modifier'  => $attributes[] = DocumentedAttribute::parseFromDoc($node),
                 'initializer' => $defaultValue = $node->textContent, // TODO Less than ideal as it can have <constant> or <literal> tags
+                'funcparams', 'templatename' => throw new \Exception('"'.$tagName.'" child tag for <methodparam> is not supported'),
             };
         }
 
