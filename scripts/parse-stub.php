@@ -1,5 +1,6 @@
 <?php
 
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\Differ\ConstantListDiffer;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
@@ -27,8 +28,7 @@ function file_to_doc_constants(string $path) {
         $content,
     );
     $content = str_replace('&', '&amp;', $content);
-    $dom = new DOMDocument();
-    $dom->loadXML($content);
+    $dom = XMLDocument::createFromString($content);
     //echo "File $path\n";
     $listOfDocumentedConstantList = DocumentedConstantParser::parse($dom);
     $list = array_reduce($listOfDocumentedConstantList, function ($carry, DocumentedConstantList $constantList) {

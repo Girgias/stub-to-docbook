@@ -4,6 +4,7 @@ namespace Girgias\StubToDocbook\Documentation;
 
 use Dom\Element;
 use Dom\XMLDocument;
+use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 
 class DocumentedConstantParser
 {
@@ -89,10 +90,10 @@ class DocumentedConstantParser
 
                 $manualTypeTags = $typeEntry->getElementsByTagName("type");
                 if (count($manualTypeTags) === 0) {
-                    $manualType = 'MISSING';
+                    $manualType = null;
                 } else {
                     assert(count($manualTypeTags) === 1);
-                    $manualType = $manualTypeTags[0]->textContent;
+                    $manualType = DocumentedTypeParser::parse($manualTypeTags[0]);
                 }
 
                 $individualList[$manualConstantName] = new DocumentedConstant($manualConstantName, $manualType, $descriptionEntry, $id);
