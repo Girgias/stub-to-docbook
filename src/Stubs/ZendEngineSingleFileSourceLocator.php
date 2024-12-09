@@ -32,7 +32,7 @@ class ZendEngineSingleFileSourceLocator extends SingleFileSourceLocator
         );
     }
 
-    private static function getExtensionNameFromFileName($fileName): string
+    private static function getExtensionNameFromFileName(string $fileName): string
     {
         if (str_contains($fileName, 'Zend/')) {
             return 'Core';

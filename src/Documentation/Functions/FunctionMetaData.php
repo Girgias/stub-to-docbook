@@ -12,13 +12,15 @@ use Girgias\StubToDocbook\Types\Type;
 
 final readonly class FunctionMetaData implements Equatable
 {
+    /**
+     * @param list<ParameterMetaData> $parameters
+     * @param list<AttributeMetaData> $attributes
+     */
     public function __construct(
         readonly string $name,
-        /** @param list<ParameterMetaData> $parameters */
         readonly array $parameters,
         readonly Type $returnType,
         readonly bool $byRefReturn = false,
-        /** @param array<string, AttributeMetaData> $attributes */
         readonly array $attributes = [],
         readonly bool $isStatic = false,
         readonly bool $isDeprecated = false,

@@ -7,8 +7,8 @@ use Roave\BetterReflection\Reflection\ReflectionConstant;
 
 final readonly class StubConstantList implements Countable
 {
+    /** @param array<string, StubConstant> $constants */
     private function __construct(
-        /** @param array<string, StubConstant> $constants */
         readonly array $constants
     ) {}
 
@@ -32,7 +32,7 @@ final readonly class StubConstantList implements Countable
     }
 
     /**
-     * @param list<StubConstant> $stubConstants
+     * @param array<string, StubConstant> $stubConstants
      * @return self
      */
     public static function fromArrayOfStubConstants(array $stubConstants): self

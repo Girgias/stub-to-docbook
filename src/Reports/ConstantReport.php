@@ -53,6 +53,9 @@ HTML;
 
     }
 
+    /**
+     * @param resource $fp
+     */
     private static function generateHtmlReportMissingConstants($fp, StubConstantList $constants): void
     {
         if (count($constants) > 0) {
@@ -86,7 +89,10 @@ HTML_MISSING_TABLE_END);
         }
     }
 
-    /** @param array<string, array{0: StubConstant, 1: string}> $incorrectTypes */
+    /**
+     * @param resource $fp
+     * @param array<string, array{0: StubConstant, 1: string}> $incorrectTypes
+     */
     private static function generateHtmlReportIncorrectConstantTypes($fp, array $incorrectTypes): void
     {
         if (count($incorrectTypes) > 0) {
@@ -126,6 +132,9 @@ HTML_MISSING_TABLE_END);
         }
     }
 
+    /**
+     * @param resource $fp
+     */
     private static function generateHtmlReportIncorrectDocumentedConstantIdsForLinking($fp, DocumentedConstantList $incorrectIdsForLinking): void
     {
         if (count($incorrectIdsForLinking) > 0) {

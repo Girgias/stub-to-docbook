@@ -12,6 +12,7 @@ use Girgias\StubToDocbook\Types\Type;
 
 final readonly class ParameterMetaData implements Equatable
 {
+    /** @param list<AttributeMetaData> $attributes */
     public function __construct(
         readonly string $name,
         readonly int $position,
@@ -20,7 +21,6 @@ final readonly class ParameterMetaData implements Equatable
         readonly ?string $defaultValue = null,
         readonly bool $isByRef = false,
         readonly bool $isVariadic = false,
-        /** @param list<AttributeMetaData> $attributes */
         readonly array $attributes = [],
     ) {}
 
@@ -108,6 +108,7 @@ final readonly class ParameterMetaData implements Equatable
         );
     }
 
+    /** @return array{0: string, 1: bool}  */
     private static function parseParameterTag(Element $element): array
     {
         $byRef = false;

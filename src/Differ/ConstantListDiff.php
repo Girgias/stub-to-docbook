@@ -8,9 +8,9 @@ use Girgias\StubToDocbook\Stubs\StubConstantList;
 
 final readonly class ConstantListDiff
 {
+    /** @param array<string, array{0: StubConstant, 1: string}> $incorrectTypes */
     public function __construct(
         readonly int $valid,
-        /** @param array<string, array{0: StubConstant, 1: string}> $incorrectTypes */
         readonly array $incorrectTypes,
         readonly StubConstantList $missing,
         readonly DocumentedConstantList $incorrectIdForLinking,

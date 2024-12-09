@@ -8,9 +8,9 @@ use Dom\XMLDocument;
 
 final class DocumentedConstantList implements Countable
 {
+    /** @param array<string, DocumentedConstant> $constants */
     public function __construct(
         readonly DocumentedConstantListType $type,
-        /** @param array<string, DocumentedConstant> $constants */
         public array $constants,
         readonly ?string $title = null,
     ) {}
