@@ -3,8 +3,8 @@
 namespace Girgias\StubToDocbook\Documentation;
 
 use Countable;
-use DOMDocument;
-use DOMElement;
+use Dom\Element;
+use Dom\XMLDocument;
 
 final class DocumentedConstantList implements Countable
 {
@@ -15,7 +15,7 @@ final class DocumentedConstantList implements Countable
         readonly ?string $title = null,
     ) {}
 
-    private function generateXmlTermElement(DOMDocument $document, int $indentationLevel, DocumentedConstant $constant): DOMElement
+    private function generateXmlTermElement(XMLDocument $document, int $indentationLevel, DocumentedConstant $constant): Element
     {
         $constantElement = $document->createElement("constant");
         $constantElement->textContent = $constant->name;
@@ -40,7 +40,7 @@ final class DocumentedConstantList implements Countable
         return $termElement;
     }
 
-    public function generateXmlList(DOMDocument $document, int $indentationLevel): DOMElement
+    public function generateXmlList(XMLDocument $document, int $indentationLevel): Element
     {
         if ($this->type != DocumentedConstantListType::VarEntryList) {
             throw new \Exception("Only support for VarEntry list atm");

@@ -2,6 +2,7 @@
 
 namespace Documentation\Functions;
 
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\Documentation\DocumentedAttribute;
 use Girgias\StubToDocbook\Documentation\Functions\DocumentedFunction;
 use Girgias\StubToDocbook\Documentation\Functions\DocumentedParameter;
@@ -20,9 +21,8 @@ class DocumentedFunctionTest extends TestCase
  <void/>
 </methodsynopsis>
 XML;
-        $document = new \DOMDocument();
-        $document->loadXML($xml);
-        $fn = DocumentedFunction::parseFromDoc($document->firstChild);
+        $document = XMLDocument::createFromString($xml);
+        $fn = DocumentedFunction::parseFromDoc($document->firstElementChild);
 
         $expectedFunction = new DocumentedFunction(
             'test_function',
@@ -42,9 +42,8 @@ XML;
  <methodparam rep="repeat"><type>mixed</type><parameter>vars</parameter></methodparam>
 </methodsynopsis>
 XML;
-        $document = new \DOMDocument();
-        $document->loadXML($xml);
-        $fn = DocumentedFunction::parseFromDoc($document->firstChild);
+        $document = XMLDocument::createFromString($xml);
+        $fn = DocumentedFunction::parseFromDoc($document->firstElementChild);
 
         $expectedFunction = new DocumentedFunction(
             'test_variadic',
@@ -76,9 +75,8 @@ XML;
  <methodparam><type>mixed</type><parameter>param1</parameter></methodparam>
 </methodsynopsis>
 XML;
-        $document = new \DOMDocument();
-        $document->loadXML($xml);
-        $fn = DocumentedFunction::parseFromDoc($document->firstChild);
+        $document = XMLDocument::createFromString($xml);
+        $fn = DocumentedFunction::parseFromDoc($document->firstElementChild);
 
         $expectedFunction = new DocumentedFunction(
             'test_attribute',
@@ -110,9 +108,8 @@ XML;
  <methodparam choice="opt"><type class="union"><type>int</type><type>null</type></type><parameter>param_optional</parameter><initializer><constant>SOME_CONST</constant></initializer></methodparam>
 </methodsynopsis>
 XML;
-        $document = new \DOMDocument();
-        $document->loadXML($xml);
-        $fn = DocumentedFunction::parseFromDoc($document->firstChild);
+        $document = XMLDocument::createFromString($xml);
+        $fn = DocumentedFunction::parseFromDoc($document->firstElementChild);
 
         $expectedFunction = new DocumentedFunction(
             'test_complete_function',

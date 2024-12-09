@@ -2,11 +2,11 @@
 
 namespace Girgias\StubToDocbook\Types;
 
-use DOMElement;
+use Dom\Element;
 
 final class DocumentedTypeParser
 {
-    public static function parse(DOMElement $type): Type
+    public static function parse(Element $type): Type
     {
         if ($type->tagName !== 'type') {
             throw new \Exception('Unexpected tag "' . $type->tagName . '"');
@@ -23,11 +23,11 @@ final class DocumentedTypeParser
     }
 
     /**
-     * @param DOMElement $type
+     * @param Element $type
      * @param class-string $className
      * @return UnionType|IntersectionType
      */
-    private static function parseTypeList(DOMElement $type, string $className): UnionType|IntersectionType
+    private static function parseTypeList(Element $type, string $className): UnionType|IntersectionType
     {
         $types = iterator_to_array($type->childNodes->getIterator());
         return new $className(array_map(self::parse(...), $types));

@@ -2,12 +2,13 @@
 
 namespace Girgias\StubToDocbook\Documentation;
 
-use DOMElement;
+use Dom\Element;
+use Dom\XMLDocument;
 
 class DocumentedConstantParser
 {
     /** @return list<DocumentedConstantList> */
-    public static function parse(\DOMDocument $doc): array
+    public static function parse(XMLDocument $doc): array
     {
         $constants = [];
 
@@ -24,7 +25,7 @@ class DocumentedConstantParser
             }
             $individualList = [];
             foreach ($variableList->getElementsByTagName("varlistentry") as $entry) {
-                assert($entry instanceof DOMElement);
+                assert($entry instanceof Element);
 
                 if ($entry->parentNode !== $variableList) {
                     continue;
@@ -70,7 +71,7 @@ class DocumentedConstantParser
             $tbody = $table->getElementsByTagName("tbody")->item(0);
             $individualList = [];
             foreach ($tbody->getElementsByTagName("row") as $row) {
-                assert($row instanceof DOMElement);
+                assert($row instanceof Element);
 
                 $id = null;
                 if ($row->hasAttribute('xml:id')) {

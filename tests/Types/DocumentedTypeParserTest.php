@@ -2,6 +2,7 @@
 
 namespace Types;
 
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\IntersectionType;
 use Girgias\StubToDocbook\Types\SingleType;
@@ -12,9 +13,8 @@ class DocumentedTypeParserTest extends TestCase
 {
     public function test_parsing_simple_type_tag(): void
     {
-        $document = new \DOMDocument();
-        $document->loadXML('<type>string</type>');
-        $type = DocumentedTypeParser::parse($document->firstChild);
+        $document = XMLDocument::createFromString('<type>string</type>');
+        $type = DocumentedTypeParser::parse($document->firstElementChild);
 
         $expectedType = new SingleType('string');
         self::assertTrue($expectedType->isSame($type));
@@ -22,9 +22,8 @@ class DocumentedTypeParserTest extends TestCase
 
     public function test_parsing_simple_union_type_tag(): void
     {
-        $document = new \DOMDocument();
-        $document->loadXML('<type class="union"><type>Countable</type><type>array</type></type>');
-        $type = DocumentedTypeParser::parse($document->firstChild);
+        $document = XMLDocument::createFromString('<type class="union"><type>Countable</type><type>array</type></type>');
+        $type = DocumentedTypeParser::parse($document->firstElementChild);
 
         $expectedType = new UnionType([
             new SingleType('Countable'),
@@ -36,9 +35,8 @@ class DocumentedTypeParserTest extends TestCase
 
     public function test_parsing_simple_intersection_type_tag(): void
     {
-        $document = new \DOMDocument();
-        $document->loadXML('<type class="intersection"><type>X</type><type>Y</type></type>');
-        $type = DocumentedTypeParser::parse($document->firstChild);
+        $document = XMLDocument::createFromString('<type class="intersection"><type>X</type><type>Y</type></type>');
+        $type = DocumentedTypeParser::parse($document->firstElementChild);
 
         $expectedType = new IntersectionType([
             new SingleType('X'),
@@ -52,9 +50,8 @@ class DocumentedTypeParserTest extends TestCase
     {
 
         $xml = '<type class="union"><type class="intersection"><type>A</type><type>B</type></type><type class="intersection"><type>X</type><type>Y</type></type><type>array</type></type>';
-        $document = new \DOMDocument();
-        $document->loadXML($xml);
-        $type = DocumentedTypeParser::parse($document->firstChild);
+        $document = XMLDocument::createFromString($xml);
+        $type = DocumentedTypeParser::parse($document->firstElementChild);
 
         $expectedType = new UnionType([
             new IntersectionType([

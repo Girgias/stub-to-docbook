@@ -2,6 +2,8 @@
 
 namespace Girgias\StubToDocbook\Documentation\Functions;
 
+use Dom\Element;
+use Dom\Text;
 use Girgias\StubToDocbook\Documentation\DocumentedAttribute;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
@@ -41,7 +43,7 @@ final readonly class DocumentedParameter implements Equatable
      * DocBook 5.2 <methodparam> documentation
      * URL: https://tdg.docbook.org/tdg/5.2/methodparam
      */
-    public static function parseFromDoc(\DOMElement $element, int $position): DocumentedParameter
+    public static function parseFromDoc(Element $element, int $position): DocumentedParameter
     {
         if ($element->tagName !== 'methodparam') {
             throw new \Exception('Unexpected tag "' . $element->tagName . '"');
@@ -72,10 +74,10 @@ final readonly class DocumentedParameter implements Equatable
         }
 
         foreach ($element->childNodes as $node) {
-            if ($node instanceof \DOMText) {
+            if ($node instanceof Text) {
                 continue;
             }
-            if (($node instanceof \DOMElement) === false) {
+            if (($node instanceof Element) === false) {
                 throw new \Exception("Unexpected node type: " .$node::class);
             }
             match ($node->tagName) {
@@ -98,7 +100,7 @@ final readonly class DocumentedParameter implements Equatable
         );
     }
 
-    private static function parseParameterTag(\DOMElement $element): array
+    private static function parseParameterTag(Element $element): array
     {
         $byRef = false;
         $role = $element->attributes->getNamedItem('role');

@@ -2,6 +2,8 @@
 
 namespace Girgias\StubToDocbook\Documentation;
 
+use Dom\Element;
+use Dom\Node;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\Type;
 
@@ -10,7 +12,7 @@ final readonly class DocumentedConstant
     public function __construct(
         readonly string $name,
         readonly Type|null $type,
-        readonly \DOMNode $description,
+        readonly Node $description,
         readonly string|null $id = null
     ) {}
 
@@ -33,7 +35,7 @@ final readonly class DocumentedConstant
      * URL: https://tdg.docbook.org/tdg/5.2/varlistentry
      * Returns null if no <constant> tag exist within the <term> tag
      */
-    public static function parseFromVarListEntryTag(\DOMElement $entry): ?DocumentedConstant
+    public static function parseFromVarListEntryTag(Element $entry): ?DocumentedConstant
     {
         $id = null;
         $type = null;

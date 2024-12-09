@@ -2,6 +2,7 @@
 
 namespace Documentation;
 
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\Documentation\DocumentedConstant;
 use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
@@ -24,9 +25,8 @@ class DocumentedConstantTest extends TestCase
  </listitem>
 </varlistentry>
 XML;
-        $document = new \DOMDocument();
-        $document->loadXML($xml);
-        $constant = DocumentedConstant::parseFromVarListEntryTag($document->firstChild);
+        $document = XMLDocument::createFromString($xml);
+        $constant = DocumentedConstant::parseFromVarListEntryTag($document->firstElementChild);
 
         $expectedType = new SingleType('resource');
 
@@ -50,9 +50,8 @@ XML;
  </listitem>
 </varlistentry>
 XML;
-        $document = new \DOMDocument();
-        $document->loadXML($xml);
-        $constant = DocumentedConstant::parseFromVarListEntryTag($document->firstChild);
+        $document = XMLDocument::createFromString($xml);
+        $constant = DocumentedConstant::parseFromVarListEntryTag($document->firstElementChild);
 
         self::assertSame('constant.stdout', $constant->id);
         self::assertSame('STDOUT', $constant->name);
@@ -75,9 +74,8 @@ XML;
  </listitem>
 </varlistentry>
 XML;
-        $document = new \DOMDocument();
-        $document->loadXML($xml);
-        $constant = DocumentedConstant::parseFromVarListEntryTag($document->firstChild);
+        $document = XMLDocument::createFromString($xml);
+        $constant = DocumentedConstant::parseFromVarListEntryTag($document->firstElementChild);
 
         $expectedType = new SingleType('T');
 

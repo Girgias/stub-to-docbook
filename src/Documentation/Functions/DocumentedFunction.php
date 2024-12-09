@@ -2,6 +2,8 @@
 
 namespace Girgias\StubToDocbook\Documentation\Functions;
 
+use Dom\Element;
+use Dom\Text;
 use Girgias\StubToDocbook\Documentation\DocumentedAttribute;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
@@ -41,7 +43,7 @@ final readonly class DocumentedFunction implements Equatable
      * DocBook 5.2 <methodsynopsis> documentation
      * URL: https://tdg.docbook.org/tdg/5.2/methodsynopsis
      */
-    public static function parseFromDoc(\DOMElement $element): DocumentedFunction
+    public static function parseFromDoc(Element $element): DocumentedFunction
     {
 
         if ($element->tagName !== 'methodsynopsis') {
@@ -57,10 +59,10 @@ final readonly class DocumentedFunction implements Equatable
         $attributes = [];
 
         foreach ($element->childNodes as $node) {
-            if ($node instanceof \DOMText) {
+            if ($node instanceof Text) {
                 continue;
             }
-            if (($node instanceof \DOMElement) === false) {
+            if (($node instanceof Element) === false) {
                 throw new \Exception("Unexpected node type: " .$node::class);
             }
             match ($node->tagName) {

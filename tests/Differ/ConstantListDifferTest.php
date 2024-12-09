@@ -2,12 +2,11 @@
 
 namespace Differ;
 
-use DOMDocument;
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\Differ\ConstantListDiffer;
 use Girgias\StubToDocbook\Documentation\DocumentedConstant;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
-use Girgias\StubToDocbook\Stubs\StubConstant;
 use Girgias\StubToDocbook\Stubs\StubConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Girgias\StubToDocbook\Types\SingleType;
@@ -39,8 +38,7 @@ const NOT_DOCUMENTED = UNKNOWN;
 STUB;
     public function testConstantListDiffer(): void
     {
-
-        $document = new DOMDocument();
+        $document = XMLDocument::createEmpty();
         $docConstants = [
             'WRONG_TYPE' => new DocumentedConstant("WRONG_TYPE", new SingleType('string'), $document->createTextNode('description')),
             'SOME_CONSTANT' => new DocumentedConstant("SOME_CONSTANT", new SingleType('int'), $document->createTextNode('description'))

@@ -2,6 +2,7 @@
 
 namespace Documentation;
 
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantParser;
 use PHPUnit\Framework\TestCase;
 
@@ -118,8 +119,7 @@ FILE;
 
     public function test_parsing_xml(): void
     {
-        $document = new \DOMDocument();
-        $document->loadXML(self::TEST_FILE);
+        $document = XMLDocument::createFromString(self::TEST_FILE);
         $constants = DocumentedConstantParser::parse($document);
 
         /** Have 2 lists of constants */

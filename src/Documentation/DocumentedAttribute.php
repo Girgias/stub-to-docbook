@@ -2,6 +2,7 @@
 
 namespace Girgias\StubToDocbook\Documentation;
 
+use Dom\Element;
 use Girgias\StubToDocbook\FP\Equatable;
 
 final readonly class DocumentedAttribute implements Equatable
@@ -16,7 +17,7 @@ final readonly class DocumentedAttribute implements Equatable
         return $this->name === $other->name;
     }
 
-    public static function parseFromDoc(\DOMElement $element): DocumentedAttribute
+    public static function parseFromDoc(Element $element): DocumentedAttribute
     {
         if (!$element->hasAttributes()) {
             throw new \Exception("No attributes");
