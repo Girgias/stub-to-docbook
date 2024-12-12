@@ -101,7 +101,7 @@ final readonly class FunctionMetaData implements Equatable
                 'type' => $returnType = DocumentedTypeParser::parse($node),
                 'void' => $parameters = [],
                 'methodname' => $name = $node->textContent,
-                'methodparam' => $parameters[] = ParameterMetaData::parseFromDoc($node, count($parameters)+1),
+                'methodparam' => $parameters[] = ParameterMetaData::parseFromMethodParamDocTag($node, count($parameters)+1),
                 'info', 'group', 'exceptionname', 'templatename', 'synopsisinfo' =>
                     throw new \Exception('"'.$tagName.'" child tag for <methodsynopsis> is not supported'),
             };

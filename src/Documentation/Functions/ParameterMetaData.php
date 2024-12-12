@@ -4,10 +4,12 @@ namespace Girgias\StubToDocbook\Documentation\Functions;
 
 use Dom\Element;
 use Dom\Text;
+use Dom\XPath;
 use Girgias\StubToDocbook\Documentation\AttributeMetaData;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
+use Girgias\StubToDocbook\Types\SingleType;
 use Girgias\StubToDocbook\Types\Type;
 
 final readonly class ParameterMetaData implements Equatable
@@ -43,7 +45,7 @@ final readonly class ParameterMetaData implements Equatable
      * DocBook 5.2 <methodparam> documentation
      * URL: https://tdg.docbook.org/tdg/5.2/methodparam
      */
-    public static function parseFromDoc(Element $element, int $position): ParameterMetaData
+    public static function parseFromMethodParamDocTag(Element $element, int $position): ParameterMetaData
     {
         if ($element->tagName !== 'methodparam') {
             throw new \Exception('Unexpected tag "' . $element->tagName . '"');
@@ -121,5 +123,24 @@ final readonly class ParameterMetaData implements Equatable
             }
         }
         return [$element->textContent, $byRef];
+    }
+
+    public static function parseFromVaListEntryDocTag(Element $element, int $position): ParameterMetaData
+    {
+        if ($element->tagName !== 'varlistentry') {
+            throw new \Exception('Unexpected tag "' . $element->tagName . '"');
+        }
+        $doc = $element->ownerDocument;
+        $xpath = new XPath($doc);
+        $xpath->registerNamespace('db', 'http://docbook.org/ns/docbook');
+        $parameterName = $xpath->evaluate('db:term/db:parameter/text()', $element);
+        if ($parameterName->length !== 1) {
+            if ($parameterName->length === 0) {
+                throw new \Exception('Unexpected missing <term><parameter> tag sequence');
+            } else {
+                throw new \Exception('Unexpected multiple <term><parameter> tag sequences');
+            }
+        }
+        return new self($parameterName[0]->wholeText, $position, new SingleType('UNKNOWN'));
     }
 }
