@@ -26,8 +26,6 @@ class DocumentedConstantParser
             }
             $individualList = [];
             foreach ($variableList->getElementsByTagName("varlistentry") as $entry) {
-                assert($entry instanceof Element);
-
                 if ($entry->parentNode !== $variableList) {
                     continue;
                 }
@@ -72,8 +70,6 @@ class DocumentedConstantParser
             $tbody = $table->getElementsByTagName("tbody")->item(0);
             $individualList = [];
             foreach ($tbody->getElementsByTagName("row") as $row) {
-                assert($row instanceof Element);
-
                 $id = null;
                 if ($row->hasAttribute('xml:id')) {
                     $id = $row->getAttribute('xml:id');

@@ -2,6 +2,7 @@
 
 namespace Documentation\Functions;
 
+use Dom\Element;
 use Dom\Text;
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\Documentation\AttributeMetaData;
@@ -179,6 +180,7 @@ XML;
             if ($variableEntry instanceof Text) {
                 continue;
             }
+            self::assertInstanceOf(Element::class, $variableEntry);
             $params[] = ParameterMetaData::parseFromVaListEntryDocTag($variableEntry, $position);
             $position++;
         }

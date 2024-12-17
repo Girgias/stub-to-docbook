@@ -50,7 +50,11 @@ HTML;
     {
         return str_replace(
             ['{{NAME}}', '{{TYPE}}', '{{VALUE}}', '{{EXTENSION}}'],
-            [$constant->name, $constant->type, $constant->value, $constant->extension],
+            /**
+             * $constant->value is of type float|int|string|null, which is safe to cast to string.
+             * do this explicitly so that phpstan stops complaining.
+             */
+            [$constant->name, $constant->type, (string)$constant->value, $constant->extension],
             self::ROW_HTML_TEMPLATE
         );
 

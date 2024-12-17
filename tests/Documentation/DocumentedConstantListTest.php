@@ -47,7 +47,9 @@ XML;
         $xmlListElement = $list->generateXmlList($document, 0);
         $document->append($xmlListElement);
 
-        self::assertXmlStringEqualsXmlString($expectedXml, $document->saveXML());
+        $savedXml = $document->saveXML();
+        self::assertIsString($savedXml);
+        self::assertXmlStringEqualsXmlString($expectedXml, $savedXml);
         self::assertEquals($expectedXml, $document->saveXML());
     }
 

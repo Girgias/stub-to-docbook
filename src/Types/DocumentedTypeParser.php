@@ -35,6 +35,7 @@ final class DocumentedTypeParser
      */
     private static function parseTypeList(Element $type, string $className): UnionType|IntersectionType
     {
+        /** @var list<Element> $types */
         $types = iterator_to_array($type->childNodes->getIterator());
         return new $className(array_map(self::parse(...), $types));
     }

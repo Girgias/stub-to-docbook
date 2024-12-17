@@ -3,6 +3,7 @@
 namespace Girgias\StubToDocbook\Documentation\Functions;
 
 use Dom\Element;
+use Dom\NodeList;
 use Dom\Text;
 use Dom\XPath;
 use Girgias\StubToDocbook\Documentation\AttributeMetaData;
@@ -133,7 +134,8 @@ final readonly class ParameterMetaData implements Equatable
         $doc = $element->ownerDocument;
         $xpath = new XPath($doc);
         $xpath->registerNamespace('db', 'http://docbook.org/ns/docbook');
-        $parameterName = $xpath->evaluate('db:term/db:parameter/text()', $element);
+        /** @var NodeList<Text> $parameterName */
+        $parameterName = $xpath->query('db:term/db:parameter/text()', $element);
         if ($parameterName->length !== 1) {
             if ($parameterName->length === 0) {
                 throw new \Exception('Unexpected missing <term><parameter> tag sequence');
