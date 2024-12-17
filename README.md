@@ -20,18 +20,22 @@ The stub files are parsed with Roave/BetterReflection
 
 ## Roadmap
 
-- [ ] Use PHP 8.4 new DOM classes
+- [x] Use PHP 8.4 new DOM classes
 - [ ] DocParser needs to deal with entities that cannot be expanded
 - [ ] Set-up CI
-- [ ] Set up Static Analysis
+- [ ] Set up Static Analysis (phpstan level 6 is green, cannot go to level 7 because of issue https://github.com/phpstan/phpstan/issues/12206)
 - [ ] Set-up Code Style requirements
-- [ ] Parsing of stub files
+- [x] Parsing of stub files (handled by `Roave/BetterReflection`)
 - [ ] Parsing of Documentation sources for constants
   - [ ] Table parsing 
-- [ ] Parsing of Documentation sources for functions
+  - [ ] Token constant list
+- [x] Parsing of Documentation sources for functions
 - [ ] Parsing of Documentation sources for classes
 - [ ] Parsing of Documentation sources for methods
 - [ ] Diff between stub and documentation
+  - [x] Constant diff (kinda see `scripts/parse-stub.php`)
+  - [ ] Function diff
+  - [ ] Class diff
 - [ ] Generate missing functions
 - [ ] Generate missing predefined classes with methods
 - [ ] Generate missing predefined attributes
