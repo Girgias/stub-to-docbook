@@ -23,7 +23,9 @@ The stub files are parsed with Roave/BetterReflection
 - [x] Use PHP 8.4 new DOM classes
 - [ ] DocParser needs to deal with entities that cannot be expanded
 - [ ] Set-up CI
-- [ ] Set up Static Analysis (phpstan level 6 is green, cannot go to level 7 because of issue https://github.com/phpstan/phpstan/issues/12206)
+- [ ] Set up Static Analysis:
+  - [x] PHPStan level 7 (level 8 seems improbable due to DOM hell)
+  - Set up Psalm?
 - [ ] Set-up Code Style requirements
 - [x] Parsing of stub files (handled by `Roave/BetterReflection`)
 - [ ] Parsing of Documentation sources for constants
