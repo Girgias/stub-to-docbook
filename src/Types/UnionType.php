@@ -41,7 +41,7 @@ final readonly class UnionType implements Type
     {
         if ($a::class === $b::class) {
             return match ($a::class) {
-                SingleType::class => $a->name <=> $b->name,
+                SingleType::class => strcmp($a->name, $b->name),
                 IntersectionType::class => self::sortIntersectionTypes($a, $b),
             };
         }
