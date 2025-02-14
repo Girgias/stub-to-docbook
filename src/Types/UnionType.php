@@ -41,7 +41,9 @@ final readonly class UnionType implements Type
     {
         if ($a::class === $b::class) {
             return match ($a::class) {
+                /** @phpstan-ignore property.notFound (See https://github.com/phpstan/phpstan/issues/12206) */
                 SingleType::class => strcmp($a->name, $b->name),
+                /** @phpstan-ignore argument.type (See https://github.com/phpstan/phpstan/issues/12206) */
                 IntersectionType::class => self::sortIntersectionTypes($a, $b),
             };
         }
