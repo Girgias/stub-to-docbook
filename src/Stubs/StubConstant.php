@@ -12,7 +12,7 @@ final readonly class StubConstant
         string $name,
         readonly string $type,
         readonly string|int|float|null $value,
-        readonly string $extension
+        readonly string $extension,
     ) {
         /* Manual refers to true, false, and null */
         $this->name = match ($name) {

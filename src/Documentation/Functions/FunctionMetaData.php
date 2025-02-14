@@ -65,7 +65,7 @@ final readonly class FunctionMetaData implements Equatable
                 continue;
             }
             if (($node instanceof Element) === false) {
-                throw new \Exception("Unexpected node type: " .$node::class);
+                throw new \Exception("Unexpected node type: " . $node::class);
             }
             /**
              * methodsynopsis ::=
@@ -101,9 +101,9 @@ final readonly class FunctionMetaData implements Equatable
                 'type' => $returnType = DocumentedTypeParser::parse($node),
                 'void' => $parameters = [],
                 'methodname' => $name = $node->textContent,
-                'methodparam' => $parameters[] = ParameterMetaData::parseFromMethodParamDocTag($node, count($parameters)+1),
+                'methodparam' => $parameters[] = ParameterMetaData::parseFromMethodParamDocTag($node, count($parameters) + 1),
                 'info', 'group', 'exceptionname', 'templatename', 'synopsisinfo' =>
-                    throw new \Exception('"'.$tagName.'" child tag for <methodsynopsis> is not supported'),
+                    throw new \Exception('"' . $tagName . '" child tag for <methodsynopsis> is not supported'),
             };
         }
 

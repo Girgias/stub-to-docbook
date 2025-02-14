@@ -11,7 +11,7 @@ use Roave\BetterReflection\SourceLocator\Type\SingleFileSourceLocator;
 
 class ZendEngineSingleFileSourceLocator extends SingleFileSourceLocator
 {
-// InternalLocatedSource
+    // InternalLocatedSource
 
     /**
      * @param non-empty-string $fileName
@@ -44,14 +44,14 @@ class ZendEngineSingleFileSourceLocator extends SingleFileSourceLocator
     {
         if (str_contains($fileName, 'Zend/')) {
             return 'Core';
-        } else if (str_contains($fileName, 'main/')) {
+        } elseif (str_contains($fileName, 'main/')) {
             return 'PHP (main/)';
-        } else if (str_contains($fileName, 'ext/')) {
+        } elseif (str_contains($fileName, 'ext/')) {
             $start = strpos($fileName, 'ext/') + strlen('ext/');
             $end = strpos($fileName, '/', $start);
             /** @var non-empty-string */
             return ucfirst(substr($fileName, $start, $end - $start));
-        } else if (str_contains($fileName, 'sapi/')) {
+        } elseif (str_contains($fileName, 'sapi/')) {
             $start = strpos($fileName, 'sapi/') + strlen('sapi/');
             $end = strpos($fileName, '/', $start);
             return 'SAPI ' . ucfirst(substr($fileName, $start, $end - $start));

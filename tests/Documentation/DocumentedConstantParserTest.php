@@ -67,7 +67,7 @@ class DocumentedConstantParserTest extends TestCase
   </varlistentry>
  </variablelist>
  <variablelist>
-  <title>Other constants constants</title>  
+  <title>Other constants constants</title>
   <varlistentry>
    <term>
     <constant>__COMPILER_HALT_OFFSET__</constant>

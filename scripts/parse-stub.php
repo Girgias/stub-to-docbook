@@ -12,7 +12,8 @@ use Girgias\StubToDocbook\Stubs\ZendEngineSingleFileSourceLocator;
 use Roave\BetterReflection\BetterReflection;
 
 $totalDocConst = 0;
-function file_to_doc_constants(string $path) {
+function file_to_doc_constants(string $path)
+{
     $content = file_get_contents($path);
     $content = str_replace(
         [
@@ -87,7 +88,7 @@ $doc_constants = array_merge(...$doc_constants);
 $doc_constants = new DocumentedConstantList(
     DocumentedConstantListType::VarEntryList,
     $doc_constants,
-    null
+    null,
 );
 
 $stubs = [
@@ -109,7 +110,7 @@ $stubs = array_diff($stubs, $IGNORE_STUB_CONSTANT_FILES);
 
 $astLocator = (new BetterReflection())->astLocator();
 $file_locators = array_map(
-    fn (string $file) => new ZendEngineSingleFileSourceLocator($file, $astLocator),
+    fn(string $file) => new ZendEngineSingleFileSourceLocator($file, $astLocator),
     $stubs,
 );
 

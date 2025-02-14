@@ -109,7 +109,7 @@ class UnionTypeTest extends TestCase
         $expected = '<type class="union"><type class="intersection"><type>A</type><type>B</type></type><type class="intersection"><type>X</type><type>Y</type></type><type>array</type></type>';
 
         $unionType = new UnionType([
-             new IntersectionType([
+            new IntersectionType([
                 new SingleType('X'),
                 new SingleType('Y'),
             ]),

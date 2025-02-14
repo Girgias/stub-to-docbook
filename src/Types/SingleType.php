@@ -4,7 +4,7 @@ namespace Girgias\StubToDocbook\Types;
 
 final class SingleType implements Type
 {
-    public function __construct(public readonly string $name) { }
+    public function __construct(public readonly string $name) {}
 
     /**
      * @param Type $other

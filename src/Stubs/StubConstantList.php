@@ -9,7 +9,7 @@ final readonly class StubConstantList implements Countable
 {
     /** @param array<string, StubConstant> $constants */
     private function __construct(
-        readonly array $constants
+        readonly array $constants,
     ) {}
 
     /**
@@ -23,11 +23,11 @@ final readonly class StubConstantList implements Countable
         $stubConstList = array_filter(
             array_map(
                 StubConstant::fromReflectionData(...),
-                $reflectionData
+                $reflectionData,
             ),
-            fn (StubConstant $constant) => !in_array($constant->name, $ignoredConstants)
+            fn(StubConstant $constant) => !in_array($constant->name, $ignoredConstants),
         );
-        $stubConstName = array_map(fn (StubConstant $constant) => $constant->name, $stubConstList);
+        $stubConstName = array_map(fn(StubConstant $constant) => $constant->name, $stubConstList);
         return new self(array_combine($stubConstName, $stubConstList));
     }
 

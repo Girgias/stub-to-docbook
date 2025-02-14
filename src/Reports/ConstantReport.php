@@ -15,7 +15,9 @@ final class ConstantReport
         if ($fp === false) {
             throw new \RuntimeException("Cannot open file \"$file\".");
         }
-        fputs($fp, <<<'HTML_START'
+        fputs(
+            $fp,
+            <<<'HTML_START'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +26,7 @@ final class ConstantReport
 </head>
 <body>
  <h1>PHP Documentation Report: Constant Status</h1>
-HTML_START
+HTML_START,
         );
         fputs($fp, '<p>Constants correctly documented: ' . $differ->valid . '</p>');
 
@@ -54,8 +56,8 @@ HTML;
              * $constant->value is of type float|int|string|null, which is safe to cast to string.
              * do this explicitly so that phpstan stops complaining.
              */
-            [$constant->name, $constant->type, (string)$constant->value, $constant->extension],
-            self::ROW_HTML_TEMPLATE
+            [$constant->name, $constant->type, (string) $constant->value, $constant->extension],
+            self::ROW_HTML_TEMPLATE,
         );
 
     }
@@ -125,7 +127,7 @@ HTML_MISSING_TABLE_START);
                 $row = str_replace(
                     ['{{NAME}}', '{{TYPE}}', '{{VALUE}}', '{{EXTENSION}}'],
                     [$constant->name, $constant->type, $constantWrapper[1], $constant->extension],
-                    self::ROW_HTML_TEMPLATE
+                    self::ROW_HTML_TEMPLATE,
                 );
                 fputs($fp, $row);
             }
@@ -166,7 +168,7 @@ HTML_MISSING_TABLE_START);
                 $row = str_replace(
                     ['{{NAME}}', '{{TYPE}}', '{{VALUE}}', '{{EXTENSION}}'],
                     [$constant->name, $constant->id ?? 'NO ID', 'constant.' . $constant::xmlifyName($constant->name), ''],
-                    self::ROW_HTML_TEMPLATE
+                    self::ROW_HTML_TEMPLATE,
                 );
                 fputs($fp, $row);
             }

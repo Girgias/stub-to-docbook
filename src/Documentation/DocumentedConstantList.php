@@ -79,7 +79,7 @@ final class DocumentedConstantList implements Countable
 
         $xmlVariableList->append(
             "\n",
-            $indentationListTag
+            $indentationListTag,
         );
 
         return $xmlVariableList;

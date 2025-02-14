@@ -17,7 +17,8 @@ class DocumentedFunctionTest extends TestCase
     private const GMP_INIT = __DIR__ . '/xml/gmp-init.xml';
     private const ISSET = __DIR__ . '/xml/isset.xml';
     private const PASSWORD_HASH = __DIR__ . '/xml/password-hash.xml';
-    public function loadXml(string $file): Element {
+    public function loadXml(string $file): Element
+    {
         $str = file_get_contents($file);
         self::assertIsString($str);
         $str = str_replace('&', '&amp;', $str);
@@ -41,7 +42,7 @@ class DocumentedFunctionTest extends TestCase
                     new UnionType([
                         new SingleType('int'),
                         new SingleType('string'),
-                    ])
+                    ]),
                 ),
                 new ParameterMetaData(
                     'base',
@@ -114,8 +115,8 @@ class DocumentedFunctionTest extends TestCase
                     1,
                     new SingleType('string'),
                     attributes: [
-                        new AttributeMetaData('\SensitiveParameter')
-                    ]
+                        new AttributeMetaData('\SensitiveParameter'),
+                    ],
                 ),
                 new ParameterMetaData(
                     'algo',
@@ -124,7 +125,7 @@ class DocumentedFunctionTest extends TestCase
                         new SingleType('string'),
                         new SingleType('int'),
                         new SingleType('null'),
-                    ])
+                    ]),
                 ),
                 new ParameterMetaData(
                     'options',

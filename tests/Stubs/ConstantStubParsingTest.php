@@ -42,7 +42,7 @@ STUB;
     {
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator(self::STUB_FILE_STR, $astLocator)
+            new StringSourceLocator(self::STUB_FILE_STR, $astLocator),
         ]);
         $constants = $reflector->reflectAllConstants();
         $constants = StubConstantList::fromReflectionDataArray($constants)->constants;

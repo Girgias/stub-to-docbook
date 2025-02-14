@@ -12,7 +12,6 @@ use PHPUnit\Framework\TestCase;
 
 class FunctionMetaDataTest extends TestCase
 {
-
     public function test_no_param_function_parsing(): void
     {
         $xml = <<<'XML'
@@ -90,7 +89,7 @@ XML;
             new SingleType('bool'),
             attributes: [
                 new AttributeMetaData('\\Deprecated'),
-            ]
+            ],
         );
 
         self::assertTrue($fn->isSame($expectedFunction));
@@ -150,7 +149,7 @@ XML;
             ]),
             attributes: [
                 new AttributeMetaData('\\Deprecated'),
-            ]
+            ],
         );
 
         self::assertTrue($fn->isSame($expectedFunction));

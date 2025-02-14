@@ -7,7 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class SingleTypeTest extends TestCase
 {
-
     public function test_generated_xml(): void
     {
         $expected = '<type>Countable</type>';

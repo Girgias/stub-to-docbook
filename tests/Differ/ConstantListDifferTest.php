@@ -41,13 +41,13 @@ STUB;
         $document = XMLDocument::createEmpty();
         $docConstants = [
             'WRONG_TYPE' => new DocumentedConstant("WRONG_TYPE", new SingleType('string'), $document->createTextNode('description')),
-            'SOME_CONSTANT' => new DocumentedConstant("SOME_CONSTANT", new SingleType('int'), $document->createTextNode('description'))
+            'SOME_CONSTANT' => new DocumentedConstant("SOME_CONSTANT", new SingleType('int'), $document->createTextNode('description')),
         ];
         $docList = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $docConstants);
 
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator(self::STUB_FILE_STR, $astLocator)
+            new StringSourceLocator(self::STUB_FILE_STR, $astLocator),
         ]);
         $constants = $reflector->reflectAllConstants();
         $stubList = StubConstantList::fromReflectionDataArray($constants);

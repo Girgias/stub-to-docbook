@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Documentation;
 
 use Dom\XMLDocument;
@@ -19,7 +18,7 @@ class DocumentedConstantListTest extends TestCase
         $document = XMLDocument::createEmpty();
         $constants = [
             "HELLO" => new DocumentedConstant("HELLO", new SingleType('string'), $document->createTextNode('description')),
-            "SOME_CONSTANT" => new DocumentedConstant("SOME_CONSTANT", new SingleType('int'), $document->createTextNode('description'))
+            "SOME_CONSTANT" => new DocumentedConstant("SOME_CONSTANT", new SingleType('int'), $document->createTextNode('description')),
         ];
 
         $list = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $constants);

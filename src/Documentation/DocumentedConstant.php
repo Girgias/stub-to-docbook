@@ -13,7 +13,7 @@ final readonly class DocumentedConstant
         readonly string $name,
         readonly Type|null $type,
         readonly Node $description,
-        readonly string|null $id = null
+        readonly string|null $id = null,
     ) {}
 
     public function hasCorrectIdForLinking(): bool

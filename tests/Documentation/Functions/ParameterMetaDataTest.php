@@ -12,7 +12,8 @@ use PHPUnit\Framework\TestCase;
 
 class ParameterMetaDataTest extends TestCase
 {
-    private static function expected_param(mixed ...$entries): ParameterMetaData {
+    private static function expected_param(mixed ...$entries): ParameterMetaData
+    {
         return new ParameterMetaData('param_name', 1, new SingleType('string'), ...$entries);
     }
 
@@ -100,7 +101,7 @@ XML;
         $param = ParameterMetaData::parseFromVaListEntryDocTag($document->firstElementChild, 1);
 
         self::assertTrue($param->isSame(new ParameterMetaData(
-          'param_name',
+            'param_name',
             1,
             new SingleType('UNKNOWN'),
         )));
