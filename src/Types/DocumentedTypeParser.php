@@ -37,6 +37,7 @@ final class DocumentedTypeParser
     {
         /** @var list<Element> $types */
         $types = iterator_to_array($type->childNodes->getIterator());
+        /** @phpstan-ignore argument.type, argument.type (Recursive calls prevent narrowing types) */
         return new $className(array_map(self::parse(...), $types));
     }
 }
