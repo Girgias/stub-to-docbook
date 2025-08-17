@@ -23,17 +23,23 @@ The stub files are parsed with Roave/BetterReflection
 - [x] Use PHP 8.4 new DOM classes
 - [ ] DocParser needs to deal with entities that cannot be expanded
 - [ ] Set-up CI
-- [ ] Set up Static Analysis:
+- [ ] Set-up Static Analysis:
   - [x] PHPStan level 7 (level 8 seems improbable due to DOM hell)
-  - Set up Psalm?
+  - [ ] Set-up Psalm?
+  - [ ] Set-up Mago?
 - [ ] Set-up Code Style requirements
 - [x] Parsing of stub files (handled by `Roave/BetterReflection`)
 - [ ] Parsing of Documentation sources for constants
-  - [ ] Table parsing 
+  - [ ] Table parsing (or convert sourced to stop relying on tables?)
   - [ ] Token constant list
 - [x] Parsing of Documentation sources for functions
+  - [ ] Handle pages with multiple methodsynopsis
+  - [ ] Parsing of Documentation sources for methods
+    - [ ] `final` modifier
+    - [ ] `static` modifier
+    - [ ] Inherited?
 - [ ] Parsing of Documentation sources for classes
-- [ ] Parsing of Documentation sources for methods
+  - [ ] Properties
 - [ ] Diff between stub and documentation
   - [x] Constant diff (kinda see `scripts/parse-stub.php`)
   - [ ] Function diff
@@ -49,5 +55,6 @@ The stub files are parsed with Roave/BetterReflection
 - [ ] Update classes and methods
 - [ ] Update enums
 - [ ] Update attributes
+- [ ] Generate Migration guides
 - [ ] Exclusion list
 - [ ] Weekly statistics reports (?)
