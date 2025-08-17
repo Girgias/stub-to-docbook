@@ -1,8 +1,8 @@
 <?php
 
-namespace Stubs;
+namespace MetaData;
 
-use Girgias\StubToDocbook\Stubs\StubConstant;
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\Stubs\StubConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Girgias\StubToDocbook\Types\SingleType;
@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
-class ConstantStubParsingTest extends TestCase
+class ConstantMetaDataTest extends TestCase
 {
     const /* string */ STUB_FILE_STR = <<<'STUB'
 <?php
@@ -59,7 +59,7 @@ STUB;
         self::assertConstantIsSame($constants['CRYPT_STD_DES'], 'CRYPT_STD_DES', new SingleType('int'));
     }
 
-    private static function assertConstantIsSame(StubConstant $constant, string $name, SingleType $type): void
+    private static function assertConstantIsSame(ConstantMetaData $constant, string $name, SingleType $type): void
     {
         self::assertSame($name, $constant->name);
         self::assertTrue($type->isSame($constant->type));

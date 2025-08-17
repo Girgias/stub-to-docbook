@@ -3,11 +3,12 @@
 namespace Girgias\StubToDocbook\Stubs;
 
 use Countable;
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Roave\BetterReflection\Reflection\ReflectionConstant;
 
 final readonly class StubConstantList implements Countable
 {
-    /** @param array<string, StubConstant> $constants */
+    /** @param array<string, ConstantMetaData> $constants */
     private function __construct(
         readonly array $constants,
     ) {}
@@ -22,17 +23,17 @@ final readonly class StubConstantList implements Countable
         $ignoredConstants[] = 'UNKNOWN';
         $stubConstList = array_filter(
             array_map(
-                StubConstant::fromReflectionData(...),
+                ConstantMetaData::fromReflectionData(...),
                 $reflectionData,
             ),
-            fn(StubConstant $constant) => !in_array($constant->name, $ignoredConstants),
+            fn(ConstantMetaData $constant) => !in_array($constant->name, $ignoredConstants),
         );
-        $stubConstName = array_map(fn(StubConstant $constant) => $constant->name, $stubConstList);
+        $stubConstName = array_map(fn(ConstantMetaData $constant) => $constant->name, $stubConstList);
         return new self(array_combine($stubConstName, $stubConstList));
     }
 
     /**
-     * @param array<string, StubConstant> $stubConstants
+     * @param array<string, ConstantMetaData> $stubConstants
      * @return self
      */
     public static function fromArrayOfStubConstants(array $stubConstants): self

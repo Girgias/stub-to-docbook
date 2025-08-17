@@ -4,7 +4,7 @@ namespace Girgias\StubToDocbook\Reports;
 
 use Girgias\StubToDocbook\Differ\ConstantListDiff;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
-use Girgias\StubToDocbook\Stubs\StubConstant;
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\Stubs\StubConstantList;
 
 final class ConstantReport
@@ -48,7 +48,7 @@ HTML_END);
       <td>{{EXTENSION}}</td>
     </tr>
 HTML;
-    private static function generateHtmlReportRow(StubConstant $constant): string
+    private static function generateHtmlReportRow(ConstantMetaData $constant): string
     {
         return str_replace(
             ['{{NAME}}', '{{TYPE}}', '{{VALUE}}', '{{EXTENSION}}'],
@@ -100,7 +100,7 @@ HTML_MISSING_TABLE_END);
 
     /**
      * @param resource $fp
-     * @param array<string, array{0: StubConstant, 1: string}> $incorrectTypes
+     * @param array<string, array{0: ConstantMetaData, 1: string}> $incorrectTypes
      */
     private static function generateHtmlReportIncorrectConstantTypes($fp, array $incorrectTypes): void
     {
