@@ -2,6 +2,7 @@
 
 namespace Girgias\StubToDocbook\Documentation\Functions;
 
+use Deprecated;
 use Dom\Element;
 use Dom\Text;
 use Girgias\StubToDocbook\Documentation\AttributeMetaData;
@@ -106,6 +107,12 @@ final readonly class FunctionMetaData implements Equatable
                     throw new \Exception('"' . $tagName . '" child tag for <methodsynopsis> is not supported'),
             };
         }
+
+        $deprecatedAttributes = array_filter(
+            $attributes,
+            fn(AttributeMetaData $attr) => $attr->name === '\Deprecated',
+        );
+        $isDeprecated = count($deprecatedAttributes) === 1;
 
         return new FunctionMetaData(
             $name,

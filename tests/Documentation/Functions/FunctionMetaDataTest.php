@@ -90,6 +90,7 @@ XML;
             attributes: [
                 new AttributeMetaData('\\Deprecated'),
             ],
+            isDeprecated: true,
         );
 
         self::assertTrue($fn->isSame($expectedFunction));
@@ -150,6 +151,7 @@ XML;
             attributes: [
                 new AttributeMetaData('\\Deprecated'),
             ],
+            isDeprecated: true,
         );
 
         self::assertTrue($fn->isSame($expectedFunction));
