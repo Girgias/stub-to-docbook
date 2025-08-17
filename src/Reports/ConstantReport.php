@@ -167,7 +167,7 @@ HTML_MISSING_TABLE_START);
             foreach ($incorrectIdsForLinking->constants as $constant) {
                 $row = str_replace(
                     ['{{NAME}}', '{{TYPE}}', '{{VALUE}}', '{{EXTENSION}}'],
-                    [$constant->name, $constant->id ?? 'NO ID', 'constant.' . $constant::xmlifyName($constant->name), ''],
+                    [$constant->name, $constant->id ?? 'NO ID', 'constant.' . xmlify_labels($constant->name), ''],
                     self::ROW_HTML_TEMPLATE,
                 );
                 fputs($fp, $row);

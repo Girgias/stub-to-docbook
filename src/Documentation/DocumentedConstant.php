@@ -21,13 +21,8 @@ final readonly class DocumentedConstant
         if ($this->id === null) {
             return false;
         }
-        $correctId = 'constant.' . $this::xmlifyName($this->name);
+        $correctId = 'constant.' . xmlify_labels($this->name);
         return $correctId === $this->id;
-    }
-
-    public static function xmlifyName(string $label): string
-    {
-        return str_replace('_', '-', strtolower($label));
     }
 
     /**
