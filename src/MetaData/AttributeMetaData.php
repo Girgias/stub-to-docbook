@@ -1,6 +1,6 @@
 <?php
 
-namespace Girgias\StubToDocbook\Documentation;
+namespace Girgias\StubToDocbook\MetaData;
 
 use Dom\Element;
 use Girgias\StubToDocbook\FP\Equatable;

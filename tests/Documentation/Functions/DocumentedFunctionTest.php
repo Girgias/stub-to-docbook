@@ -4,10 +4,10 @@ namespace Documentation\Functions;
 
 use Dom\Element;
 use Dom\XMLDocument;
-use Girgias\StubToDocbook\Documentation\AttributeMetaData;
 use Girgias\StubToDocbook\Documentation\Functions\DocumentedFunction;
-use Girgias\StubToDocbook\Documentation\Functions\FunctionMetaData;
-use Girgias\StubToDocbook\Documentation\Functions\ParameterMetaData;
+use Girgias\StubToDocbook\MetaData\AttributeMetaData;
+use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
+use Girgias\StubToDocbook\MetaData\Functions\ParameterMetaData;
 use Girgias\StubToDocbook\Types\SingleType;
 use Girgias\StubToDocbook\Types\UnionType;
 use PHPUnit\Framework\TestCase;

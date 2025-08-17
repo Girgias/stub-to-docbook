@@ -1,12 +1,12 @@
 <?php
 
-namespace Documentation\Functions;
+namespace MetaData\Functions;
 
 use Dom\Element;
 use Dom\Text;
 use Dom\XMLDocument;
-use Girgias\StubToDocbook\Documentation\AttributeMetaData;
-use Girgias\StubToDocbook\Documentation\Functions\ParameterMetaData;
+use Girgias\StubToDocbook\MetaData\AttributeMetaData;
+use Girgias\StubToDocbook\MetaData\Functions\ParameterMetaData;
 use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
 

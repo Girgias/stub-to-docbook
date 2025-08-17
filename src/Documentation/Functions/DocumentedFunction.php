@@ -5,6 +5,8 @@ namespace Girgias\StubToDocbook\Documentation\Functions;
 use Dom\Element;
 use Dom\NodeList;
 use Dom\XPath;
+use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
+use Girgias\StubToDocbook\MetaData\Functions\ParameterMetaData;
 
 final class DocumentedFunction
 {

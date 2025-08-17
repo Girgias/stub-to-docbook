@@ -1,9 +1,9 @@
 <?php
 
-namespace Documentation;
+namespace MetaData;
 
 use Dom\XMLDocument;
-use Girgias\StubToDocbook\Documentation\AttributeMetaData;
+use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use PHPUnit\Framework\TestCase;
 
 class AttributeMetaDataTest extends TestCase

@@ -1,13 +1,12 @@
 <?php
 
-namespace Girgias\StubToDocbook\Documentation\Functions;
+namespace Girgias\StubToDocbook\MetaData\Functions;
 
-use Deprecated;
 use Dom\Element;
 use Dom\Text;
-use Girgias\StubToDocbook\Documentation\AttributeMetaData;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
+use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\Type;
 
