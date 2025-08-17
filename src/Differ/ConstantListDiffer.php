@@ -23,7 +23,7 @@ class ConstantListDiffer
                 continue;
             }
             if ($docConstants[$name]->type instanceof SingleType) {
-                if ($docConstants[$name]->type->name !== $constant->type) {
+                if (!$docConstants[$name]->type->isSame($constant->type)) {
                     $xmlType = $docConstants[$name]->type->toXml();
                     $strType = substr($xmlType, strlen('<type>'), strlen($xmlType) - strlen('<type></type>'));
                     $incorrectTypes[$name] = [$constant, $strType];
