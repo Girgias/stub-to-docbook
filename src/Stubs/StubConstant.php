@@ -29,12 +29,7 @@ final readonly class StubConstant
             $reflectionData->getName(),
             ReflectionTypeParser::parseTypeForConstant($reflectionData),
             $reflectionData->getValue(),
-            self::getExtensionReflectionData($reflectionData),
+            get_extension_name_from_reflection_date($reflectionData),
         );
-    }
-
-    private static function getExtensionReflectionData(ReflectionConstant $reflectionData): string
-    {
-        return $reflectionData->getExtensionName() ?? 'Core';
     }
 }
