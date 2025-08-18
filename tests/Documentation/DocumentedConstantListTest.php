@@ -38,20 +38,20 @@ class DocumentedConstantListTest extends TestCase
         $expectedXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <variablelist>
- <varlistentry xml:id="constant.hello">
-  <term>
-   <constant>HELLO</constant>
-   (<type>string</type>)
-  </term>
-  <listitem>description</listitem>
- </varlistentry>
- <varlistentry xml:id="constant.some-constant">
-  <term>
-   <constant>SOME_CONSTANT</constant>
-   (<type>int</type>)
-  </term>
-  <listitem>description</listitem>
- </varlistentry>
+  <varlistentry xml:id="constant.hello">
+    <term>
+      <constant>HELLO</constant>
+      (<type>string</type>)
+    </term>
+    <listitem>description</listitem>
+  </varlistentry>
+  <varlistentry xml:id="constant.some-constant">
+    <term>
+      <constant>SOME_CONSTANT</constant>
+      (<type>int</type>)
+    </term>
+    <listitem>description</listitem>
+  </varlistentry>
 </variablelist>
 XML;
 
@@ -61,6 +61,11 @@ XML;
         $savedXml = $document->saveXML();
         self::assertIsString($savedXml);
         self::assertXmlStringEqualsXmlString($expectedXml, $savedXml);
+
+        $document->formatOutput = true;
+        $savedXml = $document->saveXML();
+        self::assertIsString($savedXml);
+        self::assertSame($expectedXml, $savedXml);
         self::assertEquals($expectedXml, $document->saveXML());
     }
 

@@ -4,6 +4,7 @@ namespace Girgias\StubToDocbook\MetaData;
 
 use Dom\Element;
 use Dom\Node;
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\ReflectionTypeParser;
 use Girgias\StubToDocbook\Types\SingleType;
@@ -81,5 +82,58 @@ final class ConstantMetaData
         }
         $correctId = 'constant.' . xmlify_labels($this->name);
         return $correctId === $this->id;
+    }
+
+    public function toVarListEntryXml(XMLDocument $document, int $indentationLevel): Element
+    {
+        $xmlEntry = $document->createElement('varlistentry');
+
+        if ($this->id) {
+            $xmlEntry->setAttribute('xml:id', $this->id);
+        }
+
+        $xmlListItem = $document->createElement('listitem');
+        if ($this->description) {
+            $xmlListItem->append($this->description);
+        } else {
+            $xmlSimpara = $document->createElement('simpara');
+            $xmlSimpara->textContent = 'Description';
+            $xmlListItem->append($xmlSimpara);
+        }
+        $indentationEntrySubTagLevel = $indentationLevel + 1;
+
+        $xmlEntry->append(
+            $this->generateXmlTermElement($document, $indentationEntrySubTagLevel),
+            $xmlListItem,
+        );
+
+        return $xmlEntry;
+    }
+
+    // TODO: Currently generates indentation with 2 spaces as this is what
+    // dom_xml_output_indents() does internally.
+    private function generateXmlTermElement(XMLDocument $document, int $indentationLevel): Element
+    {
+        $constantElement = $document->createElement('constant');
+        $constantElement->textContent = $this->name;
+
+        $typeFragment = $document->createDocumentFragment();
+        $typeFragment->appendXml($this->type->toXml());
+
+        $termElement = $document->createElement('term');
+        $termElement->append(
+            "\n",
+            str_repeat('  ', $indentationLevel + 1),
+            $constantElement,
+            "\n",
+            str_repeat('  ', $indentationLevel + 1),
+            '(',
+            $typeFragment,
+            ')',
+            "\n",
+            str_repeat('  ', $indentationLevel),
+        );
+
+        return $termElement;
     }
 }

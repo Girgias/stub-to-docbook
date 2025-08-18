@@ -140,4 +140,70 @@ XML;
         self::assertSame('NAME', $constant->name);
         self::assertTrue($expectedType->isSame($constant->type));
     }
+
+    public function test_to_varlistentry_xml_no_description(): void
+    {
+        $expectedXml = <<<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<varlistentry xml:id="constant.some-constant">
+  <term>
+    <constant>SOME_CONSTANT</constant>
+    (<type>int</type>)
+  </term>
+  <listitem>
+    <simpara>Description</simpara>
+  </listitem>
+</varlistentry>
+XML;
+
+        $constant = new ConstantMetaData(
+            'SOME_CONSTANT',
+            new SingleType('int'),
+            'UNKNOWN',
+            'constant.some-constant',
+        );
+
+        $document = XMLDocument::createEmpty();
+        $varEntryList = $constant->toVarListEntryXml($document, 0);
+        $document->append($varEntryList);
+        $savedXml = $document->saveXML();
+        self::assertXmlStringEqualsXmlString($expectedXml, $savedXml);
+
+        $document->formatOutput = true;
+        $savedXml = $document->saveXML();
+        self::assertSame($expectedXml, $savedXml);
+    }
+
+    public function test_to_varlistentry_xml_no_id(): void
+    {
+        $expectedXml = <<<'XML'
+<?xml version="1.0" encoding="UTF-8"?>
+<varlistentry>
+  <term>
+    <constant>SOME_CONSTANT</constant>
+    (<type>int</type>)
+  </term>
+  <listitem>
+    <simpara>Description</simpara>
+  </listitem>
+</varlistentry>
+XML;
+
+        $constant = new ConstantMetaData(
+            'SOME_CONSTANT',
+            new SingleType('int'),
+            'UNKNOWN',
+            null,
+        );
+
+        $document = XMLDocument::createEmpty();
+        $varEntryList = $constant->toVarListEntryXml($document, 0);
+        $document->append($varEntryList);
+        $savedXml = $document->saveXML();
+        self::assertXmlStringEqualsXmlString($expectedXml, $savedXml);
+
+        $document->formatOutput = true;
+        $savedXml = $document->saveXML();
+        self::assertSame($expectedXml, $savedXml);
+    }
 }
