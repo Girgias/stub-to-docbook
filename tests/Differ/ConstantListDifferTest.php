@@ -4,9 +4,9 @@ namespace Differ;
 
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\Differ\ConstantListDiffer;
-use Girgias\StubToDocbook\Documentation\DocumentedConstant;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\Stubs\StubConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Girgias\StubToDocbook\Types\SingleType;
@@ -40,8 +40,20 @@ STUB;
     {
         $document = XMLDocument::createEmpty();
         $docConstants = [
-            'WRONG_TYPE' => new DocumentedConstant("WRONG_TYPE", new SingleType('string'), $document->createTextNode('description')),
-            'SOME_CONSTANT' => new DocumentedConstant("SOME_CONSTANT", new SingleType('int'), $document->createTextNode('description')),
+            'WRONG_TYPE' => new ConstantMetaData(
+                "WRONG_TYPE",
+                new SingleType('string'),
+                'UNKNOWN',
+                'constant.wrong-type',
+                description: $document->createTextNode('description')
+            ),
+            'SOME_CONSTANT' => new ConstantMetaData(
+                "SOME_CONSTANT",
+                new SingleType('int'),
+                'UNKNOWN',
+                'constant.some-constant',
+                description: $document->createTextNode('description')
+            ),
         ];
         $docList = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $docConstants);
 

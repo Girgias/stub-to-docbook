@@ -5,17 +5,18 @@ namespace Girgias\StubToDocbook\Documentation;
 use Countable;
 use Dom\Element;
 use Dom\XMLDocument;
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 
 final class DocumentedConstantList implements Countable
 {
-    /** @param array<string, DocumentedConstant> $constants */
+    /** @param array<string, ConstantMetaData> $constants */
     public function __construct(
         readonly DocumentedConstantListType $type,
         public array $constants,
         readonly ?string $title = null,
     ) {}
 
-    private function generateXmlTermElement(XMLDocument $document, int $indentationLevel, DocumentedConstant $constant): Element
+    private function generateXmlTermElement(XMLDocument $document, int $indentationLevel, ConstantMetaData $constant): Element
     {
         $constantElement = $document->createElement("constant");
         $constantElement->textContent = $constant->name;

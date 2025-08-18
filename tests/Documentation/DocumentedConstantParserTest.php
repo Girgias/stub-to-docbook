@@ -120,7 +120,7 @@ FILE;
     public function test_parsing_xml(): void
     {
         $document = XMLDocument::createFromString(self::TEST_FILE);
-        $constants = DocumentedConstantParser::parse($document);
+        $constants = DocumentedConstantParser::parse($document, 'Core');
 
         /** Have 2 lists of constants */
         self::assertCount(2, $constants);

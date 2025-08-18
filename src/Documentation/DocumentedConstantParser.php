@@ -2,14 +2,15 @@
 
 namespace Girgias\StubToDocbook\Documentation;
 
-use Dom\Element;
 use Dom\XMLDocument;
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
+use Girgias\StubToDocbook\Types\SingleType;
 
 class DocumentedConstantParser
 {
     /** @return list<DocumentedConstantList> */
-    public static function parse(XMLDocument $doc): array
+    public static function parse(XMLDocument $doc, string $extension): array
     {
         $constants = [];
 
@@ -29,7 +30,7 @@ class DocumentedConstantParser
                 if ($entry->parentNode !== $variableList) {
                     continue;
                 }
-                $constant = DocumentedConstant::parseFromVarListEntryTag($entry);
+                $constant = ConstantMetaData::parseFromVarListEntryTag($entry, $extension);
                 /* See reference/filter/constants.xml with Available options variable lists */
                 if ($constant === null) {
                     /* Break out of the inner list dealing with the constants */
@@ -90,9 +91,16 @@ class DocumentedConstantParser
                 } else {
                     assert(count($manualTypeTags) === 1);
                     $manualType = DocumentedTypeParser::parse($manualTypeTags[0]);
+                    assert($manualType instanceof SingleType);
                 }
 
-                $individualList[$manualConstantName] = new DocumentedConstant($manualConstantName, $manualType, $descriptionEntry, $id);
+                $individualList[$manualConstantName] = new ConstantMetaData(
+                    $manualConstantName,
+                    $manualType,
+                    $extension,
+                    $id,
+                    description: $descriptionEntry
+                );
             }
             $constants[] = new DocumentedConstantList(DocumentedConstantListType::Table, $individualList);
         }

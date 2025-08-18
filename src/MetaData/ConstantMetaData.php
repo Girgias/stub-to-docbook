@@ -11,7 +11,8 @@ use Roave\BetterReflection\Reflection\ReflectionConstant;
 
 final class ConstantMetaData
 {
-    private function __construct(
+    /* Constructor is public due to table constant handling */
+    public function __construct(
         readonly string $name,
         readonly SingleType|null $type,
         readonly string $extension,
@@ -35,7 +36,6 @@ final class ConstantMetaData
             value: $reflectionData->getValue(),
         );
     }
-
 
     /**
      * DocBook 5.2 <varlistentry> documentation
@@ -72,5 +72,14 @@ final class ConstantMetaData
         assert(count($manualListItemTags) === 1);
         $manualListItem = $manualListItemTags[0];
         return new self($manualConstantName, $type, $extension, $id, description: $manualListItem);
+    }
+
+    public function hasCorrectIdForLinking(): bool
+    {
+        if ($this->id === null) {
+            return false;
+        }
+        $correctId = 'constant.' . xmlify_labels($this->name);
+        return $correctId === $this->id;
     }
 }

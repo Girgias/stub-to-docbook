@@ -31,7 +31,8 @@ function file_to_doc_constants(string $path)
     $content = str_replace('&', '&amp;', $content);
     $dom = XMLDocument::createFromString($content);
     //echo "File $path\n";
-    $listOfDocumentedConstantList = DocumentedConstantParser::parse($dom);
+    // TODO: Determine extension properly from file path
+    $listOfDocumentedConstantList = DocumentedConstantParser::parse($dom, 'UNKNOWN');
     $list = array_reduce($listOfDocumentedConstantList, function ($carry, DocumentedConstantList $constantList) {
         return [...$carry, ...($constantList->constants)];
     }, []);

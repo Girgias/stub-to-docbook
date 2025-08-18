@@ -3,9 +3,9 @@
 namespace Documentation;
 
 use Dom\XMLDocument;
-use Girgias\StubToDocbook\Documentation\DocumentedConstant;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
 
@@ -17,8 +17,20 @@ class DocumentedConstantListTest extends TestCase
     {
         $document = XMLDocument::createEmpty();
         $constants = [
-            "HELLO" => new DocumentedConstant("HELLO", new SingleType('string'), $document->createTextNode('description')),
-            "SOME_CONSTANT" => new DocumentedConstant("SOME_CONSTANT", new SingleType('int'), $document->createTextNode('description')),
+            "HELLO" => new ConstantMetaData(
+                "HELLO",
+                new SingleType('string'),
+                'UNKNOWN',
+                'constant.hello',
+                description: $document->createTextNode('description')
+            ),
+            "SOME_CONSTANT" => new ConstantMetaData(
+                "SOME_CONSTANT",
+                new SingleType('int'),
+                'UNKNOWN',
+                'constant.some-constant',
+                description: $document->createTextNode('description')
+            ),
         ];
 
         $list = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $constants);
