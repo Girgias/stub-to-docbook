@@ -4,7 +4,7 @@ use Dom\XMLDocument;
 use Girgias\StubToDocbook\Differ\ConstantListDiffer;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantParser;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
-use Girgias\StubToDocbook\Reports\ConstantReport;
+use Girgias\StubToDocbook\Reports\ConstantDocumentationReport;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Girgias\StubToDocbook\Stubs\ZendEngineSingleFileSourceLocator;
 use Roave\BetterReflection\BetterReflection;
@@ -123,7 +123,7 @@ echo 'There are currently:', PHP_EOL,
 echo "Total doc constants parsed = $totalDocConst\n";
 echo "Total stub constants parsed = ", count($constants), "\n";
 
-ConstantReport::generateHtmlReport($status, __DIR__ . '/constant-report.html');
+ConstantDocumentationReport::generateHtmlReport($status, __DIR__ . '/constant-report.html');
 
 //var_dump(array_keys($status->missing->constants));
 //var_dump(array_keys($status->incorrectType->constants));

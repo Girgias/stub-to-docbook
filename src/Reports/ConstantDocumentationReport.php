@@ -6,7 +6,7 @@ use Girgias\StubToDocbook\Differ\ConstantListDiff;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 
-final class ConstantReport
+final class ConstantDocumentationReport
 {
     public static function generateHtmlReport(ConstantListDiff $differ, string $file): void
     {
