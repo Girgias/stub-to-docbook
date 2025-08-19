@@ -3,13 +3,11 @@
 namespace Girgias\StubToDocbook\Differ;
 
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
-use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
-use Girgias\StubToDocbook\Stubs\StubConstantList;
-use Girgias\StubToDocbook\Types\SingleType;
+use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 
 class ConstantListDiffer
 {
-    public static function diff(StubConstantList $fromStubs, DocumentedConstantList $fromDocs): ConstantListDiff
+    public static function diff(ConstantList $fromStubs, DocumentedConstantList $fromDocs): ConstantListDiff
     {
         $totalStubConstants = count($fromStubs);
         $docConstants = $fromDocs->constants;
@@ -38,8 +36,8 @@ class ConstantListDiffer
         return new ConstantListDiff(
             $totalStubConstants - count($incorrectTypes) - count($missingDocs) - count($incorrectIdForLinking),
             $incorrectTypes,
-            new StubConstantList($missingDocs),
-            new DocumentedConstantList($incorrectIdForLinking, DocumentedConstantListType::VarEntryList),
+            new ConstantList($missingDocs),
+            new DocumentedConstantList($incorrectIdForLinking),
         );
     }
 }

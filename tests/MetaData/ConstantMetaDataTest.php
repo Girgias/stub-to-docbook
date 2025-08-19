@@ -4,7 +4,7 @@ namespace MetaData;
 
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
-use Girgias\StubToDocbook\Stubs\StubConstantList;
+use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
@@ -47,7 +47,7 @@ STUB;
             new StringSourceLocator(self::STUB_FILE_STR, $astLocator),
         ]);
         $constants = $reflector->reflectAllConstants();
-        $constants = StubConstantList::fromReflectionDataArray($constants)->constants;
+        $constants = ConstantList::fromReflectionDataArray($constants)->constants;
 
         self::assertCount(4, $constants);
         self::assertArrayHasKey('E_ERROR', $constants);

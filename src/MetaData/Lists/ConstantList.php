@@ -1,12 +1,13 @@
 <?php
 
-namespace Girgias\StubToDocbook\Stubs;
+namespace Girgias\StubToDocbook\MetaData\Lists;
 
 use Countable;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
+use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Roave\BetterReflection\Reflection\ReflectionConstant;
 
-final readonly class StubConstantList implements Countable
+final class ConstantList implements Countable
 {
     /** @param array<string, ConstantMetaData> $constants */
     public function __construct(
@@ -39,4 +40,5 @@ final readonly class StubConstantList implements Countable
     {
         return count($this->constants);
     }
+
 }

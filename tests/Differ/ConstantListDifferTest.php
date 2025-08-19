@@ -7,7 +7,7 @@ use Girgias\StubToDocbook\Differ\ConstantListDiffer;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
-use Girgias\StubToDocbook\Stubs\StubConstantList;
+use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
@@ -74,7 +74,7 @@ STUB;
             new StringSourceLocator(self::STUB_FILE_STR, $astLocator),
         ]);
         $constants = $reflector->reflectAllConstants();
-        $stubList = StubConstantList::fromReflectionDataArray($constants);
+        $stubList = ConstantList::fromReflectionDataArray($constants);
 
         $stubDiff = ConstantListDiffer::diff($stubList, $docList);
         self::assertSame(1, $stubDiff->valid);

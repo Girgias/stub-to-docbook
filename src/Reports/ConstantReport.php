@@ -5,7 +5,7 @@ namespace Girgias\StubToDocbook\Reports;
 use Girgias\StubToDocbook\Differ\ConstantListDiff;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
-use Girgias\StubToDocbook\Stubs\StubConstantList;
+use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 
 final class ConstantReport
 {
@@ -65,7 +65,7 @@ HTML;
     /**
      * @param resource $fp
      */
-    private static function generateHtmlReportMissingConstants($fp, StubConstantList $constants): void
+    private static function generateHtmlReportMissingConstants($fp, ConstantList $constants): void
     {
         if (count($constants) > 0) {
             fputs($fp, <<<'HTML_MISSING'

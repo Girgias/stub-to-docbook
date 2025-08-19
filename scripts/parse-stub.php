@@ -5,8 +5,8 @@ use Girgias\StubToDocbook\Differ\ConstantListDiffer;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantParser;
+use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Reports\ConstantReport;
-use Girgias\StubToDocbook\Stubs\StubConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Girgias\StubToDocbook\Stubs\ZendEngineSingleFileSourceLocator;
 use Roave\BetterReflection\BetterReflection;
@@ -116,7 +116,7 @@ $file_locators = array_map(
 );
 
 $reflector = ZendEngineReflector::newZendEngineReflector($file_locators);
-$constants = StubConstantList::fromReflectionDataArray($reflector->reflectAllConstants(), IGNORED_CONSTANTS);
+$constants = ConstantList::fromReflectionDataArray($reflector->reflectAllConstants(), IGNORED_CONSTANTS);
 //$functions = $reflector->reflectAllFunctions();
 //$classes = $reflector->reflectAllClasses();
 
