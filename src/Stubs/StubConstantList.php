@@ -23,15 +23,16 @@ final readonly class StubConstantList implements Countable
         /* We need to define the UNKNOWN constant in the stubs for BetterReflection to be able to
          * parse stubs files, but we don't actually want to deal with it */
         $ignoredConstants[] = ZendEngineReflector::STUB_UNKNOWN_NAME;
-        $stubConstList = array_filter(
-            array_map(
-                ConstantMetaData::fromReflectionData(...),
-                $reflectionData,
-            ),
-            fn(ConstantMetaData $constant) => !in_array($constant->name, $ignoredConstants),
+        $consts = array_map(
+            ConstantMetaData::fromReflectionData(...),
+            $reflectionData,
         );
-        $stubConstName = array_map(fn(ConstantMetaData $constant) => $constant->name, $stubConstList);
-        return new self(array_combine($stubConstName, $stubConstList));
+        $constNames = array_map(fn(ConstantMetaData $constant) => $constant->name, $consts);
+        $constDict = array_combine($constNames, $consts);
+        foreach ($ignoredConstants as $name) {
+            unset($constDict[$name]);
+        }
+        return new self($constDict);
     }
 
     public function count(): int
