@@ -3,6 +3,8 @@
 namespace Girgias\StubToDocbook\MetaData\Lists;
 
 use Countable;
+use Dom\Element;
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
@@ -44,4 +46,19 @@ final class ConstantList implements Countable
         return count($this->constants);
     }
 
+    public function toXml(XMLDocument $document, int $indentationLevel): Element
+    {
+        if ($this->type != DocumentedConstantListType::VarEntryList) {
+            throw new \Exception("Only support for VarEntry list atm");
+        }
+
+        $xmlVariableList = $document->createElement('variablelist');
+
+        foreach ($this->constants as $constant) {
+            $xmlEntry = $constant->toVarListEntryXml($document, $indentationLevel + 1);
+            $xmlVariableList->append($xmlEntry);
+        }
+
+        return $xmlVariableList;
+    }
 }

@@ -1,19 +1,17 @@
 <?php
 
-namespace Documentation;
+namespace MetaData\Lists;
 
 use Dom\XMLDocument;
-use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
+use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
 
-require_once dirname(__DIR__, 2) . '/src/utils.php';
-
-class DocumentedConstantListTest extends TestCase
+class ConstantListTest extends TestCase
 {
-    public function testVarEntryList(): void
+    public function test_to_xml_varlistentry_list()
     {
         $document = XMLDocument::createEmpty();
         $constants = [
@@ -22,18 +20,17 @@ class DocumentedConstantListTest extends TestCase
                 new SingleType('string'),
                 'UNKNOWN',
                 'constant.hello',
-                description: $document->createTextNode('description')
+                description: $document->createTextNode('The hello constant')
             ),
             "SOME_CONSTANT" => new ConstantMetaData(
                 "SOME_CONSTANT",
                 new SingleType('int'),
                 'UNKNOWN',
                 'constant.some-constant',
-                description: $document->createTextNode('description')
+                description: $document->createTextNode('A constant that does something')
             ),
         ];
-
-        $list = new DocumentedConstantList($constants, DocumentedConstantListType::VarEntryList);
+        $constantList = new ConstantList($constants, DocumentedConstantListType::VarEntryList);
 
         $expectedXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -43,19 +40,19 @@ class DocumentedConstantListTest extends TestCase
       <constant>HELLO</constant>
       (<type>string</type>)
     </term>
-    <listitem>description</listitem>
+    <listitem>The hello constant</listitem>
   </varlistentry>
   <varlistentry xml:id="constant.some-constant">
     <term>
       <constant>SOME_CONSTANT</constant>
       (<type>int</type>)
     </term>
-    <listitem>description</listitem>
+    <listitem>A constant that does something</listitem>
   </varlistentry>
 </variablelist>
 XML;
 
-        $xmlListElement = $list->generateXmlList($document, 0);
+        $xmlListElement = $constantList->toXml($document, 0);
         $document->append($xmlListElement);
 
         $savedXml = $document->saveXML();
@@ -68,5 +65,4 @@ XML;
         self::assertSame($expectedXml, $savedXml);
         self::assertEquals($expectedXml, $document->saveXML());
     }
-
 }
