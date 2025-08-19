@@ -4,12 +4,13 @@ namespace Girgias\StubToDocbook\Documentation;
 
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
+use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\SingleType;
 
 class DocumentedConstantParser
 {
-    /** @return list<DocumentedConstantList> */
+    /** @return list<ConstantList> */
     public static function parse(XMLDocument $doc, string $extension): array
     {
         $constants = [];
@@ -40,7 +41,7 @@ class DocumentedConstantParser
                 $individualList[$constant->name] = $constant;
             }
 
-            $constants[] = new DocumentedConstantList($individualList, DocumentedConstantListType::VarEntryList);
+            $constants[] = new ConstantList($individualList, DocumentedConstantListType::VarEntryList);
         }
 
         $tables = $doc->getElementsByTagName('table');
@@ -55,7 +56,7 @@ class DocumentedConstantParser
                 //    echo 'Column ', $col++, ': ', $theadEntry->textContent, "\n";
                 //}
                 // TODO Handle exoteric docs
-                $constants[] = new DocumentedConstantList([], DocumentedConstantListType::Table);
+                $constants[] = new ConstantList([], DocumentedConstantListType::Table);
                 continue;
             }
             if (str_contains($theadEntries->item(2)->textContent, 'Notes')) {
@@ -64,7 +65,7 @@ class DocumentedConstantParser
                 foreach ($theadEntries as $theadEntry) {
                     echo 'Column ', $col++, ': ', $theadEntry->textContent, "\n";
                 }
-                $constants[] = new DocumentedConstantList([], DocumentedConstantListType::Table);
+                $constants[] = new ConstantList([], DocumentedConstantListType::Table);
                 continue;
             }
 
@@ -102,7 +103,7 @@ class DocumentedConstantParser
                     description: $descriptionEntry
                 );
             }
-            $constants[] = new DocumentedConstantList($individualList, DocumentedConstantListType::Table);
+            $constants[] = new ConstantList($individualList, DocumentedConstantListType::Table);
         }
 
         if ($constants === []) {

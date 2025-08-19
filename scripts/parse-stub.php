@@ -2,7 +2,6 @@
 
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\Differ\ConstantListDiffer;
-use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantParser;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Reports\ConstantReport;
@@ -32,7 +31,7 @@ function file_to_doc_constants(string $path)
     //echo "File $path\n";
     // TODO: Determine extension properly from file path
     $listOfDocumentedConstantList = DocumentedConstantParser::parse($dom, 'UNKNOWN');
-    $list = array_reduce($listOfDocumentedConstantList, function ($carry, DocumentedConstantList $constantList) {
+    $list = array_reduce($listOfDocumentedConstantList, function ($carry, ConstantList $constantList) {
         return [...$carry, ...($constantList->constants)];
     }, []);
     global $totalDocConst;

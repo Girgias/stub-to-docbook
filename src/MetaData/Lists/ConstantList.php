@@ -3,6 +3,7 @@
 namespace Girgias\StubToDocbook\MetaData\Lists;
 
 use Countable;
+use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Roave\BetterReflection\Reflection\ReflectionConstant;
@@ -12,6 +13,8 @@ final class ConstantList implements Countable
     /** @param array<string, ConstantMetaData> $constants */
     public function __construct(
         readonly array $constants,
+        readonly DocumentedConstantListType $type = DocumentedConstantListType::VarEntryList,
+        readonly ?string $title = null,
     ) {}
 
     /**
