@@ -32,6 +32,7 @@ The stub files are parsed with Roave/BetterReflection
 - [ ] Parsing of Documentation sources for constants
   - [ ] Table parsing (or convert sourced to stop relying on tables?)
   - [ ] Token constant list
+  - [ ] Handle Deprecated attribute for global constants
 - [x] Parsing of Documentation sources for functions
   - [ ] Handle pages with multiple methodsynopsis
   - [ ] Parsing of Documentation sources for methods
@@ -40,10 +41,16 @@ The stub files are parsed with Roave/BetterReflection
     - [ ] Inherited?
 - [ ] Parsing of Documentation sources for classes
   - [ ] Properties
-- [ ] Diff between stub and documentation
-  - [x] Constant diff (kinda see `scripts/parse-stub.php`)
-  - [ ] Function diff
-  - [ ] Class diff
+- [ ] Diff
+  - [ ] Between stub and documentation
+    - [x] Constant diff (kinda see `scripts/parse-stub.php`)
+    - [ ] Function diff
+    - [ ] Class diff
+  - [ ] Between different stubs (e.g. 8.4 and 8.5)
+      - [ ] Constant diff
+      - [ ] Function diff
+      - [ ] Class diff
+- [ ] Generate missing constants
 - [ ] Generate missing functions
 - [ ] Generate missing predefined classes with methods
 - [ ] Generate missing predefined attributes
@@ -51,6 +58,7 @@ The stub files are parsed with Roave/BetterReflection
 - [ ] Generate missing extension classes with methods
 - [ ] Generate missing extension enums
 - [ ] Generate improved `versions.xml` files
+- [ ] Update constants
 - [ ] Update functions
 - [ ] Update classes and methods
 - [ ] Update enums
