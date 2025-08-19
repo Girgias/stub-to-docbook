@@ -2,7 +2,6 @@
 
 namespace Girgias\StubToDocbook\Differ;
 
-use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 
@@ -13,6 +12,6 @@ final readonly class ConstantListDiff
         readonly int $valid,
         readonly array $incorrectTypes,
         readonly ConstantList $missing,
-        readonly DocumentedConstantList $incorrectIdForLinking,
+        readonly ConstantList $incorrectIdForLinking,
     ) {}
 }

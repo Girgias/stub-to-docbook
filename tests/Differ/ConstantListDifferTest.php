@@ -4,8 +4,6 @@ namespace Differ;
 
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\Differ\ConstantListDiffer;
-use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
-use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
@@ -67,7 +65,7 @@ STUB;
                 description: $document->createTextNode('description')
             ),
         ];
-        $docList = new DocumentedConstantList($docConstants, DocumentedConstantListType::VarEntryList);
+        $docList = new ConstantList($docConstants);
 
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([

@@ -3,7 +3,6 @@
 namespace Girgias\StubToDocbook\Reports;
 
 use Girgias\StubToDocbook\Differ\ConstantListDiff;
-use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 
@@ -144,7 +143,7 @@ HTML_MISSING_TABLE_END);
     /**
      * @param resource $fp
      */
-    private static function generateHtmlReportIncorrectDocumentedConstantIdsForLinking($fp, DocumentedConstantList $incorrectIdsForLinking): void
+    private static function generateHtmlReportIncorrectDocumentedConstantIdsForLinking($fp, ConstantList $incorrectIdsForLinking): void
     {
         if (count($incorrectIdsForLinking) > 0) {
             fputs($fp, <<<'HTML_MISSING'

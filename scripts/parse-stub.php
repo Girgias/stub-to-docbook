@@ -3,7 +3,6 @@
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\Differ\ConstantListDiffer;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantList;
-use Girgias\StubToDocbook\Documentation\DocumentedConstantListType;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantParser;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Reports\ConstantReport;
@@ -59,7 +58,7 @@ $IGNORE_DOC_CONSTANT_FILES = [
     $doc_en_repo . 'reference/memcache/constants.xml',
 ];
 
-$doc_constants = [
+$doc_constants_files = [
     // Need to be *before* as E_* constants are actually defined in reference/errorfunc/constants.xml
     $doc_en_repo . 'appendices/reserved.constants.core.xml',
     // TODO Handle properly the table parsing
@@ -82,15 +81,11 @@ const IGNORED_CONSTANTS = [
     'MYSQLI_SERVER_PS_OUT_PARAMS',
 ];
 
-$doc_constants = array_diff($doc_constants, $IGNORE_DOC_CONSTANT_FILES);
+$doc_constants = array_diff($doc_constants_files, $IGNORE_DOC_CONSTANT_FILES);
 
 $doc_constants = array_map(file_to_doc_constants(...), $doc_constants);
 $doc_constants = array_merge(...$doc_constants);
-$doc_constants = new DocumentedConstantList(
-    $doc_constants,
-    DocumentedConstantListType::VarEntryList,
-    null,
-);
+$doc_constants = new ConstantList($doc_constants);
 
 $stubs = [
     ...glob($php_src_repo . '*/*.stub.php'),
