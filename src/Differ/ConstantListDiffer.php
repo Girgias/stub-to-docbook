@@ -39,7 +39,7 @@ class ConstantListDiffer
             $totalStubConstants - count($incorrectTypes) - count($missingDocs) - count($incorrectIdForLinking),
             $incorrectTypes,
             StubConstantList::fromArrayOfStubConstants($missingDocs),
-            new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $incorrectIdForLinking),
+            new DocumentedConstantList($incorrectIdForLinking, DocumentedConstantListType::VarEntryList),
         );
     }
 }

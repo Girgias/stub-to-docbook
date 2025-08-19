@@ -67,7 +67,7 @@ STUB;
                 description: $document->createTextNode('description')
             ),
         ];
-        $docList = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $docConstants);
+        $docList = new DocumentedConstantList($docConstants, DocumentedConstantListType::VarEntryList);
 
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([

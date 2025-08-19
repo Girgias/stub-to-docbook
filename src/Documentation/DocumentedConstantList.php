@@ -11,8 +11,8 @@ final class DocumentedConstantList implements Countable
 {
     /** @param array<string, ConstantMetaData> $constants */
     public function __construct(
-        readonly DocumentedConstantListType $type,
         public array $constants,
+        readonly DocumentedConstantListType $type = DocumentedConstantListType::VarEntryList,
         readonly ?string $title = null,
     ) {}
 

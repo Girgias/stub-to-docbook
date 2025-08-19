@@ -40,7 +40,7 @@ class DocumentedConstantParser
                 $individualList[$constant->name] = $constant;
             }
 
-            $constants[] = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $individualList);
+            $constants[] = new DocumentedConstantList($individualList, DocumentedConstantListType::VarEntryList);
         }
 
         $tables = $doc->getElementsByTagName('table');
@@ -55,7 +55,7 @@ class DocumentedConstantParser
                 //    echo 'Column ', $col++, ': ', $theadEntry->textContent, "\n";
                 //}
                 // TODO Handle exoteric docs
-                $constants[] = new DocumentedConstantList(DocumentedConstantListType::Table, []);
+                $constants[] = new DocumentedConstantList([], DocumentedConstantListType::Table);
                 continue;
             }
             if (str_contains($theadEntries->item(2)->textContent, 'Notes')) {
@@ -64,7 +64,7 @@ class DocumentedConstantParser
                 foreach ($theadEntries as $theadEntry) {
                     echo 'Column ', $col++, ': ', $theadEntry->textContent, "\n";
                 }
-                $constants[] = new DocumentedConstantList(DocumentedConstantListType::Table, []);
+                $constants[] = new DocumentedConstantList([], DocumentedConstantListType::Table);
                 continue;
             }
 
@@ -102,7 +102,7 @@ class DocumentedConstantParser
                     description: $descriptionEntry
                 );
             }
-            $constants[] = new DocumentedConstantList(DocumentedConstantListType::Table, $individualList);
+            $constants[] = new DocumentedConstantList($individualList, DocumentedConstantListType::Table);
         }
 
         if ($constants === []) {

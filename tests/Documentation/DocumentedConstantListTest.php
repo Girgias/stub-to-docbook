@@ -33,7 +33,7 @@ class DocumentedConstantListTest extends TestCase
             ),
         ];
 
-        $list = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $constants);
+        $list = new DocumentedConstantList($constants, DocumentedConstantListType::VarEntryList);
 
         $expectedXml = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>

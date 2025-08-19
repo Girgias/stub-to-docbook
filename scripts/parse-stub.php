@@ -87,8 +87,8 @@ $doc_constants = array_diff($doc_constants, $IGNORE_DOC_CONSTANT_FILES);
 $doc_constants = array_map(file_to_doc_constants(...), $doc_constants);
 $doc_constants = array_merge(...$doc_constants);
 $doc_constants = new DocumentedConstantList(
-    DocumentedConstantListType::VarEntryList,
     $doc_constants,
+    DocumentedConstantListType::VarEntryList,
     null,
 );
 
