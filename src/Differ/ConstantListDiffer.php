@@ -30,7 +30,7 @@ class ConstantListDiffer
             } else {
                 $incorrectTypes[$name] = [$constant, 'MISSING'];
             }
-            if (!$docConstants[$name]->hasCorrectIdForLinking()) {
+            if ($constant->id !== $docConstants[$name]->id) {
                 $incorrectIdForLinking[$name] = $docConstants[$name];
             }
         }
