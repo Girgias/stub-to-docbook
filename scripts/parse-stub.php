@@ -5,9 +5,6 @@ use Girgias\StubToDocbook\Differ\ConstantListDiffer;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantParser;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Reports\ConstantDocumentationReport;
-use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
-use Girgias\StubToDocbook\Stubs\ZendEngineSingleFileSourceLocator;
-use Roave\BetterReflection\BetterReflection;
 
 $totalDocConst = 0;
 function file_to_doc_constants(string $path)
@@ -40,6 +37,7 @@ function file_to_doc_constants(string $path)
 }
 
 require dirname(__DIR__) . '/vendor/autoload.php';
+require_once 'stub-utils.php';
 
 $php_src_repo = dirname(__DIR__, 2) . '/PHP-8.4/';
 $doc_en_repo = dirname(__DIR__, 2) . '/doc-php/en/';
@@ -66,50 +64,13 @@ $doc_constants_files = [
     ...glob($doc_en_repo . 'reference/*/constants_*.xml'),
 ];
 
-// Ignored because they are useless or Zend debug specific
-const IGNORED_CONSTANTS = [
-    'ZEND_VERIFY_TYPE_INFERENCE',
-    // See: https://github.com/php/php-src/pull/14724
-    'MYSQLI_SET_CHARSET_DIR',
-    // See: https://github.com/php/php-src/pull/6850
-    'MYSQLI_NO_DATA',
-    'MYSQLI_DATA_TRUNCATED',
-    'MYSQLI_SERVER_QUERY_NO_GOOD_INDEX_USED',
-    'MYSQLI_SERVER_QUERY_NO_INDEX_USED',
-    'MYSQLI_SERVER_QUERY_WAS_SLOW',
-    'MYSQLI_SERVER_PS_OUT_PARAMS',
-];
-
 $doc_constants = array_diff($doc_constants_files, $IGNORE_DOC_CONSTANT_FILES);
 
 $doc_constants = array_map(file_to_doc_constants(...), $doc_constants);
 $doc_constants = array_merge(...$doc_constants);
 $doc_constants = new ConstantList($doc_constants);
 
-$stubs = [
-    ...glob($php_src_repo . '*/*.stub.php'),
-    ...glob($php_src_repo . '*/*/*.stub.php'),
-];
-
-$IGNORE_STUB_CONSTANT_FILES = [
-    // Zend_test stubs
-    $php_src_repo . 'ext/zend_test/fiber.stub.php',
-    $php_src_repo . 'ext/zend_test/iterators.stub.php',
-    $php_src_repo . 'ext/zend_test/object_handlers.stub.php',
-    $php_src_repo . 'ext/zend_test/test.stub.php',
-    // DL Extension test
-    $php_src_repo . 'ext/dl_test/dl_test.stub.php',
-];
-
-$stubs = array_diff($stubs, $IGNORE_STUB_CONSTANT_FILES);
-
-$astLocator = (new BetterReflection())->astLocator();
-$file_locators = array_map(
-    fn(string $file) => new ZendEngineSingleFileSourceLocator($file, $astLocator),
-    $stubs,
-);
-
-$reflector = ZendEngineReflector::newZendEngineReflector($file_locators);
+$reflector = get_reflector($php_src_repo);
 $constants = ConstantList::fromReflectionDataArray($reflector->reflectAllConstants(), IGNORED_CONSTANTS);
 //$functions = $reflector->reflectAllFunctions();
 //$classes = $reflector->reflectAllClasses();

@@ -14,7 +14,7 @@ use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 class ConstantListDifferTest extends TestCase
 {
-    const /* string */ STUB_FILE_STR = <<<'STUB'
+    const string STUB_FILE_STR = <<<'STUB'
 <?php
 
 /** @generate-class-entries */
@@ -39,6 +39,83 @@ const INCORRECT_LINKING_ID = UNKNOWN;
  */
 const NOT_DOCUMENTED = UNKNOWN;
 STUB;
+
+    const string BASE_STUB_FILE_STR = <<<'STUB'
+<?php
+
+/** @generate-class-entries */
+
+/**
+ * @var int
+ */
+const EXISTING_CONSTANT = UNKNOWN;
+
+/**
+ * @var int
+ */
+const CHANGED_TYPE = UNKNOWN;
+
+/**
+ * @var int
+ */
+const WILL_BE_REMOVED = UNKNOWN;
+
+/**
+ * @var int
+ */
+const WILL_BE_DEPRECATED = UNKNOWN;
+
+/**
+ * @var int
+ * @deprecated
+ */
+const DEPRECATED_PHP_DOC = UNKNOWN;
+
+/**
+ * @var int
+ */
+#[\Deprecated(since: '8.1')]
+const DEPRECATED_PHP_ATTRIBUTE = UNKNOWN;
+STUB;
+    const string NEW_STUB_FILE_STR = <<<'STUB'
+<?php
+
+/** @generate-class-entries */
+
+/**
+ * @var int
+ */
+const EXISTING_CONSTANT = UNKNOWN;
+
+/**
+ * @var bool
+ */
+const CHANGED_TYPE = UNKNOWN;
+
+/**
+ * @var int
+ */
+const NEW_CONSTANT = UNKNOWN;
+
+/**
+ * @var int
+ */
+#[\Deprecated(since: '8.5')]
+const WILL_BE_DEPRECATED = UNKNOWN;
+
+/**
+ * @var int
+ * @deprecated
+ */
+const DEPRECATED_PHP_DOC = UNKNOWN;
+
+/**
+ * @var int
+ */
+#[\Deprecated(since: '8.1')]
+const DEPRECATED_PHP_ATTRIBUTE = UNKNOWN;
+STUB;
+
     public function testConstantListDiffer(): void
     {
         $document = XMLDocument::createEmpty();
@@ -83,5 +160,31 @@ STUB;
         self::assertSame('NOT_DOCUMENTED', $stubDiff->missing->constants['NOT_DOCUMENTED']->name);
         self::assertCount(1, $stubDiff->incorrectIdForLinking);
         self::assertSame('INCORRECT_LINKING_ID', $stubDiff->incorrectIdForLinking->constants['INCORRECT_LINKING_ID']->name);
+    }
+
+    public function test_diff_between_two_stub_files(): void
+    {
+        $astLocator = (new BetterReflection())->astLocator();
+
+        $baseReflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator(self::BASE_STUB_FILE_STR, $astLocator),
+        ]);
+        $baseConstants = $baseReflector->reflectAllConstants();
+        $baseConstantList = ConstantList::fromReflectionDataArray($baseConstants);
+
+        $newReflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator(self::NEW_STUB_FILE_STR, $astLocator),
+        ]);
+        $newConstants = $newReflector->reflectAllConstants();
+        $newConstantList = ConstantList::fromReflectionDataArray($newConstants);
+
+        $diff = ConstantListDiffer::stubDiff($baseConstantList, $newConstantList);
+        self::assertCount(1, $diff->new);
+        self::assertArrayHasKey('NEW_CONSTANT', $diff->new->constants);
+        self::assertSame('NEW_CONSTANT', $diff->new->constants['NEW_CONSTANT']->name);
+
+        self::assertCount(1, $diff->removed);
+        self::assertArrayHasKey('WILL_BE_REMOVED', $diff->removed->constants);
+        self::assertSame('WILL_BE_REMOVED', $diff->removed->constants['WILL_BE_REMOVED']->name);
     }
 }

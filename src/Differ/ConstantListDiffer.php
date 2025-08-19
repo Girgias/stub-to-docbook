@@ -39,4 +39,27 @@ class ConstantListDiffer
             new ConstantList($incorrectIdForLinking),
         );
     }
+
+    public static function stubDiff(ConstantList $baseVersion, ConstantList $newVersion): ConstantStubListDiff
+    {
+        $newConstants = [];
+        $removedConstants = [];
+        $deprecatedConstants = [];
+
+        $newNames = array_diff_key($newVersion->constants, $baseVersion->constants);
+        foreach ($newNames as $name => $_) {
+            $newConstants[$name] = $newVersion->constants[$name];
+        }
+
+        $removedNames = array_diff_key($baseVersion->constants, $newVersion->constants);
+        foreach ($removedNames as $name => $_) {
+            $removedConstants[$name] = $baseVersion->constants[$name];
+        }
+
+        return new ConstantStubListDiff(
+            new ConstantList($newConstants),
+            new ConstantList($removedConstants),
+            new ConstantList($deprecatedConstants),
+        );
+    }
 }
