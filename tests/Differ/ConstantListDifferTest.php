@@ -34,6 +34,11 @@ const WRONG_TYPE = UNKNOWN;
 /**
  * @var int
  */
+const INCORRECT_LINKING_ID = UNKNOWN;
+
+/**
+ * @var int
+ */
 const NOT_DOCUMENTED = UNKNOWN;
 STUB;
     public function testConstantListDiffer(): void
@@ -54,6 +59,13 @@ STUB;
                 'constant.some-constant',
                 description: $document->createTextNode('description')
             ),
+            'INCORRECT_LINKING_ID' => new ConstantMetaData(
+                "INCORRECT_LINKING_ID",
+                new SingleType('int'),
+                'UNKNOWN',
+                'constant.incorrect_linking_id',
+                description: $document->createTextNode('description')
+            ),
         ];
         $docList = new DocumentedConstantList(DocumentedConstantListType::VarEntryList, $docConstants);
 
@@ -71,5 +83,7 @@ STUB;
         self::assertSame('string', $stubDiff->incorrectTypes['WRONG_TYPE'][1]);
         self::assertCount(1, $stubDiff->missing);
         self::assertSame('NOT_DOCUMENTED', $stubDiff->missing->constants['NOT_DOCUMENTED']->name);
+        self::assertCount(1, $stubDiff->incorrectIdForLinking);
+        self::assertSame('INCORRECT_LINKING_ID', $stubDiff->incorrectIdForLinking->constants['INCORRECT_LINKING_ID']->name);
     }
 }
