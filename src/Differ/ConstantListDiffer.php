@@ -38,7 +38,7 @@ class ConstantListDiffer
         return new ConstantListDiff(
             $totalStubConstants - count($incorrectTypes) - count($missingDocs) - count($incorrectIdForLinking),
             $incorrectTypes,
-            StubConstantList::fromArrayOfStubConstants($missingDocs),
+            new StubConstantList($missingDocs),
             new DocumentedConstantList($incorrectIdForLinking, DocumentedConstantListType::VarEntryList),
         );
     }

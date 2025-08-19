@@ -9,7 +9,7 @@ use Roave\BetterReflection\Reflection\ReflectionConstant;
 final readonly class StubConstantList implements Countable
 {
     /** @param array<string, ConstantMetaData> $constants */
-    private function __construct(
+    public function __construct(
         readonly array $constants,
     ) {}
 
@@ -30,15 +30,6 @@ final readonly class StubConstantList implements Countable
         );
         $stubConstName = array_map(fn(ConstantMetaData $constant) => $constant->name, $stubConstList);
         return new self(array_combine($stubConstName, $stubConstList));
-    }
-
-    /**
-     * @param array<string, ConstantMetaData> $stubConstants
-     * @return self
-     */
-    public static function fromArrayOfStubConstants(array $stubConstants): self
-    {
-        return new self($stubConstants);
     }
 
     public function count(): int
