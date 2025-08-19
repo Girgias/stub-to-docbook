@@ -22,13 +22,13 @@ class ConstantListDiffer
                 $missingDocs[$name] = $constant;
                 continue;
             }
-            if ($docConstants[$name]->type instanceof SingleType) {
+            if ($docConstants[$name]->type === null) {
+                $incorrectTypes[$name] = [$constant, 'MISSING'];
+            } else {
                 if (!$docConstants[$name]->type->isSame($constant->type)) {
                     $type = $docConstants[$name]->type->name;
                     $incorrectTypes[$name] = [$constant, $type];
                 }
-            } else {
-                $incorrectTypes[$name] = [$constant, 'MISSING'];
             }
             if ($constant->id !== $docConstants[$name]->id) {
                 $incorrectIdForLinking[$name] = $docConstants[$name];
