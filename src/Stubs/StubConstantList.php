@@ -20,7 +20,9 @@ final readonly class StubConstantList implements Countable
      */
     public static function fromReflectionDataArray(array $reflectionData, array $ignoredConstants = []): self
     {
-        $ignoredConstants[] = 'UNKNOWN';
+        /* We need to define the UNKNOWN constant in the stubs for BetterReflection to be able to
+         * parse stubs files, but we don't actually want to deal with it */
+        $ignoredConstants[] = ZendEngineReflector::STUB_UNKNOWN_NAME;
         $stubConstList = array_filter(
             array_map(
                 ConstantMetaData::fromReflectionData(...),

@@ -11,6 +11,7 @@ use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 final class ZendEngineReflector
 {
+    public const string STUB_UNKNOWN_NAME = 'UNKNOWN';
     /**
      * @param list<SourceLocator> $locators
      */
@@ -18,7 +19,9 @@ final class ZendEngineReflector
     {
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = new DefaultReflector(new AggregateSourceLocator([
-            new StringSourceLocator('<?php const UNKNOWN = null;', $astLocator),
+            /* We need to define the UNKNOWN constant in the stubs for BetterReflection to be able to
+             * parse stubs files, but we don't actually want to deal with it */
+            new StringSourceLocator('<?php const ' . self::STUB_UNKNOWN_NAME . ' = null;', $astLocator),
             ...$locators,
         ]));
 
