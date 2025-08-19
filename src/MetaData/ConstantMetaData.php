@@ -75,15 +75,6 @@ final class ConstantMetaData
         return new self($manualConstantName, $type, $extension, $id, description: $manualListItem);
     }
 
-    public function hasCorrectIdForLinking(): bool
-    {
-        if ($this->id === null) {
-            return false;
-        }
-        $correctId = 'constant.' . xmlify_labels($this->name);
-        return $correctId === $this->id;
-    }
-
     public function toVarListEntryXml(XMLDocument $document, int $indentationLevel): Element
     {
         $xmlEntry = $document->createElement('varlistentry');
