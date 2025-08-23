@@ -6,6 +6,8 @@ use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\ParameterMetaData;
+use Girgias\StubToDocbook\MetaData\Initializer;
+use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use Girgias\StubToDocbook\Types\SingleType;
 use Girgias\StubToDocbook\Types\UnionType;
 use PHPUnit\Framework\TestCase;
@@ -141,7 +143,10 @@ XML;
                         new SingleType('null'),
                     ]),
                     isOptional: true,
-                    defaultValue: 'SOME_CONST',
+                    defaultValue: new Initializer(
+                        InitializerVariant::Constant,
+                        'SOME_CONST',
+                    ),
                 ),
             ],
             new UnionType([

@@ -8,6 +8,8 @@ use Girgias\StubToDocbook\Documentation\Functions\DocumentedFunction;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\ParameterMetaData;
+use Girgias\StubToDocbook\MetaData\Initializer;
+use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use Girgias\StubToDocbook\Types\SingleType;
 use Girgias\StubToDocbook\Types\UnionType;
 use PHPUnit\Framework\TestCase;
@@ -49,7 +51,10 @@ class DocumentedFunctionTest extends TestCase
                     2,
                     new SingleType('int'),
                     isOptional: true,
-                    defaultValue: '0',
+                    defaultValue: new Initializer(
+                        InitializerVariant::Literal,
+                        '0',
+                    ),
                 ),
             ],
             new SingleType('GMP'),
@@ -132,7 +137,10 @@ class DocumentedFunctionTest extends TestCase
                     3,
                     new SingleType('array'),
                     isOptional: true,
-                    defaultValue: '[]',
+                    defaultValue: new Initializer(
+                        InitializerVariant::Literal,
+                        '[]',
+                    ),
                 ),
             ],
             new SingleType('string'),

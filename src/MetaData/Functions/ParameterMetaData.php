@@ -9,6 +9,7 @@ use Dom\XPath;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
+use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\SingleType;
 use Girgias\StubToDocbook\Types\Type;
@@ -21,7 +22,7 @@ final readonly class ParameterMetaData implements Equatable
         readonly int $position,
         readonly Type $type,
         readonly bool $isOptional = false,
-        readonly ?string $defaultValue = null,
+        readonly ?Initializer $defaultValue = null,
         readonly bool $isByRef = false,
         readonly bool $isVariadic = false,
         readonly array $attributes = [],
@@ -35,7 +36,8 @@ final readonly class ParameterMetaData implements Equatable
         return $this->name === $other->name
             && $this->position === $other->position
             && $this->isOptional === $other->isOptional
-            && $this->defaultValue === $other->defaultValue
+            /** We use == here because we want to compare the properties not identity */
+            && $this->defaultValue == $other->defaultValue
             && $this->isByRef === $other->isByRef
             && $this->isVariadic === $other->isVariadic
             && Utils::equateList($this->attributes, $other->attributes)
@@ -94,7 +96,7 @@ final readonly class ParameterMetaData implements Equatable
                 'type' => $type = DocumentedTypeParser::parse($node),
                 'parameter' => [$name, $isByRef] = self::parseParameterTag($node),
                 'modifier'  => $attributes[] = AttributeMetaData::parseFromDoc($node),
-                'initializer' => $defaultValue = $node->textContent, // TODO Less than ideal as it can have <constant> or <literal> tags
+                'initializer' => $defaultValue = Initializer::parseFromDoc($node),
                 'funcparams', 'templatename' => throw new \Exception('"' . $tagName . '" child tag for <methodparam> is not supported'),
             };
         }

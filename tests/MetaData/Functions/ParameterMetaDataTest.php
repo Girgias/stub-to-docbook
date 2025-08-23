@@ -7,6 +7,8 @@ use Dom\Text;
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\ParameterMetaData;
+use Girgias\StubToDocbook\MetaData\Initializer;
+use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
 
@@ -72,7 +74,7 @@ class ParameterMetaDataTest extends TestCase
         )));
     }
 
-    public function test_option_parameter_parsing_with_initializer(): void
+    public function test_option_parameter_parsing_with_const_initializer(): void
     {
         $xml = '<methodparam choice="opt"><type>string</type><parameter>param_name</parameter><initializer><constant>SOME_CONST</constant></initializer></methodparam>';
         $document = XMLDocument::createFromString($xml);
@@ -80,8 +82,10 @@ class ParameterMetaDataTest extends TestCase
 
         self::assertTrue($param->isSame(self::expected_param(
             isOptional: true,
-            // TODO Parsing of initializer tag is less than ideal.
-            defaultValue: 'SOME_CONST',
+            defaultValue: new Initializer(
+                InitializerVariant::Constant,
+                'SOME_CONST',
+            ),
         )));
     }
 
