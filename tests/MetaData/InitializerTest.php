@@ -5,6 +5,8 @@ namespace MetaData;
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
+use PhpParser\Node\Scalar\Int_;
+use PhpParser\Node\Scalar\String_;
 use PHPUnit\Framework\TestCase;
 
 class InitializerTest extends TestCase
@@ -97,5 +99,21 @@ class InitializerTest extends TestCase
 
         self::assertSame(InitializerVariant::Text, $initializer->variant);
         self::assertSame('PDO::PARAM_STR', $initializer->value);
+    }
+
+    public function test_from_int_scalar_node()
+    {
+        $node = new Int_(25);
+        $initializer = Initializer::fromPhpParserExpr($node);
+        self::assertSame(InitializerVariant::Literal, $initializer->variant);
+        self::assertSame('25', $initializer->value);
+    }
+
+    public function test_from_string_scalar_node()
+    {
+        $node = new String_('This is a simple string');
+        $initializer = Initializer::fromPhpParserExpr($node);
+        self::assertSame(InitializerVariant::Literal, $initializer->variant);
+        self::assertSame('This is a simple string', $initializer->value);
     }
 }

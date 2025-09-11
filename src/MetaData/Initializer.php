@@ -3,6 +3,9 @@
 namespace Girgias\StubToDocbook\MetaData;
 
 use Dom\Element;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Scalar\Int_;
+use PhpParser\Node\Scalar\String_;
 
 final class Initializer
 {
@@ -49,6 +52,15 @@ final class Initializer
         return match ($child->tagName) {
             'constant' => new self(InitializerVariant::Constant, $child->textContent),
             'literal' => new self(InitializerVariant::Literal, $child->textContent),
+        };
+    }
+
+    public static function fromPhpParserExpr(Expr $expr): self
+    {
+        /* @phpstan-ignore match.unhandled */
+        return match ($expr::class) {
+            Int_::class => new self(InitializerVariant::Literal, (string)$expr->value),
+            String_::class => new self(InitializerVariant::Literal, $expr->value),
         };
     }
 }
