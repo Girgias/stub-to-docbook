@@ -4,6 +4,7 @@ namespace Girgias\StubToDocbook\MetaData;
 
 use Dom\Element;
 use Girgias\StubToDocbook\FP\Equatable;
+use Roave\BetterReflection\Reflection\ReflectionAttribute;
 
 final readonly class AttributeMetaData implements Equatable
 {
@@ -20,6 +21,19 @@ final readonly class AttributeMetaData implements Equatable
         $diff = array_udiff_assoc($this->arguments, $other->arguments,
                 fn (Initializer $l, Initializer $r) => (int)!$r->isSame($l));
         return $this->name === $other->name && $diff === [];
+    }
+
+    public static function fromReflectionData(ReflectionAttribute $reflectionData): self
+    {
+        /* getName() returns the qualified name rather than the FQN */
+        return new self(
+            '\\' . $reflectionData->getName(),
+            /* @phpstan-ignore argument.type (as we don't have positional attribute arguments) */
+            array_map(
+                Initializer::fromPhpParserExpr(...),
+                $reflectionData->getArgumentsExpressions()
+            ),
+        );
     }
 
     public static function parseFromDoc(Element $element): AttributeMetaData
