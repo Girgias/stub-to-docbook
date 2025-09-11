@@ -3,16 +3,22 @@
 namespace Girgias\StubToDocbook\MetaData;
 
 use Dom\Element;
+use Girgias\StubToDocbook\FP\Equatable;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
 
-final class Initializer
+final class Initializer implements Equatable
 {
     public function __construct(
         readonly InitializerVariant $variant,
         readonly string $value,
     ) { }
+
+    public function isSame(mixed $other): bool
+    {
+        return $this == $other;
+    }
 
     /**
      * DocBook 5.2 <initializer> documentation

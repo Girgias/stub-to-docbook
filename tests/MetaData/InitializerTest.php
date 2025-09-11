@@ -11,6 +11,16 @@ use PHPUnit\Framework\TestCase;
 
 class InitializerTest extends TestCase
 {
+    public function test_initializer_is_same()
+    {
+        $constant = new Initializer(InitializerVariant::Constant, 'SOME_CONST');
+        self::assertTrue($constant->isSame($constant));
+
+        $literal = new Initializer(InitializerVariant::Literal, 'SOME_CONST');
+        self::assertFalse($constant->isSame($literal));
+        self::assertFalse($literal->isSame($constant));
+    }
+
     public function test_constant_doc_parsing()
     {
         $xml = '<initializer><constant>SOME_CONST</constant></initializer>';
