@@ -14,6 +14,12 @@ class AttributeMetaDataTest extends TestCase
         $document = XMLDocument::createFromString('<modifier role="attribute">#[\Deprecated]</modifier>');
         $attribute = AttributeMetaData::parseFromDoc($document->firstElementChild);
         self::assertSame('\\Deprecated', $attribute->name);
+
+        $expected = new AttributeMetaData(
+            '\\Deprecated',
+            [],
+        );
+        self::assertTrue($expected->isSame($attribute));
     }
 
     public function test_attribute_with_arguments_parsing(): void

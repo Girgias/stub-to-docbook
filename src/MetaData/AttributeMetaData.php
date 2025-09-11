@@ -17,7 +17,9 @@ final readonly class AttributeMetaData implements Equatable
 
     public function isSame(mixed $other): bool
     {
-        return $this->name === $other->name;
+        $diff = array_udiff_assoc($this->arguments, $other->arguments,
+                fn (Initializer $l, Initializer $r) => (int)!$r->isSame($l));
+        return $this->name === $other->name && $diff === [];
     }
 
     public static function parseFromDoc(Element $element): AttributeMetaData
