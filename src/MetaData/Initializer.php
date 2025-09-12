@@ -5,8 +5,15 @@ namespace Girgias\StubToDocbook\MetaData;
 use Dom\Element;
 use Girgias\StubToDocbook\FP\Equatable;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\BinaryOp\BitwiseOr;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Expr\ConstFetch;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Scalar\Float_;
 use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
+use PhpParser\PrettyPrinter\Standard;
 
 final class Initializer implements Equatable
 {
@@ -63,10 +70,26 @@ final class Initializer implements Equatable
 
     public static function fromPhpParserExpr(Expr $expr): self
     {
-        /* @phpstan-ignore match.unhandled */
         return match ($expr::class) {
-            Int_::class => new self(InitializerVariant::Literal, (string)$expr->value),
-            String_::class => new self(InitializerVariant::Literal, $expr->value),
+            Int_::class, String_::class, Float_::class, Array_::class
+                => new self(InitializerVariant::Literal, self::phpParserExprToString($expr)),
+            ConstFetch::class, ClassConstFetch::class
+                => new self(InitializerVariant::Constant, self::phpParserExprToString($expr)),
+            BitwiseOr::class => new self(InitializerVariant::BitMask, self::phpParserExprToString($expr)),
+            FuncCall::class => new self(InitializerVariant::Function, self::phpParserExprToString($expr)),
         };
+    }
+
+    private static function phpParserExprToString(Expr $expr): string
+    {
+        // TODO: We trim leading \ prefix, should we do this?
+        return ltrim(match ($expr::class) {
+            // TODO: Pretty print will not keep original code value, do we care?
+            Int_::class, Float_::class
+                => $expr->getAttribute('rawValue'),
+            BitwiseOr::class
+                => self::phpParserExprToString($expr->left) . '|' . self::phpParserExprToString($expr->right),
+            default => (new Standard())->prettyPrintExpr($expr),
+        }, '\\');
     }
 }

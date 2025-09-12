@@ -5,6 +5,7 @@ namespace MetaData;
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
+use PhpParser\Node\Scalar\Float_;
 use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
 use PHPUnit\Framework\TestCase;
@@ -113,17 +114,50 @@ class InitializerTest extends TestCase
 
     public function test_from_int_scalar_node()
     {
-        $node = new Int_(25);
+        $node = Int_::fromString('25');
         $initializer = Initializer::fromPhpParserExpr($node);
         self::assertSame(InitializerVariant::Literal, $initializer->variant);
         self::assertSame('25', $initializer->value);
+
+        $node = Int_::fromString('0xFF');
+        $initializer = Initializer::fromPhpParserExpr($node);
+        self::assertSame(InitializerVariant::Literal, $initializer->variant);
+        self::assertSame('0xFF', $initializer->value);
+
+        $node = Int_::fromString('0o25');
+        $initializer = Initializer::fromPhpParserExpr($node);
+        self::assertSame(InitializerVariant::Literal, $initializer->variant);
+        self::assertSame('0o25', $initializer->value);
+
+        $node = Int_::fromString('0b1101');
+        $initializer = Initializer::fromPhpParserExpr($node);
+        self::assertSame(InitializerVariant::Literal, $initializer->variant);
+        self::assertSame('0b1101', $initializer->value);
+    }
+
+    public function test_from_float_scalar_node()
+    {
+        $node = Float_::fromString('12.5');
+        $initializer = Initializer::fromPhpParserExpr($node);
+        self::assertSame(InitializerVariant::Literal, $initializer->variant);
+        self::assertSame('12.5', $initializer->value);
+
+        $node = Float_::fromString('2.4578e12');
+        $initializer = Initializer::fromPhpParserExpr($node);
+        self::assertSame(InitializerVariant::Literal, $initializer->variant);
+        self::assertSame('2.4578e12', $initializer->value);
     }
 
     public function test_from_string_scalar_node()
     {
-        $node = new String_('This is a simple string');
+        $node = String_::fromString('"This is a simple string"');
         $initializer = Initializer::fromPhpParserExpr($node);
         self::assertSame(InitializerVariant::Literal, $initializer->variant);
-        self::assertSame('This is a simple string', $initializer->value);
+        self::assertSame('"This is a simple string"', $initializer->value);
+
+        $node = String_::fromString("'raw str'");
+        $initializer = Initializer::fromPhpParserExpr($node);
+        self::assertSame(InitializerVariant::Literal, $initializer->variant);
+        self::assertSame("'raw str'", $initializer->value);
     }
 }

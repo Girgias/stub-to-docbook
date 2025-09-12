@@ -59,11 +59,11 @@ STUB;
         self::assertArrayHasKey('since', $attribute->arguments);
         self::assertInstanceOf(Initializer::class, $attribute->arguments['since']);
         self::assertSame(InitializerVariant::Literal, $attribute->arguments['since']->variant);
-        self::assertSame('8.1', $attribute->arguments['since']->value);
+        self::assertSame('\'8.1\'', $attribute->arguments['since']->value);
 
         $expected = new AttributeMetaData(
             '\\Deprecated',
-            ['since' => new Initializer(InitializerVariant::Literal, '8.1')]
+            ['since' => new Initializer(InitializerVariant::Literal, '\'8.1\'')]
         );
         self::assertTrue($expected->isSame($attribute));
     }
