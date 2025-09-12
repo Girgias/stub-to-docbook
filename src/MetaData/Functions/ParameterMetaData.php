@@ -11,8 +11,10 @@ use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
+use Girgias\StubToDocbook\Types\ReflectionTypeParser;
 use Girgias\StubToDocbook\Types\SingleType;
 use Girgias\StubToDocbook\Types\Type;
+use Roave\BetterReflection\Reflection\ReflectionParameter;
 
 final readonly class ParameterMetaData implements Equatable
 {
@@ -42,6 +44,31 @@ final readonly class ParameterMetaData implements Equatable
             && $this->isVariadic === $other->isVariadic
             && Utils::equateList($this->attributes, $other->attributes)
             && $this->type->isSame($other->type);
+    }
+
+    public static function fromReflectionData(ReflectionParameter $reflectionData): self
+    {
+        $attributes = array_map(
+            AttributeMetaData::fromReflectionData(...),
+            $reflectionData->getAttributes()
+        );
+        $type = ReflectionTypeParser::convertFromReflectionType($reflectionData->getType());
+
+        $defaultValue = $reflectionData->getDefaultValueExpression();
+        if ($defaultValue) {
+            $defaultValue = Initializer::fromPhpParserExpr($defaultValue);
+        }
+
+        return new self(
+            $reflectionData->getName(),
+            $reflectionData->getPosition() + 1, /* Reflection position starts at 0 */
+            $type,
+            $reflectionData->isOptional(),
+            defaultValue: $defaultValue,
+            isByRef: $reflectionData->isPassedByReference(),
+            isVariadic: $reflectionData->isVariadic(),
+            attributes: $attributes,
+        );
     }
 
     /**
