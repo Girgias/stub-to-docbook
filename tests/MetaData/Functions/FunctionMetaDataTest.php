@@ -8,12 +8,66 @@ use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\ParameterMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
+use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Girgias\StubToDocbook\Types\SingleType;
 use Girgias\StubToDocbook\Types\UnionType;
 use PHPUnit\Framework\TestCase;
+use Roave\BetterReflection\BetterReflection;
+use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 class FunctionMetaDataTest extends TestCase
 {
+    public function test_basic_from_reflection_data()
+    {
+        $stub = <<<'STUB'
+<?php
+/**
+ * @compile-time-eval
+ * @refcount 1
+ */
+function array_column(array $array, int|string|null $column_key, int|string|null $index_key = null): array {}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectFunction('array_column');
+        $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
+
+        self::assertSame('array_column', $fn->name);
+        self::assertTrue(new SingleType('array')->isSame($fn->returnType));
+        self::assertFalse($fn->isStatic);
+        self::assertFalse($fn->isDeprecated);
+        self::assertFalse($fn->byRefReturn);
+        self::assertSame([], $fn->attributes);
+        self::assertCount(3, $fn->parameters);
+    }
+
+    public function test_is_deprecated_from_reflection_data()
+    {
+        $stub = <<<'STUB'
+<?php
+#[\Deprecated(since: '8.0', message: 'as EnchantBroker objects are freed automatically')]
+function enchant_broker_free(EnchantBroker $broker): bool {}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectFunction('enchant_broker_free');
+        $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
+
+        self::assertSame('enchant_broker_free', $fn->name);
+        self::assertTrue($fn->isDeprecated);
+        self::assertTrue(new SingleType('bool')->isSame($fn->returnType));
+        self::assertFalse($fn->isStatic);
+        self::assertFalse($fn->byRefReturn);
+        self::assertCount(1, $fn->attributes);
+        self::assertCount(1, $fn->parameters);
+    }
+
     public function test_no_param_function_parsing(): void
     {
         $xml = <<<'XML'

@@ -8,7 +8,9 @@ use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
+use Girgias\StubToDocbook\Types\ReflectionTypeParser;
 use Girgias\StubToDocbook\Types\Type;
+use Roave\BetterReflection\Reflection\ReflectionFunction;
 
 final readonly class FunctionMetaData implements Equatable
 {
@@ -39,6 +41,28 @@ final readonly class FunctionMetaData implements Equatable
             && $this->isStatic === $other->isStatic
             && $this->isDeprecated === $other->isDeprecated
         ;
+    }
+
+    public static function fromReflectionData(ReflectionFunction $reflectionData): self
+    {
+        $returnType = ReflectionTypeParser::convertFromReflectionType($reflectionData->getReturnType());
+        $parameters = array_map(
+            ParameterMetaData::fromReflectionData(...),
+            $reflectionData->getParameters(),
+        );
+        $attributes = array_map(
+            AttributeMetaData::fromReflectionData(...),
+            $reflectionData->getAttributes(),
+        );
+        return new self(
+            $reflectionData->getName(),
+            $parameters,
+            $returnType,
+            $reflectionData->returnsReference(),
+            $attributes,
+            $reflectionData->isStatic(),
+            $reflectionData->isDeprecated(),
+        );
     }
 
     /**
