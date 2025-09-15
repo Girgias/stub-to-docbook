@@ -1,0 +1,69 @@
+parameters:
+    level: 7
+    paths:
+        - scripts
+        - src
+        - tests
+    treatPhpDocTypesAsCertain: false
+
+    # To be addressed in follow-up commits
+    ignoreErrors:
+        -
+            message: '#Method [a-zA-Z\\]+?Test::test[a-zA-Z_]+\(\) has no return type specified\.#'
+            identifier: missingType.return
+            count: 22
+            path: tests/*
+
+        -
+            message: '#^Function file_to_doc_constants\(\) has no return type specified\.$#'
+            identifier: missingType.return
+            count: 1
+            path: scripts/parse-stub.php
+
+        -
+            message: '#^Only iterables can be unpacked, list\<string\>\|false given\.$#'
+            identifier: arrayUnpacking.nonIterable
+            count: 2
+            path: scripts/parse-stub.php
+
+        -
+            message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|false given\.$#'
+            identifier: argument.type
+            count: 1
+            path: scripts/parse-stub.php
+
+        -
+            message: '#^Only iterables can be unpacked, list\<string\>\|false given\.$#'
+            identifier: arrayUnpacking.nonIterable
+            count: 2
+            path: scripts/stub-utils.php
+
+        -
+            message: '#^Parameter \#1 \$fileName of class Girgias\\StubToDocbook\\Stubs\\ZendEngineSingleFileSourceLocator constructor expects non\-empty\-string, string given\.$#'
+            identifier: argument.type
+            count: 1
+            path: scripts/stub-utils.php
+
+        -
+            message: '#^Parameter \#1 \$locators of static method Girgias\\StubToDocbook\\Stubs\\ZendEngineReflector\:\:newZendEngineReflector\(\) expects list\<Roave\\BetterReflection\\SourceLocator\\Type\\SourceLocator\>, array\<Girgias\\StubToDocbook\\Stubs\\ZendEngineSingleFileSourceLocator\> given\.$#'
+            identifier: argument.type
+            count: 1
+            path: scripts/stub-utils.php
+
+        -
+            message: '#^Match expression does not handle remaining value\: class\-string\<PhpParser\\Node\\Expr\>&literal\-string$#'
+            identifier: match.unhandled
+            count: 1
+            path: src/MetaData/Initializer.php
+
+        -
+            message: '#^Parameter \#2 \$actualXml of static method PHPUnit\\Framework\\Assert\:\:assertXmlStringEqualsXmlString\(\) expects string, string\|false given\.$#'
+            identifier: argument.type
+            count: 2
+            path: tests/MetaData/ConstantMetaDataTest.php
+
+        -
+            message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\ReflectionNamedType\|Roave\\BetterReflection\\Reflection\\ReflectionUnionType\|null\)\: mixed\)\|null, Closure\(Roave\\BetterReflection\\Reflection\\ReflectionIntersectionType\|Roave\\BetterReflection\\Reflection\\ReflectionNamedType\|Roave\\BetterReflection\\Reflection\\ReflectionUnionType\)\: Girgias\\StubToDocbook\\Types\\Type given\.$#'
+            identifier: argument.type
+            count: 1
+            path: tests/Types/ReflectionTypeParserTest.php
