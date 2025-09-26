@@ -105,8 +105,8 @@ const WILL_BE_DEPRECATED = UNKNOWN;
 
 /**
  * @var int
- * @deprecated
  */
+#[\Deprecated(since: '8.4')]
 const DEPRECATED_PHP_DOC = UNKNOWN;
 
 /**
@@ -186,5 +186,9 @@ STUB;
         self::assertCount(1, $diff->removed);
         self::assertArrayHasKey('WILL_BE_REMOVED', $diff->removed->constants);
         self::assertSame('WILL_BE_REMOVED', $diff->removed->constants['WILL_BE_REMOVED']->name);
+
+        self::assertCount(1, $diff->deprecated);
+        self::assertArrayHasKey('WILL_BE_DEPRECATED', $diff->deprecated->constants);
+        self::assertSame('WILL_BE_DEPRECATED', $diff->deprecated->constants['WILL_BE_DEPRECATED']->name);
     }
 }

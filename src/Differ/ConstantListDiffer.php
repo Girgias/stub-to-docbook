@@ -2,6 +2,7 @@
 
 namespace Girgias\StubToDocbook\Differ;
 
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 
 class ConstantListDiffer
@@ -40,6 +41,10 @@ class ConstantListDiffer
         );
     }
 
+    private static function isDeprecated(ConstantMetaData $constant): bool {
+        return $constant->isDeprecated;
+    }
+
     public static function stubDiff(ConstantList $baseVersion, ConstantList $newVersion): ConstantStubListDiff
     {
         $newConstants = [];
@@ -54,6 +59,13 @@ class ConstantListDiffer
         $removedNames = array_diff_key($baseVersion->constants, $newVersion->constants);
         foreach ($removedNames as $name => $_) {
             $removedConstants[$name] = $baseVersion->constants[$name];
+        }
+
+        $baseDeprecated = array_filter($baseVersion->constants, self::isDeprecated(...));
+        $newDeprecated = array_filter($newVersion->constants, self::isDeprecated(...));
+        $newDeprecationsNames = array_diff_key($newDeprecated, $baseDeprecated);
+        foreach ($newDeprecationsNames as $name => $_) {
+            $deprecatedConstants[$name] = $newVersion->constants[$name];
         }
 
         return new ConstantStubListDiff(
