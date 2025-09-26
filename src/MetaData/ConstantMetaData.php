@@ -23,6 +23,7 @@ final class ConstantMetaData
         readonly string|null $id,
         readonly string|int|float|null $value = null,
         readonly array $attributes = [],
+        readonly bool $isDeprecated = false,
         readonly Node|null $description = null,
     ) {}
 
@@ -44,6 +45,7 @@ final class ConstantMetaData
             'constant.' . xmlify_labels($name),
             value: $reflectionData->getValue(),
             attributes: $attributes,
+            isDeprecated: $reflectionData->isDeprecated(),
         );
     }
 

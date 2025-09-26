@@ -42,6 +42,18 @@ const E_PARSE = UNKNOWN;
 
 /** @var int */
 const CRYPT_STD_DES = 1;
+
+/**
+ * @var int
+ * @deprecated
+ */
+const DEPRECATED_PHP_DOC = UNKNOWN;
+
+/**
+ * @var int
+ */
+#[\Deprecated(since: '8.1')]
+const DEPRECATED_PHP_ATTRIBUTE = UNKNOWN;
 STUB;
 
     public function test_can_retrieve_constants(): void
@@ -53,22 +65,38 @@ STUB;
         $constants = $reflector->reflectAllConstants();
         $constants = ConstantList::fromReflectionDataArray($constants)->constants;
 
-        self::assertCount(4, $constants);
+        self::assertCount(6, $constants);
 
         self::assertArrayHasKey('E_ERROR', $constants);
         self::assertConstantIsSame($constants['E_ERROR'], 'E_ERROR', new SingleType('int'));
+        self::assertFalse($constants['E_ERROR']->isDeprecated);
 
         self::assertArrayHasKey('E_WARNING', $constants);
         self::assertConstantIsSame($constants['E_WARNING'], 'E_WARNING', new SingleType('int'));
+        self::assertFalse($constants['E_WARNING']->isDeprecated);
 
         self::assertArrayHasKey('E_PARSE', $constants);
         self::assertConstantIsSame($constants['E_PARSE'], 'E_PARSE', new SingleType('int'));
         $expectedEparseAttribute = new AttributeMetaData('\SomeAttribute', ['param' => new Initializer(InitializerVariant::Literal, "'value'")]);
         self::assertCount(1, $constants['E_PARSE']->attributes);
         self::assertTrue($expectedEparseAttribute->isSame($constants['E_PARSE']->attributes[0]));
+        self::assertFalse($constants['E_PARSE']->isDeprecated);
 
         self::assertArrayHasKey('CRYPT_STD_DES', $constants);
         self::assertConstantIsSame($constants['CRYPT_STD_DES'], 'CRYPT_STD_DES', new SingleType('int'));
+        self::assertFalse($constants['CRYPT_STD_DES']->isDeprecated);
+
+        self::assertArrayHasKey('DEPRECATED_PHP_DOC', $constants);
+        self::assertConstantIsSame($constants['DEPRECATED_PHP_DOC'], 'DEPRECATED_PHP_DOC', new SingleType('int'));
+        self::assertCount(0, $constants['DEPRECATED_PHP_DOC']->attributes);
+        self::assertTrue($constants['DEPRECATED_PHP_DOC']->isDeprecated);
+
+        self::assertArrayHasKey('DEPRECATED_PHP_ATTRIBUTE', $constants);
+        self::assertConstantIsSame($constants['DEPRECATED_PHP_ATTRIBUTE'], 'DEPRECATED_PHP_ATTRIBUTE', new SingleType('int'));
+        $expectedDeprecatedPhpAttribute = new AttributeMetaData('\Deprecated', ['since' => new Initializer(InitializerVariant::Literal, "'8.1'")]);
+        self::assertCount(1, $constants['DEPRECATED_PHP_ATTRIBUTE']->attributes);
+        self::assertTrue($expectedDeprecatedPhpAttribute->isSame($constants['DEPRECATED_PHP_ATTRIBUTE']->attributes[0]));
+        self::assertTrue($constants['DEPRECATED_PHP_ATTRIBUTE']->isDeprecated);
     }
 
     private static function assertConstantIsSame(ConstantMetaData $constant, string $name, SingleType $type): void
