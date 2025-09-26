@@ -18,7 +18,7 @@ use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 class ParameterMetaDataTest extends TestCase
 {
-    public function test_optional_from_reflection_data()
+    public function test_optional_from_reflection_data(): void
     {
         $stub = <<<'STUB'
 <?php
@@ -58,7 +58,7 @@ STUB;
         self::assertTrue($expectedDefaultValue->isSame($param->defaultValue));
     }
 
-    public function test_variadic_from_reflection_data()
+    public function test_variadic_from_reflection_data(): void
     {
         $stub = <<<'STUB'
 <?php
@@ -87,7 +87,7 @@ STUB;
         self::assertNull($param->defaultValue);
     }
 
-    public function test_by_ref_from_reflection_data()
+    public function test_by_ref_from_reflection_data(): void
     {
         $stub = <<<'STUB'
 <?php
@@ -112,7 +112,7 @@ STUB;
         self::assertNull($param->defaultValue);
     }
 
-    public function test_with_attribute_from_reflection_data()
+    public function test_with_attribute_from_reflection_data(): void
     {
         $stub = <<<'STUB'
 <?php
@@ -141,7 +141,7 @@ STUB;
         self::assertTrue((new AttributeMetaData('\\SensitiveParameter'))->isSame($param->attributes[0]));
     }
 
-    public function test_default_values_const_expr_from_reflection_data()
+    public function test_default_values_const_expr_from_reflection_data(): void
     {
         $stub = <<<'STUB'
 <?php
@@ -199,7 +199,7 @@ STUB;
         self::assertSame('SomeClass::CONST', $params[11]->defaultValue->value);
     }
 
-    public function test_default_values_bitwise_expr_from_reflection_data()
+    public function test_default_values_bitwise_expr_from_reflection_data(): void
     {
         $stub = <<<'STUB'
 <?php
@@ -227,7 +227,7 @@ STUB;
         self::assertSame('FLAG_A|FLAG_B|FLAG_C', $params[1]->defaultValue->value);
     }
 
-    public function test_default_values_function_call_expr_from_reflection_data()
+    public function test_default_values_function_call_expr_from_reflection_data(): void
     {
         $stub = <<<'STUB'
 <?php

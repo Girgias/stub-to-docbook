@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class ConstantListTest extends TestCase
 {
-    public function test_to_xml_varlistentry_list()
+    public function test_to_xml_varlistentry_list(): void
     {
         $document = XMLDocument::createEmpty();
         $constants = [

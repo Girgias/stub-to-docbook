@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class InitializerTest extends TestCase
 {
-    public function test_initializer_is_same()
+    public function test_initializer_is_same(): void
     {
         $constant = new Initializer(InitializerVariant::Constant, 'SOME_CONST');
         self::assertTrue($constant->isSame($constant));
@@ -22,7 +22,7 @@ class InitializerTest extends TestCase
         self::assertFalse($literal->isSame($constant));
     }
 
-    public function test_constant_doc_parsing()
+    public function test_constant_doc_parsing(): void
     {
         $xml = '<initializer><constant>SOME_CONST</constant></initializer>';
 
@@ -33,7 +33,7 @@ class InitializerTest extends TestCase
         self::assertSame('SOME_CONST', $initializer->value);
     }
 
-    public function test_literal_int_doc_parsing()
+    public function test_literal_int_doc_parsing(): void
     {
         $xml = '<initializer><literal>1</literal></initializer>';
 
@@ -44,7 +44,7 @@ class InitializerTest extends TestCase
         self::assertSame('1', $initializer->value);
     }
 
-    public function test_text_int_doc_parsing()
+    public function test_text_int_doc_parsing(): void
     {
         $xml = '<initializer>1</initializer>';
 
@@ -55,7 +55,7 @@ class InitializerTest extends TestCase
         self::assertSame('1', $initializer->value);
     }
 
-    public function test_text_empty_array_doc_parsing()
+    public function test_text_empty_array_doc_parsing(): void
     {
         $xml = '<initializer>[]</initializer>';
 
@@ -66,7 +66,7 @@ class InitializerTest extends TestCase
         self::assertSame('[]', $initializer->value);
     }
 
-    public function test_text_string_doc_parsing()
+    public function test_text_string_doc_parsing(): void
     {
         $xml = '<initializer>"\t"</initializer>';
 
@@ -78,7 +78,7 @@ class InitializerTest extends TestCase
     }
 
     /** This is taken from htmlspecialchars() */
-    public function test_text_bitmask_doc_parsing()
+    public function test_text_bitmask_doc_parsing(): void
     {
         $xml = '<initializer>ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401</initializer>';
 
@@ -90,7 +90,7 @@ class InitializerTest extends TestCase
     }
 
     /** This is taken from reference/stomp/stomp/construct.xml */
-    public function test_text_function_doc_parsing()
+    public function test_text_function_doc_parsing(): void
     {
         $xml = '<initializer>ini_get("stomp.default_broker_uri")</initializer>';
 
@@ -101,7 +101,7 @@ class InitializerTest extends TestCase
         self::assertSame('ini_get("stomp.default_broker_uri")', $initializer->value);
     }
 
-    public function test_text_bad_constant_doc_parsing()
+    public function test_text_bad_constant_doc_parsing(): void
     {
         $xml = '<initializer>PDO::PARAM_STR</initializer>';
 
@@ -112,7 +112,7 @@ class InitializerTest extends TestCase
         self::assertSame('PDO::PARAM_STR', $initializer->value);
     }
 
-    public function test_from_int_scalar_node()
+    public function test_from_int_scalar_node(): void
     {
         $node = Int_::fromString('25');
         $initializer = Initializer::fromPhpParserExpr($node);
@@ -135,7 +135,7 @@ class InitializerTest extends TestCase
         self::assertSame('0b1101', $initializer->value);
     }
 
-    public function test_from_float_scalar_node()
+    public function test_from_float_scalar_node(): void
     {
         $node = Float_::fromString('12.5');
         $initializer = Initializer::fromPhpParserExpr($node);
@@ -148,7 +148,7 @@ class InitializerTest extends TestCase
         self::assertSame('2.4578e12', $initializer->value);
     }
 
-    public function test_from_string_scalar_node()
+    public function test_from_string_scalar_node(): void
     {
         $node = String_::fromString('"This is a simple string"');
         $initializer = Initializer::fromPhpParserExpr($node);

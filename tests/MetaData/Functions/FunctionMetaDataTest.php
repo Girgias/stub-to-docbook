@@ -17,7 +17,7 @@ use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 class FunctionMetaDataTest extends TestCase
 {
-    public function test_basic_from_reflection_data()
+    public function test_basic_from_reflection_data(): void
     {
         $stub = <<<'STUB'
 <?php
@@ -44,7 +44,7 @@ STUB;
         self::assertCount(3, $fn->parameters);
     }
 
-    public function test_is_deprecated_from_reflection_data()
+    public function test_is_deprecated_from_reflection_data(): void
     {
         $stub = <<<'STUB'
 <?php
