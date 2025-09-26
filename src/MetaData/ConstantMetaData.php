@@ -13,12 +13,16 @@ use Roave\BetterReflection\Reflection\ReflectionConstant;
 final class ConstantMetaData
 {
     /* Constructor is public due to table constant handling */
+    /**
+     * @param list<AttributeMetaData> $attributes
+     */
     public function __construct(
         readonly string $name,
         readonly SingleType|null $type,
         readonly string $extension,
         readonly string|null $id,
         readonly string|int|float|null $value = null,
+        readonly array $attributes = [],
         readonly Node|null $description = null,
     ) {}
 
@@ -29,12 +33,17 @@ final class ConstantMetaData
             'TRUE', 'FALSE', 'NULL' => strtolower($name),
             default => $name,
         };
+        $attributes = array_map(
+            AttributeMetaData::fromReflectionData(...),
+            $reflectionData->getAttributes(),
+        );
         return new self(
             $name,
             ReflectionTypeParser::parseTypeForConstant($reflectionData),
             get_extension_name_from_reflection_date($reflectionData),
             'constant.' . xmlify_labels($name),
             value: $reflectionData->getValue(),
+            attributes: $attributes,
         );
     }
 

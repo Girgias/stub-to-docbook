@@ -3,7 +3,10 @@
 namespace MetaData;
 
 use Dom\XMLDocument;
+use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
+use Girgias\StubToDocbook\MetaData\Initializer;
+use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Girgias\StubToDocbook\Types\SingleType;
@@ -34,6 +37,7 @@ const E_WARNING = UNKNOWN;
  * @var int
  * @cvalue E_PARSE
  */
+#[\SomeAttribute(param: 'value')]
 const E_PARSE = UNKNOWN;
 
 /** @var int */
@@ -50,12 +54,19 @@ STUB;
         $constants = ConstantList::fromReflectionDataArray($constants)->constants;
 
         self::assertCount(4, $constants);
+
         self::assertArrayHasKey('E_ERROR', $constants);
         self::assertConstantIsSame($constants['E_ERROR'], 'E_ERROR', new SingleType('int'));
+
         self::assertArrayHasKey('E_WARNING', $constants);
         self::assertConstantIsSame($constants['E_WARNING'], 'E_WARNING', new SingleType('int'));
+
         self::assertArrayHasKey('E_PARSE', $constants);
         self::assertConstantIsSame($constants['E_PARSE'], 'E_PARSE', new SingleType('int'));
+        $expectedEparseAttribute = new AttributeMetaData('\SomeAttribute', ['param' => new Initializer(InitializerVariant::Literal, "'value'")]);
+        self::assertCount(1, $constants['E_PARSE']->attributes);
+        self::assertTrue($expectedEparseAttribute->isSame($constants['E_PARSE']->attributes[0]));
+
         self::assertArrayHasKey('CRYPT_STD_DES', $constants);
         self::assertConstantIsSame($constants['CRYPT_STD_DES'], 'CRYPT_STD_DES', new SingleType('int'));
     }
