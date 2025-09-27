@@ -24,7 +24,15 @@ echo 'There are currently:', PHP_EOL,
 echo "Total 8.4 constants parsed = ", count($prior_version_constants), "\n";
 echo "Total 8.5 constants parsed = ", count($master_constants), "\n";
 
-foreach ($diff->new->constants as $newConstant) {
-    echo 'New constant ', $newConstant->name, ' from extension ', $newConstant->extension, ' with type:', "\n",
-        $newConstant->type->toXml(), "\n";
+foreach ($diff->new->constants as $constant) {
+    echo 'New constant ', $constant->name, ' from extension ', $constant->extension, ' with type:', "\n",
+    $constant->type->toXml(), "\n";
+}
+foreach ($diff->deprecated->constants as $constant) {
+    echo 'Newly deprecated constant ', $constant->name, ' from extension ', $constant->extension, ' with type:', "\n",
+    $constant->type->toXml(), "\n";
+}
+foreach ($diff->removed->constants as $constant) {
+    echo 'Removed constant ', $constant->name, ' from extension ', $constant->extension, ' with type:', "\n",
+    $constant->type->toXml(), "\n";
 }
