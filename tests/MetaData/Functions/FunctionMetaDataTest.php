@@ -68,6 +68,40 @@ STUB;
         self::assertSame([], $fn->parameters);
     }
 
+    public function test_return_type_from_doc_comment_from_reflection_data(): void
+    {
+        $stub = <<<'STUB'
+<?php
+
+/**
+ * @param resource|null $context
+ * @return resource|false
+ * @refcount 1
+ */
+function fopen(string $filename, string $mode, bool $use_include_path = false, $context = null) {}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectFunction('fopen');
+        $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
+
+        self::assertSame('fopen', $fn->name);
+
+        $expectedReturnType = new UnionType([
+            new SingleType('false'),
+            new SingleType('resource'),
+        ]);
+        self::assertTrue($expectedReturnType->isSame($fn->returnType));
+        self::assertFalse($fn->isStatic);
+        self::assertFalse($fn->isDeprecated);
+        self::assertFalse($fn->byRefReturn);
+        self::assertSame([], $fn->attributes);
+        self::assertCount(4, $fn->parameters);
+    }
+
     public function test_is_deprecated_from_reflection_data(): void
     {
         $stub = <<<'STUB'
