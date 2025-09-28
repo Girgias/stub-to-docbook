@@ -48,11 +48,23 @@ final readonly class ParameterMetaData implements Equatable
 
     public static function fromReflectionData(ReflectionParameter $reflectionData): self
     {
+        $name = $reflectionData->getName();
+
         $attributes = array_map(
             AttributeMetaData::fromReflectionData(...),
             $reflectionData->getAttributes()
         );
-        $type = ReflectionTypeParser::convertFromReflectionType($reflectionData->getType());
+
+        $reflectionType = $reflectionData->getType();
+        if ($reflectionType !== null) {
+            $type = ReflectionTypeParser::convertFromReflectionType($reflectionData->getType());
+        } else {
+            /* We need to grab the type from the doc comment */
+            $comment = $reflectionData->getDeclaringFunction()->getDocComment()
+                ?? throw new \Error("Cannot determine parameter type (no declared type nor doc comment on declaring function)");
+            preg_match('/@param (.*) \$' . $name . '/', $comment, $matches);
+            $type = ReflectionTypeParser::parseTypeFromDocCommentString(trim($matches[1]));
+        }
 
         $defaultValue = $reflectionData->getDefaultValueExpression();
         if ($defaultValue) {
@@ -60,7 +72,7 @@ final readonly class ParameterMetaData implements Equatable
         }
 
         return new self(
-            $reflectionData->getName(),
+            $name,
             $reflectionData->getPosition() + 1, /* Reflection position starts at 0 */
             $type,
             $reflectionData->isOptional(),
