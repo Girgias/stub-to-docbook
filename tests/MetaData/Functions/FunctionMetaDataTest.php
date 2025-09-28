@@ -44,6 +44,30 @@ STUB;
         self::assertCount(3, $fn->parameters);
     }
 
+    public function test_no_param_from_reflection_data(): void
+    {
+        $stub = <<<'STUB'
+<?php
+
+function my_function(): void {}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectFunction('my_function');
+        $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
+
+        self::assertSame('my_function', $fn->name);
+        self::assertTrue(new SingleType('void')->isSame($fn->returnType));
+        self::assertFalse($fn->isStatic);
+        self::assertFalse($fn->isDeprecated);
+        self::assertFalse($fn->byRefReturn);
+        self::assertSame([], $fn->attributes);
+        self::assertSame([], $fn->parameters);
+    }
+
     public function test_is_deprecated_from_reflection_data(): void
     {
         $stub = <<<'STUB'
