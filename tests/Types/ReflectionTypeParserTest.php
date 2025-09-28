@@ -34,6 +34,68 @@ function dnf_type(): array|(Traversable&Countable) {}
 
 STUB;
 
+    public function test_are_string_types_properly_parsed(): void
+    {
+        $expectedSimpleType = new SingleType("string");
+        self::assertTrue(
+            $expectedSimpleType->isSame(
+                ReflectionTypeParser::parseTypeFromDocCommentString(
+                    'string',
+                )
+            )
+        );
+
+        $expectedNullbaleSimpleType = new UnionType([
+            new SingleType("null"),
+            new SingleType("string"),
+        ]);
+        self::assertTrue(
+            $expectedNullbaleSimpleType->isSame(
+                ReflectionTypeParser::parseTypeFromDocCommentString(
+                    '?string',
+                )
+            )
+        );
+
+        $expectedSimpleUnionType = new UnionType([
+            new SingleType("resource"),
+            new SingleType("false"),
+        ]);
+        self::assertTrue(
+            $expectedSimpleUnionType->isSame(
+                ReflectionTypeParser::parseTypeFromDocCommentString(
+                    'resource|false',
+                )
+            )
+        );
+
+        $expectedSimpleIntersectionType = new IntersectionType([
+            new SingleType("Countable"),
+            new SingleType("Traversable"),
+        ]);
+        self::assertTrue(
+            $expectedSimpleIntersectionType->isSame(
+                ReflectionTypeParser::parseTypeFromDocCommentString(
+                    'Traversable&Countable',
+                )
+            )
+        );
+
+        $expectedDnfType = new UnionType([
+            new SingleType("array"),
+            new IntersectionType([
+                new SingleType("Countable"),
+                new SingleType("Traversable"),
+            ])
+        ]);
+        self::assertTrue(
+            $expectedDnfType->isSame(
+                ReflectionTypeParser::parseTypeFromDocCommentString(
+                    '(Traversable&Countable)|array',
+                )
+            )
+        );
+    }
 
     public function test_can_retrieve_constants(): void
     {
