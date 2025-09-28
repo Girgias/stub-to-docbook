@@ -10,6 +10,7 @@ use PhpParser\Node\Expr\BinaryOp\BitwiseOr;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\UnaryMinus;
 use PhpParser\Node\Scalar\Float_;
 use PhpParser\Node\Scalar\Int_;
 use PhpParser\Node\Scalar\String_;
@@ -71,7 +72,7 @@ final class Initializer implements Equatable
     public static function fromPhpParserExpr(Expr $expr): self
     {
         return match ($expr::class) {
-            Int_::class, String_::class, Float_::class, Array_::class
+            Int_::class, String_::class, Float_::class, Array_::class, UnaryMinus::class
                 => new self(InitializerVariant::Literal, self::phpParserExprToString($expr)),
             ConstFetch::class, ClassConstFetch::class
                 => new self(InitializerVariant::Constant, self::phpParserExprToString($expr)),
@@ -85,6 +86,8 @@ final class Initializer implements Equatable
         // TODO: We trim leading \ prefix, should we do this?
         return ltrim(match ($expr::class) {
             // TODO: Pretty print will not keep original code value, do we care?
+            UnaryMinus::class
+                => '-' . self::phpParserExprToString($expr->expr),
             Int_::class, Float_::class
                 => $expr->getAttribute('rawValue'),
             BitwiseOr::class
