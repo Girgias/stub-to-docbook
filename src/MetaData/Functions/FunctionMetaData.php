@@ -45,7 +45,16 @@ final readonly class FunctionMetaData implements Equatable
 
     public static function fromReflectionData(ReflectionFunction $reflectionData): self
     {
-        $returnType = ReflectionTypeParser::convertFromReflectionType($reflectionData->getReturnType());
+        $reflectionType = $reflectionData->getReturnType();
+        if ($reflectionType !== null) {
+            $returnType = ReflectionTypeParser::convertFromReflectionType($reflectionData->getReturnType());
+        } else {
+            /* We need to grab the type from the doc comment */
+            $comment = $reflectionData->getDocComment()
+                ?? throw new \Error("Cannot determine return type (no declared type nor doc comment)");
+            preg_match('/@return (.*)/', $comment, $matches);
+            $returnType = ReflectionTypeParser::parseTypeFromDocCommentString(trim($matches[1]));
+        }
         $parameters = array_map(
             ParameterMetaData::fromReflectionData(...),
             $reflectionData->getParameters(),
