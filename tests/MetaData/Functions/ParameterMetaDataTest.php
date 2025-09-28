@@ -87,6 +87,34 @@ STUB;
         self::assertNull($param->defaultValue);
     }
 
+    public function test_type_in_doc_comment_from_reflection_data(): void
+    {
+        $stub = <<<'STUB'
+<?php
+/**
+ * @param string $type_doc
+ */
+function my_function($type_doc): array {}
+STUB;
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectFunction('my_function');
+        $param = $reflectionFunction->getParameter('type_doc');
+        $param = ParameterMetaData::fromReflectionData($param);
+
+        self::assertSame('type_doc', $param->name);
+        self::assertSame(1, $param->position);
+        self::assertTrue((new SingleType('string'))->isSame($param->type));
+        self::assertFalse($param->isVariadic);
+        /* isVariadic => isOptional() however not sure we want those semantics */
+        self::assertFalse($param->isOptional);
+        self::assertFalse($param->isByRef);
+        self::assertSame([], $param->attributes);
+        self::assertNull($param->defaultValue);
+    }
+
     public function test_by_ref_from_reflection_data(): void
     {
         $stub = <<<'STUB'
