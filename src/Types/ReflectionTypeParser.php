@@ -32,6 +32,39 @@ final class ReflectionTypeParser
         return new SingleType(self::parseTypeForConstantAsString($reflectionData));
     }
 
+    public static function parseTypeFromDocCommentString(string $typeString): Type
+    {
+        if ($typeString[0] === '?') {
+            $typeString = substr($typeString, 1);
+            return new UnionType([
+                new SingleType($typeString),
+                new SingleType('null'),
+            ]);
+        }
+        if (str_contains($typeString, '|')) {
+            return new UnionType(
+                /** @phpstan-ignore argument.type (Recursive calls prevent narrowing types, and an error indicated bogus string type) */
+                array_map(
+                    self::parseTypeFromDocCommentString(...),
+                    explode('|', $typeString),
+                )
+            );
+        }
+        if (str_contains($typeString, '(') || str_contains($typeString, '&')) {
+            return new IntersectionType(
+                /** @phpstan-ignore argument.type (Recursive calls prevent narrowing types, and an error indicated bogus string type) */
+                array_map(
+                    self::parseTypeFromDocCommentString(...),
+                    explode(
+                        '&',
+                        trim($typeString, '()')
+                    ),
+                )
+            );
+        }
+        return new SingleType($typeString);
+    }
+
     public static function convertFromReflectionType(
         ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType $reflectionType
     ): Type
