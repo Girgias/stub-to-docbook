@@ -4,7 +4,7 @@
     "type": "project",
     "require": {
         "php": "^8.4",
-        "roave/better-reflection": "^6.64",
+        "roave/better-reflection": "^6.65",
         "ext-dom": "*",
         "ext-libxml": "*"
     },
