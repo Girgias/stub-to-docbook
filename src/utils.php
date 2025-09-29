@@ -15,3 +15,11 @@ function get_extension_name_from_reflection_date(
 {
     return $reflectionData->getExtensionName() ?? 'Core';
 }
+
+/**
+ * @param object{isDeprecated: bool} $symbol
+ */
+function symbol_is_deprecated(object $symbol): bool
+{
+    return $symbol->isDeprecated;
+}
