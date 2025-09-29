@@ -22,6 +22,7 @@ final readonly class FunctionMetaData implements Equatable
         readonly string $name,
         readonly array $parameters,
         readonly Type $returnType,
+        readonly string $extension,
         readonly bool $byRefReturn = false,
         readonly array $attributes = [],
         readonly bool $isStatic = false,
@@ -67,6 +68,7 @@ final readonly class FunctionMetaData implements Equatable
             $reflectionData->getName(),
             $parameters,
             $returnType,
+            $reflectionData->getExtensionName(),
             $reflectionData->returnsReference(),
             $attributes,
             $reflectionData->isStatic(),
@@ -78,7 +80,7 @@ final readonly class FunctionMetaData implements Equatable
      * DocBook 5.2 <methodsynopsis> documentation
      * URL: https://tdg.docbook.org/tdg/5.2/methodsynopsis
      */
-    public static function parseFromDoc(Element $element): FunctionMetaData
+    public static function parseFromDoc(Element $element, string $extension): FunctionMetaData
     {
 
         if ($element->tagName !== 'methodsynopsis') {
@@ -150,6 +152,7 @@ final readonly class FunctionMetaData implements Equatable
             $name,
             $parameters,
             $returnType,
+            $extension,
             $byRefReturn,
             $attributes,
             $isStatic,

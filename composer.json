@@ -19,6 +19,11 @@
             "Girgias\\StubToDocbook\\": "src/"
         }
     },
+    "autoload-dev": {
+      "psr-4": {
+        "Girgias\\StubToDocbook\\Tests\\": "tests/"
+      }
+    },
     "authors": [
         {
             "name": "Gina Peter Banyard",
