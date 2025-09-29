@@ -54,7 +54,7 @@ final class DocumentedFunction
         );
     }
 
-    public static function parseFromDoc(Element $element): ?DocumentedFunction
+    public static function parseFromDoc(Element $element, string $extension): ?DocumentedFunction
     {
         $id = $element->id;
         $parameters = [];
@@ -71,7 +71,7 @@ final class DocumentedFunction
             // TODO Handle more than 1 <methodsynopsis> tag
             return null;
         }
-        $fn = FunctionMetaData::parseFromDoc($methodSynopsis[0]);
+        $fn = FunctionMetaData::parseFromDoc($methodSynopsis[0], $extension);
 
         /* We only want to select the <varlistentry> from the top level <variablelist>.
          * However, dumb XML markup means that we might encounter a para tag */

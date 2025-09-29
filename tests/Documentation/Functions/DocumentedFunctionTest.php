@@ -33,7 +33,7 @@ class DocumentedFunctionTest extends TestCase
     public function test_parsing_gmp_xml(): void
     {
         $root = $this->loadXml(self::GMP_INIT);
-        $documentedFunction = DocumentedFunction::parseFromDoc($root);
+        $documentedFunction = DocumentedFunction::parseFromDoc($root, 'gmp');
 
         $expectedFn = new FunctionMetaData(
             'gmp_init',
@@ -58,6 +58,7 @@ class DocumentedFunctionTest extends TestCase
                 ),
             ],
             new SingleType('GMP'),
+            'gmp',
         );
 
         $expectedDocumentedParams = [
@@ -75,7 +76,7 @@ class DocumentedFunctionTest extends TestCase
     public function test_parsing_isset_xml(): void
     {
         $root = $this->loadXml(self::ISSET);
-        $documentedFunction = DocumentedFunction::parseFromDoc($root);
+        $documentedFunction = DocumentedFunction::parseFromDoc($root, 'core');
 
         $expectedFn = new FunctionMetaData(
             'isset',
@@ -93,6 +94,7 @@ class DocumentedFunctionTest extends TestCase
                 ),
             ],
             new SingleType('bool'),
+            'core',
         );
 
         $expectedDocumentedParams = [
@@ -110,7 +112,7 @@ class DocumentedFunctionTest extends TestCase
     public function test_parsing_password_hash_xml(): void
     {
         $root = $this->loadXml(self::PASSWORD_HASH);
-        $documentedFunction = DocumentedFunction::parseFromDoc($root);
+        $documentedFunction = DocumentedFunction::parseFromDoc($root, 'hash');
 
         $expectedFn = new FunctionMetaData(
             'password_hash',
@@ -144,6 +146,7 @@ class DocumentedFunctionTest extends TestCase
                 ),
             ],
             new SingleType('string'),
+            'hash',
         );
 
         $expectedDocumentedParams = [

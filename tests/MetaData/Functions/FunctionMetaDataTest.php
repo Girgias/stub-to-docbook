@@ -9,11 +9,11 @@ use Girgias\StubToDocbook\MetaData\Functions\ParameterMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
+use Girgias\StubToDocbook\Tests\ZendEngineStringSourceLocator;
 use Girgias\StubToDocbook\Types\SingleType;
 use Girgias\StubToDocbook\Types\UnionType;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 class FunctionMetaDataTest extends TestCase
 {
@@ -30,7 +30,7 @@ STUB;
 
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $reflectionFunction = $reflector->reflectFunction('array_column');
         $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
@@ -54,7 +54,7 @@ STUB;
 
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $reflectionFunction = $reflector->reflectFunction('my_function');
         $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
@@ -83,7 +83,7 @@ STUB;
 
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $reflectionFunction = $reflector->reflectFunction('fopen');
         $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
@@ -112,7 +112,7 @@ STUB;
 
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $reflectionFunction = $reflector->reflectFunction('enchant_broker_free');
         $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
@@ -135,12 +135,13 @@ STUB;
 </methodsynopsis>
 XML;
         $document = XMLDocument::createFromString($xml);
-        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
 
         $expectedFunction = new FunctionMetaData(
             'test_function',
             [],
             new SingleType('string'),
+            'none',
         );
 
         self::assertTrue($fn->isSame($expectedFunction));
@@ -156,7 +157,7 @@ XML;
 </methodsynopsis>
 XML;
         $document = XMLDocument::createFromString($xml);
-        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
 
         $expectedFunction = new FunctionMetaData(
             'test_variadic',
@@ -174,6 +175,7 @@ XML;
                 ),
             ],
             new SingleType('bool'),
+            'none',
         );
 
         self::assertTrue($fn->isSame($expectedFunction));
@@ -189,7 +191,7 @@ XML;
 </methodsynopsis>
 XML;
         $document = XMLDocument::createFromString($xml);
-        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
 
         $expectedFunction = new FunctionMetaData(
             'test_attribute',
@@ -201,6 +203,7 @@ XML;
                 ),
             ],
             new SingleType('bool'),
+            'none',
             attributes: [
                 new AttributeMetaData('\\Deprecated'),
             ],
@@ -223,7 +226,7 @@ XML;
 </methodsynopsis>
 XML;
         $document = XMLDocument::createFromString($xml);
-        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
 
         $expectedFunction = new FunctionMetaData(
             'test_complete_function',
@@ -265,6 +268,7 @@ XML;
                 new SingleType('string'),
                 new SingleType('false'),
             ]),
+            'none',
             attributes: [
                 new AttributeMetaData('\\Deprecated'),
             ],
