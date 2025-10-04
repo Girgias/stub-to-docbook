@@ -33,8 +33,7 @@ final class ConstantList implements Countable
             ConstantMetaData::fromReflectionData(...),
             $reflectionData,
         );
-        $constNames = array_map(fn(ConstantMetaData $constant) => $constant->name, $consts);
-        $constDict = array_combine($constNames, $consts);
+        $constDict = named_symbol_list_to_map($consts);
         foreach ($ignoredConstants as $name) {
             unset($constDict[$name]);
         }
