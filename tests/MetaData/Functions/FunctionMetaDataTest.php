@@ -127,6 +127,167 @@ STUB;
         self::assertCount(1, $fn->parameters);
     }
 
+    public function test_public_method_from_reflection_data(): void
+    {
+        $stub = <<<'STUB'
+<?php
+class Foo {
+    public function method(): void {}
+}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectClass('Foo')->getMethod('method');
+        $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
+
+        $expectedFunction = new FunctionMetaData(
+            'method',
+            [],
+            new SingleType('void'),
+            'internal',
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_protected_method_from_reflection_data(): void
+    {
+        $stub = <<<'STUB'
+<?php
+class Foo {
+    protected function method(): void {}
+}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectClass('Foo')->getMethod('method');
+        $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
+
+        $expectedFunction = new FunctionMetaData(
+            'method',
+            [],
+            new SingleType('void'),
+            'internal',
+            visibility: Visibility::Protected,
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_private_method_from_reflection_data(): void
+    {
+        $stub = <<<'STUB'
+<?php
+class Foo {
+    private function method(): void {}
+}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectClass('Foo')->getMethod('method');
+        $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
+
+        $expectedFunction = new FunctionMetaData(
+            'method',
+            [],
+            new SingleType('void'),
+            'internal',
+            visibility: Visibility::Private,
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_final_public_method_from_reflection_data(): void
+    {
+        $stub = <<<'STUB'
+<?php
+class Foo {
+    final public function method(): void {}
+}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectClass('Foo')->getMethod('method');
+        $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
+
+        $expectedFunction = new FunctionMetaData(
+            'method',
+            [],
+            new SingleType('void'),
+            'internal',
+            isFinal: true,
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_static_public_method_from_reflection_data(): void
+    {
+        $stub = <<<'STUB'
+<?php
+class Foo {
+    public static function method(): void {}
+}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectClass('Foo')->getMethod('method');
+        $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
+
+        $expectedFunction = new FunctionMetaData(
+            'method',
+            [],
+            new SingleType('void'),
+            'internal',
+            isStatic: true,
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_abstract_public_method_from_reflection_data(): void
+    {
+        $stub = <<<'STUB'
+<?php
+class Foo {
+    abstract public function method(): void {}
+}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectClass('Foo')->getMethod('method');
+        $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
+
+        $expectedFunction = new FunctionMetaData(
+            'method',
+            [],
+            new SingleType('void'),
+            'internal',
+            isAbstract: true,
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
     public function test_no_param_function_parsing(): void
     {
         $xml = <<<'XML'

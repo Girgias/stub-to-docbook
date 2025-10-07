@@ -12,6 +12,7 @@ use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\ReflectionTypeParser;
 use Girgias\StubToDocbook\Types\Type;
 use Roave\BetterReflection\Reflection\ReflectionFunction;
+use Roave\BetterReflection\Reflection\ReflectionMethod;
 
 final readonly class FunctionMetaData implements Equatable
 {
@@ -51,7 +52,7 @@ final readonly class FunctionMetaData implements Equatable
         ;
     }
 
-    public static function fromReflectionData(ReflectionFunction $reflectionData): self
+    public static function fromReflectionData(ReflectionFunction|ReflectionMethod $reflectionData): self
     {
         $isFinal = false;
         $isAbstract = false;
@@ -75,6 +76,13 @@ final readonly class FunctionMetaData implements Equatable
             AttributeMetaData::fromReflectionData(...),
             $reflectionData->getAttributes(),
         );
+
+        if ($reflectionData instanceof ReflectionMethod) {
+            $isFinal = $reflectionData->isFinal();
+            $isAbstract = $reflectionData->isAbstract();
+            $visibility = Visibility::fromReflectionData($reflectionData);
+        }
+
         return new self(
             $reflectionData->getName(),
             $parameters,
