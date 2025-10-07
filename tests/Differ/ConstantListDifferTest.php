@@ -144,12 +144,7 @@ STUB;
         ];
         $docList = new ConstantList($docConstants);
 
-        $astLocator = (new BetterReflection())->astLocator();
-        $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator(self::STUB_FILE_STR, $astLocator),
-        ]);
-        $constants = $reflector->reflectAllConstants();
-        $stubList = ConstantList::fromReflectionDataArray($constants);
+        $stubList = self::reflectionDataFromStubString(self::STUB_FILE_STR);
 
         $stubDiff = ConstantListDiffer::diff($stubList, $docList);
         self::assertSame(1, $stubDiff->valid);
@@ -164,19 +159,8 @@ STUB;
 
     public function test_diff_between_two_stub_files(): void
     {
-        $astLocator = (new BetterReflection())->astLocator();
-
-        $baseReflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator(self::BASE_STUB_FILE_STR, $astLocator),
-        ]);
-        $baseConstants = $baseReflector->reflectAllConstants();
-        $baseConstantList = ConstantList::fromReflectionDataArray($baseConstants);
-
-        $newReflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator(self::NEW_STUB_FILE_STR, $astLocator),
-        ]);
-        $newConstants = $newReflector->reflectAllConstants();
-        $newConstantList = ConstantList::fromReflectionDataArray($newConstants);
+        $baseConstantList = self::reflectionDataFromStubString(self::BASE_STUB_FILE_STR);
+        $newConstantList = self::reflectionDataFromStubString(self::NEW_STUB_FILE_STR);
 
         $diff = ConstantListDiffer::stubDiff($baseConstantList, $newConstantList);
         self::assertCount(1, $diff->new);
@@ -190,5 +174,15 @@ STUB;
         self::assertCount(1, $diff->deprecated);
         self::assertArrayHasKey('WILL_BE_DEPRECATED', $diff->deprecated->constants);
         self::assertSame('WILL_BE_DEPRECATED', $diff->deprecated->constants['WILL_BE_DEPRECATED']->name);
+    }
+
+    private static function reflectionDataFromStubString(string $stub): ConstantList
+    {
+        $astLocator = (new BetterReflection())->astLocator();
+
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator($stub, $astLocator),
+        ]);
+        return ConstantList::fromReflectionDataArray($reflector->reflectAllConstants());
     }
 }

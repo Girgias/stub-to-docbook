@@ -62,17 +62,8 @@ STUB;
 
     public function test_diff_between_two_stub_files(): void
     {
-        $astLocator = (new BetterReflection())->astLocator();
-
-        $baseReflector = ZendEngineReflector::newZendEngineReflector([
-            new ZendEngineStringSourceLocator(self::BASE_STUB_FILE_STR, $astLocator),
-        ]);
-        $baseSymbols = from_better_reflection_list_to_metadata(FunctionMetaData::class, $baseReflector->reflectAllFunctions());
-
-        $newReflector = ZendEngineReflector::newZendEngineReflector([
-            new ZendEngineStringSourceLocator(self::NEW_STUB_FILE_STR, $astLocator),
-        ]);
-        $newSymbols = from_better_reflection_list_to_metadata(FunctionMetaData::class, $newReflector->reflectAllFunctions());
+        $baseSymbols = self::reflectionDataFromStubString(self::BASE_STUB_FILE_STR);
+        $newSymbols = self::reflectionDataFromStubString(self::NEW_STUB_FILE_STR);
 
         $diff = FunctionListDiffer::stubDiff($baseSymbols, $newSymbols);
         self::assertCount(1, $diff->new);
@@ -86,5 +77,19 @@ STUB;
         self::assertCount(1, $diff->deprecated);
         self::assertArrayHasKey('will_be_deprecated', $diff->deprecated);
         self::assertSame('will_be_deprecated', $diff->deprecated['will_be_deprecated']->name);
+    }
+
+    /**
+     * @param string $stub
+     * @return array<string, FunctionMetaData>
+     */
+    private static function reflectionDataFromStubString(string $stub): array
+    {
+        $astLocator = (new BetterReflection())->astLocator();
+
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        return from_better_reflection_list_to_metadata(FunctionMetaData::class, $reflector->reflectAllFunctions());
     }
 }
