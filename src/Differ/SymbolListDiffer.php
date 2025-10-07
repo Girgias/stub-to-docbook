@@ -2,16 +2,21 @@
 
 namespace Girgias\StubToDocbook\Differ;
 
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 
-final class FunctionListDiffer
+/**
+ * @template T of FunctionMetaData|ConstantMetaData
+ */
+final class SymbolListDiffer
 {
     /**
-     * @param array<string, FunctionMetaData> $baseVersion
-     * @param array<string, FunctionMetaData> $newVersion
+     * @param array<string, T> $baseVersion
+     * @param array<string, T> $newVersion
      * TODO: Function Signature differences between existing functions
+     * @return SymbolStubMapDiff<T>
      */
-    public static function stubDiff(array $baseVersion, array $newVersion): FunctionStubMapDiff
+    public static function stubDiff(array $baseVersion, array $newVersion): SymbolStubMapDiff
     {
         $newSymbols = array_diff_key($newVersion, $baseVersion);
 
@@ -22,7 +27,7 @@ final class FunctionListDiffer
         $newDeprecationsSymbols = array_diff_key($newDeprecated, $baseDeprecated);
 
 
-        return new FunctionStubMapDiff(
+        return new SymbolStubMapDiff(
             $newSymbols,
             $removedSymbols,
             $newDeprecationsSymbols,
