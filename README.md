@@ -37,21 +37,25 @@ The stub files are parsed with [`Roave/BetterReflection`](https://github.com/Roa
 - [x] Parsing of Documentation sources for functions
   - [ ] Handle pages with multiple methodsynopsis
   - [ ] Parsing of Documentation sources for methods
-    - [ ] `final` modifier
-    - [ ] `static` modifier
+    - [x] `final` modifier
+    - [x] `static` modifier
     - [ ] Inherited?
 - [ ] Parsing of Documentation sources for classes
-  - [ ] Properties
+  - [ ] Properties (no cases where attributes are attached)
+  - [ ] Constants (no cases where attributes are attached)
+- [ ] Parsing of Documentation sources for enums
 - [ ] Diff
   - [ ] Between stub and documentation
     - [x] Constant diff (kinda see `scripts/parse-stub.php`)
     - [ ] Function diff
     - [ ] Class diff
+    - [ ] Enum diff
   - [ ] Between different stubs (e.g. 8.4 and 8.5) (see `scripts/migration-diff.php`)
-      - [x] Constant diff
-      - [x] Function diff
-      - [ ] Class diff
-      - [ ] Modified symbols
+    - [x] Constant diff
+    - [x] Function diff
+    - [ ] Class diff
+    - [ ] Enum diff
+    - [ ] Modified symbols
 - [ ] Generate missing constants
 - [ ] Generate missing functions
 - [ ] Generate missing predefined classes with methods
