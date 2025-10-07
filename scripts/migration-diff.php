@@ -64,11 +64,11 @@ $master_dir = dirname(__DIR__, 2) . '/PHP-8.5/';
 
 $prior_version_reflector = get_reflector($prior_version_dir);
 $prior_version_constants = ConstantList::fromReflectionDataArray($prior_version_reflector->reflectAllConstants(), IGNORED_CONSTANTS);
-$prior_version_functions = from_better_reflection_list_to_metadata($prior_version_reflector->reflectAllFunctions());
+$prior_version_functions = from_better_reflection_list_to_metadata(FunctionMetaData::class, $prior_version_reflector->reflectAllFunctions());
 
 $master_reflector = get_reflector($master_dir);
 $master_constants = ConstantList::fromReflectionDataArray($master_reflector->reflectAllConstants(), IGNORED_CONSTANTS);
-$master_functions = from_better_reflection_list_to_metadata($master_reflector->reflectAllFunctions());
+$master_functions = from_better_reflection_list_to_metadata(FunctionMetaData::class, $master_reflector->reflectAllFunctions());
 
 $diffC = ConstantListDiffer::stubDiff($prior_version_constants, $master_constants);
 $diffF = FunctionListDiffer::stubDiff($prior_version_functions, $master_functions);

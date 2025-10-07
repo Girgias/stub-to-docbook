@@ -1,5 +1,6 @@
 <?php
 
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 use Roave\BetterReflection\Reflection\ReflectionFunction;
 use Roave\BetterReflection\Reflection\ReflectionConstant;
@@ -37,13 +38,17 @@ function named_symbol_list_to_map(array $list): array {
 }
 
 /**
- * @param list<ReflectionFunction> $list
- * @return array<string, FunctionMetaData>
+ * @template O of ConstantMetaData|FunctionMetaData
+ * @template I of ReflectionConstant|ReflectionFunction|ReflectionClass|ReflectionClassConstant
+ * @param class-string<O> $class
+ * @param list<I> $list
+ * @return array<string, O>
  */
-function from_better_reflection_list_to_metadata(array $list): array
+function from_better_reflection_list_to_metadata(string $class, array $list): array
 {
+    /** @var list<O> $fns */
     $fns = array_map(
-        FunctionMetaData::fromReflectionData(...),
+        $class::fromReflectionData(...),
         $list,
     );
     return named_symbol_list_to_map($fns);
