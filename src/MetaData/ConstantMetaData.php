@@ -8,6 +8,7 @@ use Dom\XMLDocument;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\ReflectionTypeParser;
 use Girgias\StubToDocbook\Types\SingleType;
+use Roave\BetterReflection\Reflection\ReflectionClassConstant;
 use Roave\BetterReflection\Reflection\ReflectionConstant;
 
 final class ConstantMetaData
@@ -24,11 +25,16 @@ final class ConstantMetaData
         readonly string|int|float|null $value = null,
         readonly array $attributes = [],
         readonly bool $isDeprecated = false,
+        readonly bool $isFinal = false,
+        readonly Visibility $visibility = Visibility::Public,
         readonly Node|null $description = null,
     ) {}
 
-    public static function fromReflectionData(ReflectionConstant $reflectionData): self
+    public static function fromReflectionData(ReflectionConstant|ReflectionClassConstant $reflectionData): self
     {
+        $isFinal = false;
+        $visibility = Visibility::Public;
+
         $name = $reflectionData->getName();
         $name = match ($name) {
             'TRUE', 'FALSE', 'NULL' => strtolower($name),
@@ -38,6 +44,12 @@ final class ConstantMetaData
             AttributeMetaData::fromReflectionData(...),
             $reflectionData->getAttributes(),
         );
+
+        if ($reflectionData instanceof ReflectionClassConstant) {
+            $visibility = Visibility::fromReflectionData($reflectionData);
+            $isFinal = $reflectionData->isFinal();
+        }
+
         return new self(
             $name,
             ReflectionTypeParser::parseTypeForConstant($reflectionData),
@@ -46,6 +58,8 @@ final class ConstantMetaData
             value: $reflectionData->getValue(),
             attributes: $attributes,
             isDeprecated: $reflectionData->isDeprecated(),
+            isFinal: $isFinal,
+            visibility: $visibility,
         );
     }
 

@@ -2,6 +2,7 @@
 
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
+use Roave\BetterReflection\Reflection\ReflectionClassConstant;
 use Roave\BetterReflection\Reflection\ReflectionFunction;
 use Roave\BetterReflection\Reflection\ReflectionConstant;
 use Roave\BetterReflection\Reflection\ReflectionClass;
@@ -12,9 +13,12 @@ function xmlify_labels(string $label): string
 }
 
 function get_extension_name_from_reflection_date(
-    ReflectionFunction|ReflectionConstant|ReflectionClass $reflectionData
+    ReflectionFunction|ReflectionConstant|ReflectionClass|ReflectionClassConstant $reflectionData
 ): string
 {
+    if ($reflectionData instanceof ReflectionClassConstant) {
+        return $reflectionData->getDeclaringClass()->getExtensionName();
+    }
     return $reflectionData->getExtensionName() ?? 'Core';
 }
 

@@ -2,6 +2,7 @@
 
 namespace Girgias\StubToDocbook\Types;
 
+use Roave\BetterReflection\Reflection\ReflectionClassConstant;
 use Roave\BetterReflection\Reflection\ReflectionConstant;
 use Roave\BetterReflection\Reflection\ReflectionIntersectionType;
 use Roave\BetterReflection\Reflection\ReflectionNamedType;
@@ -9,7 +10,7 @@ use Roave\BetterReflection\Reflection\ReflectionUnionType;
 
 final class ReflectionTypeParser
 {
-    private static function parseTypeForConstantAsString(ReflectionConstant $reflectionData): string
+    private static function parseTypeForConstantAsString(ReflectionConstant|ReflectionClassConstant $reflectionData): string
     {
         $docComment = $reflectionData->getDocComment();
         if ($docComment === null) {
@@ -27,7 +28,7 @@ final class ReflectionTypeParser
         }
         return trim(substr($docComment, $startTypeAnnotation, $endTypeAnnotation - $startTypeAnnotation));
     }
-    public static function parseTypeForConstant(ReflectionConstant $reflectionData): SingleType
+    public static function parseTypeForConstant(ReflectionConstant|ReflectionClassConstant $reflectionData): SingleType
     {
         return new SingleType(self::parseTypeForConstantAsString($reflectionData));
     }

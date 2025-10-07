@@ -8,7 +8,9 @@ use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
+use Girgias\StubToDocbook\MetaData\Visibility;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
+use Girgias\StubToDocbook\Tests\ZendEngineStringSourceLocator;
 use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\BetterReflection;
@@ -103,6 +105,49 @@ STUB;
     {
         self::assertSame($name, $constant->name);
         self::assertTrue($type->isSame($constant->type));
+    }
+
+    public function test_class_constants(): void
+    {
+
+        $stub = <<<'STUB'
+<?php
+
+/** @generate-class-entries */
+class Foo {
+    const int MY_CONST = UNKNOWN;
+    protected const int PROTECTED_CONST = UNKNOWN;
+    private const int PRIVATE_CONST = UNKNOWN;
+    final const int FINAL_CONST = UNKNOWN;
+}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+
+        $constants = array_map(
+            ConstantMetaData::fromReflectionData(...),
+            $reflector->reflectClass('foo')->getConstants()
+        );
+
+        self::assertCount(4, $constants);
+        self::assertArrayHasKey('MY_CONST', $constants);
+        self::assertSame(Visibility::Public, $constants['MY_CONST']->visibility);
+        self::assertFalse($constants['MY_CONST']->isFinal);
+
+        self::assertArrayHasKey('PROTECTED_CONST', $constants);
+        self::assertSame(Visibility::Protected, $constants['PROTECTED_CONST']->visibility);
+        self::assertFalse($constants['PROTECTED_CONST']->isFinal);
+
+        self::assertArrayHasKey('PRIVATE_CONST', $constants);
+        self::assertSame(Visibility::Private, $constants['PRIVATE_CONST']->visibility);
+        self::assertFalse($constants['PRIVATE_CONST']->isFinal);
+
+        self::assertArrayHasKey('FINAL_CONST', $constants);
+        self::assertSame(Visibility::Public, $constants['FINAL_CONST']->visibility);
+        self::assertTrue($constants['FINAL_CONST']->isFinal);
     }
 
     public function test_varlistentry_constant_parsing_all_data(): void
