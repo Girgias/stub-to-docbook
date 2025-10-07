@@ -2,6 +2,7 @@
 
 namespace Girgias\StubToDocbook\Differ;
 
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 
 class ConstantListDiffer
@@ -40,28 +41,19 @@ class ConstantListDiffer
         );
     }
 
-    public static function stubDiff(ConstantList $baseVersion, ConstantList $newVersion): ConstantStubListDiff
+    /**
+     * @param array<string, ConstantMetaData> $baseVersion
+     * @param array<string, ConstantMetaData> $newVersion
+     */
+    public static function stubDiff(array $baseVersion, array $newVersion): ConstantStubListDiff
     {
-        $newConstants = [];
-        $removedConstants = [];
-        $deprecatedConstants = [];
+        $newConstants = array_diff_key($newVersion, $baseVersion);
 
-        $newNames = array_diff_key($newVersion->constants, $baseVersion->constants);
-        foreach ($newNames as $name => $_) {
-            $newConstants[$name] = $newVersion->constants[$name];
-        }
+        $removedConstants = array_diff_key($baseVersion, $newVersion);
 
-        $removedNames = array_diff_key($baseVersion->constants, $newVersion->constants);
-        foreach ($removedNames as $name => $_) {
-            $removedConstants[$name] = $baseVersion->constants[$name];
-        }
-
-        $baseDeprecated = array_filter($baseVersion->constants, symbol_is_deprecated(...));
-        $newDeprecated = array_filter($newVersion->constants, symbol_is_deprecated(...));
-        $newDeprecationsNames = array_diff_key($newDeprecated, $baseDeprecated);
-        foreach ($newDeprecationsNames as $name => $_) {
-            $deprecatedConstants[$name] = $newVersion->constants[$name];
-        }
+        $baseDeprecated = array_filter($baseVersion, symbol_is_deprecated(...));
+        $newDeprecated = array_filter($newVersion, symbol_is_deprecated(...));
+        $deprecatedConstants = array_diff_key($newDeprecated, $baseDeprecated);
 
         return new ConstantStubListDiff(
             new ConstantList($newConstants),
