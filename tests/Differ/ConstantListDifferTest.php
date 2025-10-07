@@ -162,7 +162,7 @@ STUB;
         $baseConstantList = self::reflectionDataFromStubString(self::BASE_STUB_FILE_STR);
         $newConstantList = self::reflectionDataFromStubString(self::NEW_STUB_FILE_STR);
 
-        $diff = ConstantListDiffer::stubDiff($baseConstantList, $newConstantList);
+        $diff = ConstantListDiffer::stubDiff($baseConstantList->constants, $newConstantList->constants);
         self::assertCount(1, $diff->new);
         self::assertArrayHasKey('NEW_CONSTANT', $diff->new->constants);
         self::assertSame('NEW_CONSTANT', $diff->new->constants['NEW_CONSTANT']->name);
