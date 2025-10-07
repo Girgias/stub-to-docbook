@@ -7,6 +7,7 @@ use Dom\Text;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
+use Girgias\StubToDocbook\MetaData\Visibility;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\ReflectionTypeParser;
 use Girgias\StubToDocbook\Types\Type;
@@ -26,6 +27,9 @@ final readonly class FunctionMetaData implements Equatable
         readonly bool $byRefReturn = false,
         readonly array $attributes = [],
         readonly bool $isStatic = false,
+        readonly bool $isAbstract = false,
+        readonly bool $isFinal = false,
+        readonly Visibility $visibility = Visibility::Public,
         readonly bool $isDeprecated = false,
     ) {}
 
@@ -40,12 +44,19 @@ final readonly class FunctionMetaData implements Equatable
             && Utils::equateList($this->parameters, $other->parameters)
             && Utils::equateList($this->attributes, $other->attributes)
             && $this->isStatic === $other->isStatic
+            && $this->isAbstract === $other->isAbstract
+            && $this->isFinal === $other->isFinal
+            && $this->visibility === $other->visibility
             && $this->isDeprecated === $other->isDeprecated
         ;
     }
 
     public static function fromReflectionData(ReflectionFunction $reflectionData): self
     {
+        $isFinal = false;
+        $isAbstract = false;
+        $visibility = Visibility::Public;
+
         $reflectionType = $reflectionData->getReturnType();
         if ($reflectionType !== null) {
             $returnType = ReflectionTypeParser::convertFromReflectionType($reflectionData->getReturnType());
@@ -68,11 +79,14 @@ final readonly class FunctionMetaData implements Equatable
             $reflectionData->getName(),
             $parameters,
             $returnType,
-            $reflectionData->getExtensionName(),
-            $reflectionData->returnsReference(),
-            $attributes,
-            $reflectionData->isStatic(),
-            $reflectionData->isDeprecated(),
+            extension: $reflectionData->getExtensionName(),
+            byRefReturn: $reflectionData->returnsReference(),
+            attributes: $attributes,
+            isStatic: $reflectionData->isStatic(),
+            isAbstract: $isAbstract,
+            isFinal: $isFinal,
+            visibility: $visibility,
+            isDeprecated: $reflectionData->isDeprecated(),
         );
     }
 
@@ -91,7 +105,9 @@ final readonly class FunctionMetaData implements Equatable
         $returnType = null;
         $byRefReturn = false;
         $isStatic = false;
-        $isDeprecated = false;
+        $isFinal = false;
+        $isAbstract = false;
+        $visibility = Visibility::Public;
         $parameters = [];
         $attributes = [];
 
@@ -132,10 +148,10 @@ final readonly class FunctionMetaData implements Equatable
              */
             $tagName = $node->tagName;
             match ($tagName) {
-                'modifier'  => $attributes[] = AttributeMetaData::parseFromDoc($node),
+                'modifier' => self::parseModifierTag($node, $isStatic, $isFinal, $isAbstract, $visibility, $attributes),
                 'type' => $returnType = DocumentedTypeParser::parse($node),
                 'void' => $parameters = [],
-                'methodname' => $name = $node->textContent,
+                'methodname' => $name = self::parseNameWithPossibleClassQualifier($node->textContent),
                 'methodparam' => $parameters[] = ParameterMetaData::parseFromMethodParamDocTag($node, count($parameters) + 1),
                 'info', 'group', 'exceptionname', 'templatename', 'synopsisinfo' =>
                     throw new \Exception('"' . $tagName . '" child tag for <methodsynopsis> is not supported'),
@@ -152,11 +168,44 @@ final readonly class FunctionMetaData implements Equatable
             $name,
             $parameters,
             $returnType,
-            $extension,
-            $byRefReturn,
-            $attributes,
-            $isStatic,
-            $isDeprecated,
+            extension: $extension,
+            byRefReturn: $byRefReturn,
+            attributes: $attributes,
+            isStatic: $isStatic,
+            isAbstract: $isAbstract,
+            isFinal: $isFinal,
+            visibility: $visibility,
+            isDeprecated: $isDeprecated,
         );
+    }
+
+    private static function parseNameWithPossibleClassQualifier(string $name): string
+    {
+        if (str_contains($name, '::')) {
+            return explode('::', $name)[1];
+        }
+        return $name;
+    }
+
+    /**
+     * @param list<AttributeMetaData> $attributes
+     */
+    private static function parseModifierTag(
+        Element $element,
+        bool &$isStatic,
+        bool &$isFinal,
+        bool &$isAbstract,
+        Visibility &$visibility,
+        array &$attributes
+    ): void {
+        match ($element->textContent) {
+            'public' => $visibility = Visibility::Public,
+            'protected' => $visibility = Visibility::Protected,
+            'private' => $visibility = Visibility::Private,
+            'static' => $isStatic = true,
+            'final' => $isFinal = true,
+            'abstract' => $isAbstract = true,
+            default => $attributes[] = AttributeMetaData::parseFromDoc($element),
+        };
     }
 }
