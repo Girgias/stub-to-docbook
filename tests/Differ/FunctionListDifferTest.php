@@ -80,7 +80,7 @@ STUB;
     }
 
     /**
-     * @param string $stub
+     * @param non-empty-string $stub
      * @return array<string, FunctionMetaData>
      */
     private static function reflectionDataFromStubString(string $stub): array

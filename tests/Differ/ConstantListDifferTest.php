@@ -176,6 +176,9 @@ STUB;
         self::assertSame('WILL_BE_DEPRECATED', $diff->deprecated->constants['WILL_BE_DEPRECATED']->name);
     }
 
+    /**
+     * @param non-empty-string $stub
+     */
     private static function reflectionDataFromStubString(string $stub): ConstantList
     {
         $astLocator = (new BetterReflection())->astLocator();
