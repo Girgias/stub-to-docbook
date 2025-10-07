@@ -8,6 +8,7 @@ use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\ParameterMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
+use Girgias\StubToDocbook\MetaData\Visibility;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Girgias\StubToDocbook\Tests\ZendEngineStringSourceLocator;
 use Girgias\StubToDocbook\Types\SingleType;
@@ -208,6 +209,148 @@ XML;
                 new AttributeMetaData('\\Deprecated'),
             ],
             isDeprecated: true,
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_method_parsing_with_public_visibility(): void
+    {
+        $xml = <<<'XML'
+<methodsynopsis role="WeakReference">
+ <modifier>public</modifier> <type class="union"><type>object</type><type>null</type></type><methodname>WeakReference::get</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+
+        $expectedFunction = new FunctionMetaData(
+            'get',
+            [],
+            new UnionType([
+                new SingleType('null'),
+                new SingleType('object'),
+            ]),
+            'none',
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_method_parsing_with_protected_visibility(): void
+    {
+        /** Removed parameters for test simplicity */
+        $xml = <<<'XML'
+<methodsynopsis role="SplHeap">
+ <modifier>protected</modifier> <type>int</type><methodname>SplHeap::compare</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+
+        $expectedFunction = new FunctionMetaData(
+            'compare',
+            [],
+            new SingleType('int'),
+            'none',
+            visibility: Visibility::Protected,
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_method_parsing_with_private_visibility(): void
+    {
+        $xml = <<<'XML'
+<methodsynopsis role="ReflectionFunctionAbstract">
+ <modifier>private</modifier> <type>void</type><methodname>ReflectionFunctionAbstract::__clone</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+
+        $expectedFunction = new FunctionMetaData(
+            '__clone',
+            [],
+            new SingleType('void'),
+            'none',
+            visibility: Visibility::Private,
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_final_method_parsing_with_public_visibility(): void
+    {
+        $xml = <<<'XML'
+<methodsynopsis role="Exception">
+ <modifier>final</modifier> <modifier>public</modifier> <type>string</type><methodname>Exception::getMessage</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+
+        $expectedFunction = new FunctionMetaData(
+            'getMessage',
+            [],
+            new SingleType('string'),
+            'none',
+            isFinal: true,
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_static_method_parsing_with_public_visibility(): void
+    {
+        $xml = <<<'XML'
+<methodsynopsis role="WeakReference">
+ <modifier>public</modifier> <modifier>static</modifier> <type>WeakReference</type><methodname>WeakReference::create</methodname>
+ <methodparam><type>object</type><parameter>object</parameter></methodparam>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+
+        $expectedFunction = new FunctionMetaData(
+            'create',
+            [
+                new ParameterMetaData(
+                    'object',
+                    1,
+                    new SingleType('object'),
+                ),
+            ],
+            new SingleType('WeakReference'),
+            'none',
+            isStatic: true,
+        );
+
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+
+    public function test_abstract_method_parsing_with_public_visibility(): void
+    {
+        $xml = <<<'XML'
+<methodsynopsis role="Foo">
+ <modifier>public</modifier> <modifier>abstract</modifier> <type>void</type><methodname>Foo::bar</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+
+        $expectedFunction = new FunctionMetaData(
+            'bar',
+            [],
+            new SingleType('void'),
+            'none',
+            isAbstract: true,
         );
 
         self::assertTrue($fn->isSame($expectedFunction));
