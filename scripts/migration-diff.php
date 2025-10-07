@@ -1,9 +1,7 @@
 <?php
 
-use Girgias\StubToDocbook\Differ\ConstantListDiffer;
-use Girgias\StubToDocbook\Differ\ConstantStubListDiff;
-use Girgias\StubToDocbook\Differ\FunctionListDiffer;
-use Girgias\StubToDocbook\Differ\FunctionStubMapDiff;
+use Girgias\StubToDocbook\Differ\SymbolListDiffer;
+use Girgias\StubToDocbook\Differ\SymbolStubMapDiff;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
@@ -27,7 +25,10 @@ function symbol_list_to_extensions_map(array $symbols): array
     return $extensions;
 }
 
-/** @param array<string, array<string, ConstantMetaData>|array<string, FunctionMetaData>> $symbolsMap */
+/**
+ * @template T of FunctionMetaData|ConstantMetaData
+ * @param array<string, array<string, T>> $symbolsMap
+ */
 function print_extensions_map_of_symbols(array $symbolsMap): void
 {
     foreach ($symbolsMap as $extension => $symbols) {
@@ -38,22 +39,17 @@ function print_extensions_map_of_symbols(array $symbolsMap): void
     }
 }
 
-function print_constant_list_diff(ConstantStubListDiff $diff): void
-{
-    echo 'New constants:' . count($diff->new) . "\n";
-    print_extensions_map_of_symbols(symbol_list_to_extensions_map($diff->new->constants));
-    echo 'Newly deprecated constants:' . count($diff->deprecated) . "\n";
-    print_extensions_map_of_symbols(symbol_list_to_extensions_map($diff->deprecated->constants));
-    echo 'Removed constants:' . count($diff->removed) . "\n";
-    print_extensions_map_of_symbols(symbol_list_to_extensions_map($diff->removed->constants));
-}
-
-function print_function_map_diff(FunctionStubMapDiff $diff): void {
-    echo 'New functions:' . count($diff->new) . "\n";
+/**
+ * @template T of FunctionMetaData|ConstantMetaData
+ * @param SymbolStubMapDiff<T> $diff
+ * @return void
+ */
+function print_symbol_map_diff(string $symbolName, SymbolStubMapDiff $diff): void {
+    echo 'New ', $symbolName, ':' . count($diff->new) . "\n";
     print_extensions_map_of_symbols(symbol_list_to_extensions_map($diff->new));
-    echo 'Newly deprecated functions:' . count($diff->deprecated) . "\n";
+    echo 'Newly deprecated ', $symbolName, ':' . count($diff->deprecated) . "\n";
     print_extensions_map_of_symbols(symbol_list_to_extensions_map($diff->deprecated));
-    echo 'Removed functions:' . count($diff->removed) . "\n";
+    echo 'Removed ', $symbolName, ':' . count($diff->removed) . "\n";
     print_extensions_map_of_symbols(symbol_list_to_extensions_map($diff->removed));
 }
 
@@ -70,11 +66,11 @@ $master_reflector = get_reflector($master_dir);
 $master_constants = ConstantList::fromReflectionDataArray($master_reflector->reflectAllConstants(), IGNORED_CONSTANTS);
 $master_functions = from_better_reflection_list_to_metadata(FunctionMetaData::class, $master_reflector->reflectAllFunctions());
 
-$diffC = ConstantListDiffer::stubDiff($prior_version_constants->constants, $master_constants->constants);
-$diffF = FunctionListDiffer::stubDiff($prior_version_functions, $master_functions);
+$diffC = SymbolListDiffer::stubDiff($prior_version_constants->constants, $master_constants->constants);
+$diffF = SymbolListDiffer::stubDiff($prior_version_functions, $master_functions);
 
 echo "Total 8.4 constants parsed = ", count($prior_version_constants), "; functions parsed = ", count($prior_version_functions), "\n";
 echo "Total 8.5 constants parsed = ", count($master_constants), "; functions parsed = ", count($master_functions), "\n";
 
-print_constant_list_diff($diffC);
-print_function_map_diff($diffF);
+print_symbol_map_diff('constant', $diffC);
+print_symbol_map_diff('function', $diffF);

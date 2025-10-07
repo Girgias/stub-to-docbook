@@ -2,7 +2,6 @@
 
 namespace Girgias\StubToDocbook\Differ;
 
-use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 
 class ConstantListDiffer
@@ -38,27 +37,6 @@ class ConstantListDiffer
             $incorrectTypes,
             new ConstantList($missingDocs),
             new ConstantList($incorrectIdForLinking),
-        );
-    }
-
-    /**
-     * @param array<string, ConstantMetaData> $baseVersion
-     * @param array<string, ConstantMetaData> $newVersion
-     */
-    public static function stubDiff(array $baseVersion, array $newVersion): ConstantStubListDiff
-    {
-        $newConstants = array_diff_key($newVersion, $baseVersion);
-
-        $removedConstants = array_diff_key($baseVersion, $newVersion);
-
-        $baseDeprecated = array_filter($baseVersion, symbol_is_deprecated(...));
-        $newDeprecated = array_filter($newVersion, symbol_is_deprecated(...));
-        $deprecatedConstants = array_diff_key($newDeprecated, $baseDeprecated);
-
-        return new ConstantStubListDiff(
-            new ConstantList($newConstants),
-            new ConstantList($removedConstants),
-            new ConstantList($deprecatedConstants),
         );
     }
 }

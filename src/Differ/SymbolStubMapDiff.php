@@ -2,14 +2,18 @@
 
 namespace Girgias\StubToDocbook\Differ;
 
+use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 
-final class FunctionStubMapDiff
+/**
+ * @template T of FunctionMetaData|ConstantMetaData
+ */
+final class SymbolStubMapDiff
 {
     /**
-     * @param array<string, FunctionMetaData> $new
-     * @param array<string, FunctionMetaData> $removed
-     * @param array<string, FunctionMetaData> $deprecated
+     * @param array<string, T> $new
+     * @param array<string, T> $removed
+     * @param array<string, T> $deprecated
      */
     public function __construct(
         readonly array $new,
