@@ -67,12 +67,12 @@ STUB;
         $baseReflector = ZendEngineReflector::newZendEngineReflector([
             new ZendEngineStringSourceLocator(self::BASE_STUB_FILE_STR, $astLocator),
         ]);
-        $baseSymbols = from_better_reflection_list_to_metadata($baseReflector->reflectAllFunctions());
+        $baseSymbols = from_better_reflection_list_to_metadata(FunctionMetaData::class, $baseReflector->reflectAllFunctions());
 
         $newReflector = ZendEngineReflector::newZendEngineReflector([
             new ZendEngineStringSourceLocator(self::NEW_STUB_FILE_STR, $astLocator),
         ]);
-        $newSymbols = from_better_reflection_list_to_metadata($newReflector->reflectAllFunctions());
+        $newSymbols = from_better_reflection_list_to_metadata(FunctionMetaData::class, $newReflector->reflectAllFunctions());
 
         $diff = FunctionListDiffer::stubDiff($baseSymbols, $newSymbols);
         self::assertCount(1, $diff->new);

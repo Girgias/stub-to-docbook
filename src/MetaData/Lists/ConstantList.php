@@ -29,11 +29,7 @@ final class ConstantList implements Countable
         /* We need to define the UNKNOWN constant in the stubs for BetterReflection to be able to
          * parse stubs files, but we don't actually want to deal with it */
         $ignoredConstants[] = ZendEngineReflector::STUB_UNKNOWN_NAME;
-        $consts = array_map(
-            ConstantMetaData::fromReflectionData(...),
-            $reflectionData,
-        );
-        $constDict = named_symbol_list_to_map($consts);
+        $constDict = from_better_reflection_list_to_metadata(ConstantMetaData::class, $reflectionData);
         foreach ($ignoredConstants as $name) {
             unset($constDict[$name]);
         }
