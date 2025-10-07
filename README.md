@@ -16,7 +16,7 @@ The high level idea is to provide a CLI tool a path to `php-src` and `doc-en`,
 where both stubs and the existing documentation XML sources are parsed into metadata that can easily be compared
 for missing symbols, and replace them if required.
 
-The stub files are parsed with Roave/BetterReflection
+The stub files are parsed with [`Roave/BetterReflection`](https://github.com/Roave/BetterReflection)
 
 ## Roadmap
 
@@ -29,6 +29,7 @@ The stub files are parsed with Roave/BetterReflection
   - [ ] Set-up Mago?
 - [ ] Set-up Code Style requirements
 - [x] Parsing of stub files (handled by `Roave/BetterReflection`)
+  - Create a `ZendReflector` class that handles filtering out `UNKNOWN` constant from `reflectAllConstants()`?
 - [ ] Parsing of Documentation sources for constants
   - [ ] Table parsing (or convert sourced to stop relying on tables?)
   - [ ] Token constant list
@@ -46,10 +47,11 @@ The stub files are parsed with Roave/BetterReflection
     - [x] Constant diff (kinda see `scripts/parse-stub.php`)
     - [ ] Function diff
     - [ ] Class diff
-  - [ ] Between different stubs (e.g. 8.4 and 8.5)
-      - [ ] Constant diff
-      - [ ] Function diff
+  - [ ] Between different stubs (e.g. 8.4 and 8.5) (see `scripts/migration-diff.php`)
+      - [x] Constant diff
+      - [x] Function diff
       - [ ] Class diff
+      - [ ] Modified symbols
 - [ ] Generate missing constants
 - [ ] Generate missing functions
 - [ ] Generate missing predefined classes with methods
