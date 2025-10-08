@@ -5,13 +5,15 @@ namespace Girgias\StubToDocbook\MetaData;
 use Dom\Element;
 use Dom\Node;
 use Dom\XMLDocument;
+use Girgias\StubToDocbook\FP\Equatable;
+use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\ReflectionTypeParser;
 use Girgias\StubToDocbook\Types\SingleType;
 use Roave\BetterReflection\Reflection\ReflectionClassConstant;
 use Roave\BetterReflection\Reflection\ReflectionConstant;
 
-final class ConstantMetaData
+final class ConstantMetaData implements Equatable
 {
     /* Constructor is public due to table constant handling */
     /**
@@ -29,6 +31,29 @@ final class ConstantMetaData
         readonly Visibility $visibility = Visibility::Public,
         readonly Node|null $description = null,
     ) {}
+
+    /**
+     * @param ConstantMetaData $other
+     */
+    public function isSame(mixed $other): bool
+    {
+        return $this->name === $other->name
+            && $this->id === $other->id
+            && $this->value === $other->value
+            && $this->isDeprecated === $other->isDeprecated
+            && $this->isFinal === $other->isFinal
+            && $this->visibility === $other->visibility
+            && Utils::equateList($this->attributes, $other->attributes)
+            && self::checkNullableIsSame($this->type, $other->type);
+    }
+
+    private static function checkNullableIsSame(?Equatable $l, ?Equatable $r)
+    {
+        if ($l === null || $r === null) {
+            return $l === $r;
+        }
+        $l->isSame($r);
+    }
 
     public static function fromReflectionData(ReflectionConstant|ReflectionClassConstant $reflectionData): self
     {
