@@ -26,6 +26,8 @@ final class SymbolListDiffer
         $newDeprecated = array_filter($newVersion, symbol_is_deprecated(...));
         $newDeprecationsSymbols = array_diff_key($newDeprecated, $baseDeprecated);
 
+        $commonSymbols = array_intersect_key($baseVersion, $newVersion);
+
 
         return new SymbolStubMapDiff(
             $newSymbols,
