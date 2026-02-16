@@ -2,7 +2,6 @@
 
 namespace Girgias\StubToDocbook\Tests\MetaData\Classes;
 
-use Girgias\StubToDocbook\MetaData\Classes\EnumCaseMetaData;
 use Girgias\StubToDocbook\MetaData\Classes\EnumMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
@@ -88,7 +87,7 @@ STUB;
         self::assertCount(2, $enum->cases);
         self::assertSame('Low', $enum->cases[0]->name);
         self::assertTrue(
-            (new Initializer(InitializerVariant::Literal, '1'))->isSame($enum->cases[0]->value)
+            (new Initializer(InitializerVariant::Literal, '1'))->isSame($enum->cases[0]->value),
         );
     }
 

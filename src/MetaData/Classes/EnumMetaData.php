@@ -6,10 +6,8 @@ use Dom\Element;
 use Dom\XPath;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
-use Girgias\StubToDocbook\MetaData\Visibility;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\ReflectionTypeParser;
-use Girgias\StubToDocbook\Types\SingleType;
 use Girgias\StubToDocbook\Types\Type;
 use Roave\BetterReflection\Reflection\ReflectionEnum;
 
@@ -49,11 +47,11 @@ final class EnumMetaData
                 FunctionMetaData::fromReflectionData(...),
                 $reflectionData->getMethods(),
             ),
-            fn(FunctionMetaData $m) => !in_array($m->name, ['cases', 'from', 'tryFrom'], true),
+            fn (FunctionMetaData $m) => !in_array($m->name, ['cases', 'from', 'tryFrom'], true),
         ));
 
         $implements = array_map(
-            fn($interface) => $interface->getName(),
+            fn ($interface) => $interface->getName(),
             $reflectionData->getInterfaces(),
         );
 
