@@ -80,14 +80,14 @@ final class PropertyMetaData
                 'type' => $type = DocumentedTypeParser::parse($node),
                 'varname' => $name = $node->textContent,
                 'initializer' => $defaultValue = Initializer::parseFromDoc($node),
-                'info', 'synopsisinfo', 'templatename' =>
-                    throw new \Exception('"' . $tagName . '" child tag for <fieldsynopsis> is not supported'),
+                'info', 'synopsisinfo', 'templatename'
+                    => throw new \Exception('"' . $tagName . '" child tag for <fieldsynopsis> is not supported'),
             };
         }
 
         $deprecatedAttributes = array_filter(
             $attributes,
-            fn(AttributeMetaData $attr) => $attr->name === '\Deprecated',
+            fn (AttributeMetaData $attr) => $attr->name === '\Deprecated',
         );
         $isDeprecated = count($deprecatedAttributes) === 1;
 
@@ -111,7 +111,7 @@ final class PropertyMetaData
         bool &$isStatic,
         bool &$isReadOnly,
         Visibility &$visibility,
-        array &$attributes
+        array &$attributes,
     ): void {
         match ($element->textContent) {
             'public' => $visibility = Visibility::Public,
