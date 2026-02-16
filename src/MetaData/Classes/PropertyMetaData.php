@@ -46,6 +46,7 @@ final class PropertyMetaData
         $visibility = Visibility::Public;
         $isStatic = false;
         $isReadOnly = false;
+        $attributes = [];
 
         foreach ($element->childNodes as $node) {
             if ($node instanceof Text) {
@@ -54,30 +55,72 @@ final class PropertyMetaData
             if (($node instanceof Element) === false) {
                 throw new \Exception("Unexpected node type: " . $node::class);
             }
-            match ($node->tagName) {
-                'modifier' => match ($node->textContent) {
-                    'public' => $visibility = Visibility::Public,
-                    'protected' => $visibility = Visibility::Protected,
-                    'private' => $visibility = Visibility::Private,
-                    'static' => $isStatic = true,
-                    'readonly' => $isReadOnly = true,
-                    default => null,
-                },
+            /**
+             * fieldsynopsis ::=
+             *   Sequence of:
+             *      info? (db.titleforbidden.info)
+             *      Zero or more of:
+             *         synopsisinfo
+             *      Zero or more of:
+             *         modifier
+             *      Zero or more of:
+             *         templatename
+             *         type
+             *      varname
+             *      Zero or more of:
+             *         modifier
+             *      initializer?
+             *      Zero or more of:
+             *         synopsisinfo
+             * @var 'info'|'synopsisinfo'|'modifier'|'templatename'|'type'|'varname'|'initializer' $tagName
+             */
+            $tagName = $node->tagName;
+            match ($tagName) {
+                'modifier' => self::parseModifierTag($node, $isStatic, $isReadOnly, $visibility, $attributes),
                 'type' => $type = DocumentedTypeParser::parse($node),
                 'varname' => $name = $node->textContent,
                 'initializer' => $defaultValue = Initializer::parseFromDoc($node),
-                default => throw new \Exception('Unexpected <fieldsynopsis> child tag: <' . $node->tagName . '>'),
+                'info', 'synopsisinfo', 'templatename' =>
+                    throw new \Exception('"' . $tagName . '" child tag for <fieldsynopsis> is not supported'),
             };
         }
+
+        $deprecatedAttributes = array_filter(
+            $attributes,
+            fn(AttributeMetaData $attr) => $attr->name === '\Deprecated',
+        );
+        $isDeprecated = count($deprecatedAttributes) === 1;
 
         return new self(
             $name,
             $type,
             defaultValue: $defaultValue,
             visibility: $visibility,
+            attributes: $attributes,
             isReadOnly: $isReadOnly,
             isStatic: $isStatic,
+            isDeprecated: $isDeprecated,
         );
+    }
+
+    /**
+     * @param list<AttributeMetaData> $attributes
+     */
+    private static function parseModifierTag(
+        Element $element,
+        bool &$isStatic,
+        bool &$isReadOnly,
+        Visibility &$visibility,
+        array &$attributes
+    ): void {
+        match ($element->textContent) {
+            'public' => $visibility = Visibility::Public,
+            'protected' => $visibility = Visibility::Protected,
+            'private' => $visibility = Visibility::Private,
+            'static' => $isStatic = true,
+            'readonly' => $isReadOnly = true,
+            default => $attributes[] = AttributeMetaData::parseFromDoc($element),
+        };
     }
 
     public static function fromReflectionData(ReflectionProperty $reflectionData): self
