@@ -21,7 +21,9 @@ final class MissingConstantsGenerator
         $document->append($element);
         $document->formatOutput = true;
 
-        return $document->saveXml($element);
+        $xml = $document->saveXml($element);
+        assert($xml !== false);
+        return $xml;
     }
 
     /**
