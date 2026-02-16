@@ -3,7 +3,6 @@
 namespace Girgias\StubToDocbook\Updater;
 
 use Dom\Element;
-use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 
 final class ConstantDocUpdater
