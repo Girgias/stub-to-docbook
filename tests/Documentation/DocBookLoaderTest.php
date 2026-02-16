@@ -34,7 +34,9 @@ class DocBookLoaderTest extends TestCase
         $doc = DocBookLoader::loadString($xml);
 
         self::assertInstanceOf(XMLDocument::class, $doc);
-        self::assertStringContainsString('&amp;reftitle.description;', $doc->saveXml());
+        $xml = $doc->saveXml();
+        self::assertIsString($xml);
+        self::assertStringContainsString('&amp;reftitle.description;', $xml);
     }
 
     public function test_load_file_with_nonexistent_path(): void
