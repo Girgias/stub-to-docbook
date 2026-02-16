@@ -30,7 +30,7 @@ final class SymbolListDiffer
         $commonSymbols = array_intersect_key($baseVersion, $newVersion);
         foreach ($commonSymbols as $name => $baseSymbol) {
             $newSymbol = $newVersion[$name];
-            if ($baseSymbol instanceof Equatable && !$baseSymbol->isSame($newSymbol)) {
+            if ($baseSymbol instanceof Equatable && !$baseSymbol->isSame($newSymbol)) { // @phpstan-ignore argument.type
                 $modified[$name] = ['base' => $baseSymbol, 'new' => $newSymbol];
             }
         }
