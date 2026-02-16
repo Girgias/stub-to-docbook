@@ -2,8 +2,8 @@
 
 namespace Girgias\StubToDocbook\Generator;
 
-use Dom\XMLDocument;
 use Dom\Element;
+use Dom\XMLDocument;
 
 final class MigrationGuideGenerator
 {
