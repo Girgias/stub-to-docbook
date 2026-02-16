@@ -2,8 +2,10 @@
 
 namespace Girgias\StubToDocbook\MetaData\Classes;
 
+use Dom\Element;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
+use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use Roave\BetterReflection\Reflection\ReflectionEnumCase;
 
 final class EnumCaseMetaData
@@ -36,5 +38,26 @@ final class EnumCaseMetaData
             attributes: $attributes,
             isDeprecated: $reflectionData->isDeprecated(),
         );
+    }
+
+    /**
+     * Parse an enum case from a DocBook <fieldsynopsis> element.
+     */
+    public static function parseFromDoc(Element $element): self
+    {
+        $varnameTags = $element->getElementsByTagName('varname');
+        assert($varnameTags->length === 1);
+        $name = $varnameTags[0]->textContent;
+
+        $value = null;
+        $initializerTags = $element->getElementsByTagName('initializer');
+        if ($initializerTags->length === 1) {
+            $value = new Initializer(
+                InitializerVariant::Literal,
+                trim($initializerTags[0]->textContent),
+            );
+        }
+
+        return new self($name, $value);
     }
 }

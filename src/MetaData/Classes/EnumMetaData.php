@@ -2,9 +2,12 @@
 
 namespace Girgias\StubToDocbook\MetaData\Classes;
 
+use Dom\Element;
+use Dom\XPath;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 use Girgias\StubToDocbook\MetaData\Visibility;
+use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\ReflectionTypeParser;
 use Girgias\StubToDocbook\Types\SingleType;
 use Girgias\StubToDocbook\Types\Type;
@@ -68,6 +71,64 @@ final class EnumMetaData
             implements: array_values($implements),
             attributes: $attributes,
             isDeprecated: $reflectionData->isDeprecated(),
+        );
+    }
+
+    /**
+     * Parse an enum from a DocBook <classsynopsis class="enum"> element.
+     */
+    public static function parseFromDoc(Element $element, string $extension): self
+    {
+        $doc = $element->ownerDocument;
+        $xpath = new XPath($doc);
+        $xpath->registerNamespace('db', 'http://docbook.org/ns/docbook');
+
+        // Parse enum name
+        $enumNameTags = $xpath->query('.//db:enumname', $element);
+        if ($enumNameTags->length === 0) {
+            // Fallback to classname
+            $classNameTags = $xpath->query('.//db:classname', $element);
+            assert($classNameTags->length >= 1);
+            $name = $classNameTags[0]->textContent;
+        } else {
+            $name = $enumNameTags[0]->textContent;
+        }
+
+        // Parse backing type
+        $backingType = null;
+        $typeTags = $xpath->query('.//db:classsynopsisinfo//db:type', $element);
+        if ($typeTags->length > 0) {
+            $backingType = DocumentedTypeParser::parse($typeTags[0]);
+        }
+
+        // Parse implemented interfaces
+        $implements = [];
+        $interfaceTags = $xpath->query('.//db:oointerface/db:interfacename', $element);
+        foreach ($interfaceTags as $interfaceTag) {
+            $implements[] = $interfaceTag->textContent;
+        }
+
+        // Parse enum cases from fieldsynopsis
+        $cases = [];
+        $fieldSynopsisTags = $xpath->query('.//db:fieldsynopsis', $element);
+        foreach ($fieldSynopsisTags as $fieldTag) {
+            $cases[] = EnumCaseMetaData::parseFromDoc($fieldTag);
+        }
+
+        // Parse methods from methodsynopsis
+        $methods = [];
+        $methodSynopsisTags = $xpath->query('.//db:methodsynopsis', $element);
+        foreach ($methodSynopsisTags as $methodTag) {
+            $methods[] = FunctionMetaData::parseFromDoc($methodTag, $extension);
+        }
+
+        return new self(
+            $name,
+            $backingType,
+            $cases,
+            $methods,
+            extension: $extension,
+            implements: $implements,
         );
     }
 }
