@@ -2,6 +2,7 @@
 
 namespace Girgias\StubToDocbook\Differ;
 
+use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 
@@ -13,7 +14,6 @@ final class SymbolListDiffer
     /**
      * @param array<string, T> $baseVersion
      * @param array<string, T> $newVersion
-     * TODO: Function Signature differences between existing functions
      * @return SymbolStubMapDiff<T>
      */
     public static function stubDiff(array $baseVersion, array $newVersion): SymbolStubMapDiff
@@ -26,11 +26,20 @@ final class SymbolListDiffer
         $newDeprecated = array_filter($newVersion, symbol_is_deprecated(...));
         $newDeprecationsSymbols = array_diff_key($newDeprecated, $baseDeprecated);
 
+        $modified = [];
+        $commonSymbols = array_intersect_key($baseVersion, $newVersion);
+        foreach ($commonSymbols as $name => $baseSymbol) {
+            $newSymbol = $newVersion[$name];
+            if ($baseSymbol instanceof Equatable && !$baseSymbol->isSame($newSymbol)) {
+                $modified[$name] = ['base' => $baseSymbol, 'new' => $newSymbol];
+            }
+        }
 
         return new SymbolStubMapDiff(
             $newSymbols,
             $removedSymbols,
             $newDeprecationsSymbols,
+            $modified,
         );
     }
 }
