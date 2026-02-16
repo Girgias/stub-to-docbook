@@ -17,7 +17,9 @@ final class MissingFunctionsGenerator
         $document->append($element);
         $document->formatOutput = true;
 
-        return $document->saveXml($element);
+        $xml = $document->saveXml($element);
+        assert(is_string($xml));
+        return $xml;
     }
 
     /**
