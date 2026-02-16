@@ -8,7 +8,7 @@ use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
 use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
+use Girgias\StubToDocbook\Tests\ZendEngineStringSourceLocator;
 
 class ClassMetaDataTest extends TestCase
 {
@@ -20,7 +20,7 @@ class Foo {}
 STUB;
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $rc = $reflector->reflectClass('Foo');
         $class = ClassMetaData::fromReflectionData($rc);
@@ -51,7 +51,7 @@ class Child extends Base implements Countable {
 STUB;
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $rc = $reflector->reflectClass('Child');
         $class = ClassMetaData::fromReflectionData($rc);
@@ -73,7 +73,7 @@ abstract class AbstractFoo {
 STUB;
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $rc = $reflector->reflectClass('AbstractFoo');
         $class = ClassMetaData::fromReflectionData($rc);
@@ -94,7 +94,7 @@ class Full {
 STUB;
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $rc = $reflector->reflectClass('Full');
         $class = ClassMetaData::fromReflectionData($rc);
@@ -108,19 +108,47 @@ STUB;
         self::assertSame('MY_CONST', $class->constants[0]->name);
     }
 
+    public function test_class_with_inherited_and_overridden_methods(): void
+    {
+        $stub = <<<'STUB'
+<?php
+class Base {
+    public function kept(): void {}
+    protected function overridden(): int {}
+    public function alsoKept(): string {}
+}
+class Child extends Base {
+    protected function overridden(): int {}
+}
+STUB;
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $rc = $reflector->reflectClass('Child');
+        $class = ClassMetaData::fromReflectionData($rc);
+
+        self::assertSame('Child', $class->name);
+        self::assertSame('Base', $class->extends);
+        self::assertCount(3, $class->methods);
+
+        $methodNames = array_map(fn($m) => $m->name, $class->methods);
+        self::assertContains('kept', $methodNames);
+        self::assertContains('overridden', $methodNames);
+        self::assertContains('alsoKept', $methodNames);
+    }
+
     public function test_readonly_class(): void
     {
         $stub = <<<'STUB'
 <?php
 readonly class Immutable {
-    public function __construct(
-        public string $name,
-    ) {}
+    public string $name;
 }
 STUB;
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $rc = $reflector->reflectClass('Immutable');
         $class = ClassMetaData::fromReflectionData($rc);
