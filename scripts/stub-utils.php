@@ -37,13 +37,13 @@ function get_reflector(string $path): Reflector
     ];
     $ignored_files = array_map(
         fn (string $file) => $path . $file,
-        IGNORED_STUB_FILES
+        IGNORED_STUB_FILES,
     );
     $stubs = array_diff($files, $ignored_files);
 
     $astLocator = (new BetterReflection())->astLocator();
     $file_locators = array_map(
-        fn(string $file) => new ZendEngineSingleFileSourceLocator($file, $astLocator),
+        fn (string $file) => new ZendEngineSingleFileSourceLocator($file, $astLocator),
         $stubs,
     );
 

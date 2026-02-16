@@ -29,14 +29,14 @@ final class DocumentedFunction
             return false;
         }
         $areEqual = array_map(
-            fn(ParameterMetaData $synopsis, ParameterMetaData $listEntry) => $synopsis->name === $listEntry->name,
+            fn (ParameterMetaData $synopsis, ParameterMetaData $listEntry) => $synopsis->name === $listEntry->name,
             $this->functionMetaData->parameters,
             $this->documentedParameters,
         );
 
         return array_reduce(
             $areEqual,
-            fn(bool $carry, bool $item) => $carry && $item,
+            fn (bool $carry, bool $item) => $carry && $item,
             true,
         );
     }
@@ -44,12 +44,12 @@ final class DocumentedFunction
     public function areAllParameterTagsReferencingFunctionParameters(): bool
     {
         $validParamNames = array_map(
-            fn(ParameterMetaData $synopsis) => $synopsis->name,
+            fn (ParameterMetaData $synopsis) => $synopsis->name,
             $this->functionMetaData->parameters,
         );
         return array_reduce(
             $this->parameterTagsValues,
-            fn(bool $carry, string $item) => $carry && in_array($item, $validParamNames, true),
+            fn (bool $carry, string $item) => $carry && in_array($item, $validParamNames, true),
             true,
         );
     }
@@ -86,7 +86,7 @@ final class DocumentedFunction
         /** @var NodeList<Element> $parameterTags */
         $parameterTags = $xpath->query('db:parameter', $element);
         $parameterTags = array_map(
-            fn(Element $paramTag) => $paramTag->textContent,
+            fn (Element $paramTag) => $paramTag->textContent,
             iterator_to_array($parameterTags, false),
         );
 

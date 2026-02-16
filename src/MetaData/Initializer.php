@@ -21,7 +21,7 @@ final class Initializer implements Equatable
     public function __construct(
         readonly InitializerVariant $variant,
         readonly string $value,
-    ) { }
+    ) {}
 
     public function isSame(mixed $other): bool
     {

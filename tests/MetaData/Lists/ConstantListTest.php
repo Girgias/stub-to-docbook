@@ -20,14 +20,14 @@ class ConstantListTest extends TestCase
                 new SingleType('string'),
                 'UNKNOWN',
                 'constant.hello',
-                description: $document->createTextNode('The hello constant')
+                description: $document->createTextNode('The hello constant'),
             ),
             "SOME_CONSTANT" => new ConstantMetaData(
                 "SOME_CONSTANT",
                 new SingleType('int'),
                 'UNKNOWN',
                 'constant.some-constant',
-                description: $document->createTextNode('A constant that does something')
+                description: $document->createTextNode('A constant that does something'),
             ),
         ];
         $constantList = new ConstantList($constants, DocumentedConstantListType::VarEntryList);

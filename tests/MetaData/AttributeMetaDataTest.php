@@ -63,7 +63,7 @@ STUB;
 
         $expected = new AttributeMetaData(
             '\\Deprecated',
-            ['since' => new Initializer(InitializerVariant::Literal, '\'8.1\'')]
+            ['since' => new Initializer(InitializerVariant::Literal, '\'8.1\'')],
         );
         self::assertTrue($expected->isSame($attribute));
     }
@@ -99,7 +99,7 @@ STUB;
             [
                 'int_one' => new Initializer(InitializerVariant::Literal, '5'),
                 'int_two' => new Initializer(InitializerVariant::Literal, '-10'),
-            ]
+            ],
         );
         self::assertTrue($expected->isSame($attribute));
     }
@@ -147,7 +147,7 @@ STUB;
                 'f_two' => new Initializer(InitializerVariant::Literal, '-6.7'),
                 'f_three' => new Initializer(InitializerVariant::Literal, '1e2'),
                 'f_four' => new Initializer(InitializerVariant::Literal, '-2e5'),
-            ]
+            ],
         );
         self::assertTrue($expected->isSame($attribute));
     }

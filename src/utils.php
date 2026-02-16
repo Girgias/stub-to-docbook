@@ -2,10 +2,10 @@
 
 use Girgias\StubToDocbook\MetaData\ConstantMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
-use Roave\BetterReflection\Reflection\ReflectionClassConstant;
-use Roave\BetterReflection\Reflection\ReflectionFunction;
-use Roave\BetterReflection\Reflection\ReflectionConstant;
 use Roave\BetterReflection\Reflection\ReflectionClass;
+use Roave\BetterReflection\Reflection\ReflectionClassConstant;
+use Roave\BetterReflection\Reflection\ReflectionConstant;
+use Roave\BetterReflection\Reflection\ReflectionFunction;
 
 function xmlify_labels(string $label): string
 {
@@ -13,7 +13,7 @@ function xmlify_labels(string $label): string
 }
 
 function get_extension_name_from_reflection_date(
-    ReflectionFunction|ReflectionConstant|ReflectionClass|ReflectionClassConstant $reflectionData
+    ReflectionFunction|ReflectionConstant|ReflectionClass|ReflectionClassConstant $reflectionData,
 ): string
 {
     if ($reflectionData instanceof ReflectionClassConstant) {
@@ -37,7 +37,7 @@ function symbol_is_deprecated(object $symbol): bool
  */
 function named_symbol_list_to_map(array $list): array {
 
-    $names = array_map(fn($fn) => $fn->name, $list);
+    $names = array_map(fn ($fn) => $fn->name, $list);
     return array_combine($names, $list);
 }
 

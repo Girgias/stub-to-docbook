@@ -48,7 +48,7 @@ final class ReflectionTypeParser
                 array_map(
                     self::parseTypeFromDocCommentString(...),
                     explode('|', $typeString),
-                )
+                ),
             );
         }
         if (str_contains($typeString, '(') || str_contains($typeString, '&')) {
@@ -58,16 +58,16 @@ final class ReflectionTypeParser
                     self::parseTypeFromDocCommentString(...),
                     explode(
                         '&',
-                        trim($typeString, '()')
+                        trim($typeString, '()'),
                     ),
-                )
+                ),
             );
         }
         return new SingleType($typeString);
     }
 
     public static function convertFromReflectionType(
-        ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType $reflectionType
+        ReflectionNamedType|ReflectionUnionType|ReflectionIntersectionType $reflectionType,
     ): Type
     {
         if ($reflectionType instanceof ReflectionNamedType) {
@@ -88,7 +88,7 @@ final class ReflectionTypeParser
     }
 
     private static function fromReflectionTypeList(
-        ReflectionUnionType|ReflectionIntersectionType $type
+        ReflectionUnionType|ReflectionIntersectionType $type,
     ): UnionType|IntersectionType {
         /** @var non-empty-list<IntersectionType|SingleType> $types */
         $types = array_map(self::convertFromReflectionType(...), $type->getTypes());

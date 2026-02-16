@@ -14,8 +14,7 @@ use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 class SymbolListDifferTest extends TestCase
 {
-
-    const string BASE_STUB_FILE_STR = <<<'STUB'
+    public const string BASE_STUB_FILE_STR = <<<'STUB'
 <?php
 
 /** @generate-class-entries */
@@ -70,7 +69,7 @@ function strptime(string $timestamp, string $format): array|false {}
  */
 function will_be_deprecated($stream, int $seconds, int $microseconds = 0): bool {}
 STUB;
-    const string NEW_STUB_FILE_STR = <<<'STUB'
+    public const string NEW_STUB_FILE_STR = <<<'STUB'
 <?php
 
 /** @generate-class-entries */

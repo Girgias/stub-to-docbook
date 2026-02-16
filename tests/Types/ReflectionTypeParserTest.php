@@ -14,8 +14,7 @@ use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 class ReflectionTypeParserTest extends TestCase
 {
-
-    const /* string */ STUB_FILE_STR = <<<'STUB'
+    public const /* string */ STUB_FILE_STR = <<<'STUB'
 <?php
 
 /** @generate-class-entries */
@@ -41,8 +40,8 @@ STUB;
             $expectedSimpleType->isSame(
                 ReflectionTypeParser::parseTypeFromDocCommentString(
                     'string',
-                )
-            )
+                ),
+            ),
         );
 
         $expectedNullbaleSimpleType = new UnionType([
@@ -53,8 +52,8 @@ STUB;
             $expectedNullbaleSimpleType->isSame(
                 ReflectionTypeParser::parseTypeFromDocCommentString(
                     '?string',
-                )
-            )
+                ),
+            ),
         );
 
         $expectedSimpleUnionType = new UnionType([
@@ -65,8 +64,8 @@ STUB;
             $expectedSimpleUnionType->isSame(
                 ReflectionTypeParser::parseTypeFromDocCommentString(
                     'resource|false',
-                )
-            )
+                ),
+            ),
         );
 
         $expectedSimpleIntersectionType = new IntersectionType([
@@ -77,8 +76,8 @@ STUB;
             $expectedSimpleIntersectionType->isSame(
                 ReflectionTypeParser::parseTypeFromDocCommentString(
                     'Traversable&Countable',
-                )
-            )
+                ),
+            ),
         );
 
         $expectedDnfType = new UnionType([
@@ -86,14 +85,14 @@ STUB;
             new IntersectionType([
                 new SingleType("Countable"),
                 new SingleType("Traversable"),
-            ])
+            ]),
         ]);
         self::assertTrue(
             $expectedDnfType->isSame(
                 ReflectionTypeParser::parseTypeFromDocCommentString(
                     '(Traversable&Countable)|array',
-                )
-            )
+                ),
+            ),
         );
     }
 
@@ -106,7 +105,7 @@ STUB;
         $returnTypes = array_map(
             ReflectionTypeParser::convertFromReflectionType(...),
             array_map(
-                fn(ReflectionFunction $rf) => $rf->getReturnType(),
+                fn (ReflectionFunction $rf) => $rf->getReturnType(),
                 $reflector->reflectAllFunctions(),
             ),
         );

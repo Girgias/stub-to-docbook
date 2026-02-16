@@ -14,7 +14,7 @@ use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 class ConstantListDifferTest extends TestCase
 {
-    const string STUB_FILE_STR = <<<'STUB'
+    public const string STUB_FILE_STR = <<<'STUB'
 <?php
 
 /** @generate-class-entries */
@@ -49,21 +49,21 @@ STUB;
                 new SingleType('string'),
                 'UNKNOWN',
                 'constant.wrong-type',
-                description: $document->createTextNode('description')
+                description: $document->createTextNode('description'),
             ),
             'SOME_CONSTANT' => new ConstantMetaData(
                 "SOME_CONSTANT",
                 new SingleType('int'),
                 'UNKNOWN',
                 'constant.some-constant',
-                description: $document->createTextNode('description')
+                description: $document->createTextNode('description'),
             ),
             'INCORRECT_LINKING_ID' => new ConstantMetaData(
                 "INCORRECT_LINKING_ID",
                 new SingleType('int'),
                 'UNKNOWN',
                 'constant.incorrect_linking_id',
-                description: $document->createTextNode('description')
+                description: $document->createTextNode('description'),
             ),
         ];
         $docList = new ConstantList($docConstants);

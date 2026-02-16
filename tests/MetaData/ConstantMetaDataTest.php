@@ -18,7 +18,7 @@ use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 class ConstantMetaDataTest extends TestCase
 {
-    const /* string */ STUB_FILE_STR = <<<'STUB'
+    public const /* string */ STUB_FILE_STR = <<<'STUB'
 <?php
 
 /** @generate-class-entries */
@@ -129,7 +129,7 @@ STUB;
 
         $constants = array_map(
             ConstantMetaData::fromReflectionData(...),
-            $reflector->reflectClass('foo')->getConstants()
+            $reflector->reflectClass('foo')->getConstants(),
         );
 
         self::assertCount(4, $constants);

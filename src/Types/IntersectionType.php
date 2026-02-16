@@ -34,7 +34,7 @@ final readonly class IntersectionType implements Type
     {
         return implode([
             '<type class="intersection">',
-            ...array_map(fn(SingleType $type) => $type->toXml(), $this->types),
+            ...array_map(fn (SingleType $type) => $type->toXml(), $this->types),
             '</type>',
         ]);
     }

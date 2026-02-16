@@ -161,14 +161,14 @@ final readonly class FunctionMetaData implements Equatable
                 'void' => $parameters = [],
                 'methodname' => $name = self::parseNameWithPossibleClassQualifier($node->textContent),
                 'methodparam' => $parameters[] = ParameterMetaData::parseFromMethodParamDocTag($node, count($parameters) + 1),
-                'info', 'group', 'exceptionname', 'templatename', 'synopsisinfo' =>
-                    throw new \Exception('"' . $tagName . '" child tag for <methodsynopsis> is not supported'),
+                'info', 'group', 'exceptionname', 'templatename', 'synopsisinfo'
+                    => throw new \Exception('"' . $tagName . '" child tag for <methodsynopsis> is not supported'),
             };
         }
 
         $deprecatedAttributes = array_filter(
             $attributes,
-            fn(AttributeMetaData $attr) => $attr->name === '\Deprecated',
+            fn (AttributeMetaData $attr) => $attr->name === '\Deprecated',
         );
         $isDeprecated = count($deprecatedAttributes) === 1;
 
@@ -204,7 +204,7 @@ final readonly class FunctionMetaData implements Equatable
         bool &$isFinal,
         bool &$isAbstract,
         Visibility &$visibility,
-        array &$attributes
+        array &$attributes,
     ): void {
         match ($element->textContent) {
             'public' => $visibility = Visibility::Public,

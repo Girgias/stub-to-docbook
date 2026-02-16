@@ -100,7 +100,7 @@ class DocumentedConstantParser
                     $manualType,
                     $extension,
                     $id,
-                    description: $descriptionEntry
+                    description: $descriptionEntry,
                 );
             }
             $constants[] = new ConstantList($individualList, DocumentedConstantListType::Table);
