@@ -208,7 +208,6 @@ final readonly class FunctionMetaData implements Equatable
         if ($this->visibility !== Visibility::Public) {
             $modifier = $document->createElement('modifier');
             $modifier->textContent = match ($this->visibility) {
-                Visibility::Public => 'public',
                 Visibility::Protected => 'protected',
                 Visibility::Private => 'private',
             };

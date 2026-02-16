@@ -603,6 +603,7 @@ XML;
         $document->append($element);
 
         $xml = $document->saveXml($element);
+        self::assertIsString($xml);
 
         self::assertStringContainsString('<methodname>array_pop</methodname>', $xml);
         self::assertStringContainsString('<type>mixed</type>', $xml);
@@ -625,6 +626,7 @@ XML;
         $document->append($element);
 
         $xml = $document->saveXml($element);
+        self::assertIsString($xml);
 
         self::assertStringContainsString('<void/>', $xml);
         self::assertStringNotContainsString('<methodparam', $xml);
@@ -647,6 +649,7 @@ XML;
         $document->append($element);
 
         $xml = $document->saveXml($element);
+        self::assertIsString($xml);
 
         self::assertStringContainsString('<modifier>final</modifier>', $xml);
         self::assertStringContainsString('<modifier>protected</modifier>', $xml);
@@ -678,6 +681,7 @@ XML;
         $document->append($element);
 
         $xml = $document->saveXml($element);
+        self::assertIsString($xml);
 
         self::assertStringContainsString('choice="opt"', $xml);
         self::assertStringContainsString('<initializer>null</initializer>', $xml);
