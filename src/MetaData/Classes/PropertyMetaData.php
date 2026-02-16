@@ -6,7 +6,6 @@ use Dom\Element;
 use Dom\Text;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
-use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use Girgias\StubToDocbook\MetaData\Visibility;
 use Girgias\StubToDocbook\Types\DocumentedTypeParser;
 use Girgias\StubToDocbook\Types\ReflectionTypeParser;

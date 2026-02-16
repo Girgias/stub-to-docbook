@@ -3,9 +3,7 @@
 namespace Girgias\StubToDocbook\Tests\MetaData\Classes;
 
 use Girgias\StubToDocbook\MetaData\Classes\ClassMetaData;
-use Girgias\StubToDocbook\MetaData\Visibility;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
-use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
