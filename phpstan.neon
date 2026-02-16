@@ -9,6 +9,12 @@ parameters:
     # To be addressed in follow-up commits
     ignoreErrors:
         -
+            message: '#^Parameter \#1 \$constants of class Girgias\\StubToDocbook\\MetaData\\Lists\\ConstantList constructor expects array\<string, Girgias\\StubToDocbook\\MetaData\\ConstantMetaData\>, list\<Girgias\\StubToDocbook\\MetaData\\ConstantMetaData\> given\.$#'
+            identifier: argument.type
+            count: 1
+            path: scripts/parse-stub.php
+
+        -
             message: '#^Match expression does not handle remaining value\: class\-string\<PhpParser\\Node\\Expr\>&literal\-string$#'
             identifier: match.unhandled
             count: 1
