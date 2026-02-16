@@ -6,10 +6,11 @@ use Girgias\StubToDocbook\MetaData\Classes\EnumMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
+use Girgias\StubToDocbook\Tests\ZendEngineStringSourceLocator;
 use Girgias\StubToDocbook\Types\SingleType;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\BetterReflection;
-use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
+use Roave\BetterReflection\Reflection\ReflectionEnum;
 
 class EnumMetaDataTest extends TestCase
 {
@@ -26,9 +27,10 @@ enum Suit {
 STUB;
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $rc = $reflector->reflectClass('Suit');
+        self::assertInstanceOf(ReflectionEnum::class, $rc);
         $enum = EnumMetaData::fromReflectionData($rc);
 
         self::assertSame('Suit', $enum->name);
@@ -51,9 +53,10 @@ enum Color: string {
 STUB;
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $rc = $reflector->reflectClass('Color');
+        self::assertInstanceOf(ReflectionEnum::class, $rc);
         $enum = EnumMetaData::fromReflectionData($rc);
 
         self::assertSame('Color', $enum->name);
@@ -76,9 +79,10 @@ enum Priority: int {
 STUB;
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $rc = $reflector->reflectClass('Priority');
+        self::assertInstanceOf(ReflectionEnum::class, $rc);
         $enum = EnumMetaData::fromReflectionData($rc);
 
         self::assertSame('Priority', $enum->name);
@@ -103,9 +107,10 @@ enum Suit {
 STUB;
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $rc = $reflector->reflectClass('Suit');
+        self::assertInstanceOf(ReflectionEnum::class, $rc);
         $enum = EnumMetaData::fromReflectionData($rc);
 
         self::assertCount(1, $enum->cases);
@@ -128,9 +133,10 @@ enum Suit implements HasLabel {
 STUB;
         $astLocator = (new BetterReflection())->astLocator();
         $reflector = ZendEngineReflector::newZendEngineReflector([
-            new StringSourceLocator($stub, $astLocator),
+            new ZendEngineStringSourceLocator($stub, $astLocator),
         ]);
         $rc = $reflector->reflectClass('Suit');
+        self::assertInstanceOf(ReflectionEnum::class, $rc);
         $enum = EnumMetaData::fromReflectionData($rc);
 
         self::assertContains('HasLabel', $enum->implements);

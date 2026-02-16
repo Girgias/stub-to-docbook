@@ -37,23 +37,20 @@ final class EnumMetaData
             $backingType = ReflectionTypeParser::convertFromReflectionType($reflectionData->getBackingType());
         }
 
-        $cases = array_map(
+        $cases = array_values(array_map(
             EnumCaseMetaData::fromReflectionData(...),
             $reflectionData->getCases(),
-        );
+        ));
 
         $methods = array_values(array_filter(
             array_map(
                 FunctionMetaData::fromReflectionData(...),
-                $reflectionData->getMethods(),
+                $reflectionData->getImmediateMethods(),
             ),
             fn (FunctionMetaData $m) => !in_array($m->name, ['cases', 'from', 'tryFrom'], true),
         ));
 
-        $implements = array_map(
-            fn ($interface) => $interface->getName(),
-            $reflectionData->getInterfaces(),
-        );
+        $implements = $reflectionData->getInterfaceClassNames();
 
         $attributes = array_map(
             AttributeMetaData::fromReflectionData(...),
@@ -110,6 +107,7 @@ final class EnumMetaData
         $cases = [];
         $fieldSynopsisTags = $xpath->query('.//db:fieldsynopsis', $element);
         foreach ($fieldSynopsisTags as $fieldTag) {
+            assert($fieldTag instanceof Element);
             $cases[] = EnumCaseMetaData::parseFromDoc($fieldTag);
         }
 
@@ -117,6 +115,7 @@ final class EnumMetaData
         $methods = [];
         $methodSynopsisTags = $xpath->query('.//db:methodsynopsis', $element);
         foreach ($methodSynopsisTags as $methodTag) {
+            assert($methodTag instanceof Element);
             $methods[] = FunctionMetaData::parseFromDoc($methodTag, $extension);
         }
 
