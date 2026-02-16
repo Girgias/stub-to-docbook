@@ -117,7 +117,7 @@ End:
 
 FILE;
 
-    const /* string */ TABLE_3COL = <<<'FILE'
+    public const /* string */ TABLE_3COL = <<<'FILE'
 <?xml version="1.0" encoding="utf-8"?>
 <appendix xml:id="test.constants" xmlns="http://docbook.org/ns/docbook">
  <table>
@@ -147,7 +147,7 @@ FILE;
 </appendix>
 FILE;
 
-    const /* string */ TABLE_2COL = <<<'FILE'
+    public const /* string */ TABLE_2COL = <<<'FILE'
 <?xml version="1.0" encoding="utf-8"?>
 <appendix xml:id="test.constants" xmlns="http://docbook.org/ns/docbook">
  <table>
@@ -170,7 +170,7 @@ FILE;
 </appendix>
 FILE;
 
-    const /* string */ TABLE_NOTES = <<<'FILE'
+    public const /* string */ TABLE_NOTES = <<<'FILE'
 <?xml version="1.0" encoding="utf-8"?>
 <appendix xml:id="test.constants" xmlns="http://docbook.org/ns/docbook">
  <table>
