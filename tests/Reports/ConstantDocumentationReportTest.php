@@ -37,6 +37,7 @@ class ConstantDocumentationReportTest extends TestCase
         ConstantDocumentationReport::generateHtmlReport($diff, $this->outputFile);
 
         $html = file_get_contents($this->outputFile);
+        self::assertIsString($html);
         self::assertStringContainsString('<title>PHP Documentation Report: Constant Status</title>', $html);
         self::assertStringContainsString('Constants correctly documented: 0', $html);
         self::assertStringContainsString('<p>No missing constants</p>', $html);
@@ -74,6 +75,7 @@ class ConstantDocumentationReportTest extends TestCase
         ConstantDocumentationReport::generateHtmlReport($diff, $this->outputFile);
 
         $html = file_get_contents($this->outputFile);
+        self::assertIsString($html);
         self::assertStringContainsString('Constants correctly documented: 5', $html);
         self::assertStringContainsString('<h2>Missing Constants</h2>', $html);
         self::assertStringContainsString('Constants missing documentation: 2', $html);
@@ -109,6 +111,7 @@ class ConstantDocumentationReportTest extends TestCase
         ConstantDocumentationReport::generateHtmlReport($diff, $this->outputFile);
 
         $html = file_get_contents($this->outputFile);
+        self::assertIsString($html);
         self::assertStringContainsString('Constants correctly documented: 3', $html);
         self::assertStringContainsString('<h2>Constants with Incorrect Documented Types</h2>', $html);
         self::assertStringContainsString('Constants with Incorrect Documented Types: 1', $html);
@@ -142,6 +145,7 @@ class ConstantDocumentationReportTest extends TestCase
         ConstantDocumentationReport::generateHtmlReport($diff, $this->outputFile);
 
         $html = file_get_contents($this->outputFile);
+        self::assertIsString($html);
         self::assertStringContainsString('Constants correctly documented: 2', $html);
         self::assertStringContainsString('<h2>Documented Constants with Incorrect XML IDs for linking</h2>', $html);
         self::assertStringContainsString('Documented Constants with Incorrect XML IDs for linking: 1', $html);
@@ -199,6 +203,7 @@ class ConstantDocumentationReportTest extends TestCase
         ConstantDocumentationReport::generateHtmlReport($diff, $this->outputFile);
 
         $html = file_get_contents($this->outputFile);
+        self::assertIsString($html);
 
         // Header
         self::assertStringContainsString('<!DOCTYPE html>', $html);
