@@ -43,8 +43,8 @@ STUB;
             (new UnionType([
                 new SingleType('int'),
                 new SingleType('string'),
-                new SingleType('null')
-            ]))->isSame($param->type)
+                new SingleType('null'),
+            ]))->isSame($param->type),
         );
         self::assertTrue($param->isOptional);
         self::assertFalse($param->isVariadic);

@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class DocumentedConstantParserTest extends TestCase
 {
-    const /* string */ TEST_FILE = <<<'FILE'
+    public const /* string */ TEST_FILE = <<<'FILE'
 <?xml version="1.0" encoding="utf-8"?>
 <!-- $Revision$ -->
 <sect2 xml:id="reserved.constants.core" xmlns="http://docbook.org/ns/docbook">

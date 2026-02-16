@@ -18,8 +18,11 @@ final readonly class AttributeMetaData implements Equatable
 
     public function isSame(mixed $other): bool
     {
-        $diff = array_udiff_assoc($this->arguments, $other->arguments,
-                fn (Initializer $l, Initializer $r) => (int)!$r->isSame($l));
+        $diff = array_udiff_assoc(
+            $this->arguments,
+            $other->arguments,
+            fn (Initializer $l, Initializer $r) => (int) !$r->isSame($l),
+        );
         return $this->name === $other->name && $diff === [];
     }
 
@@ -31,7 +34,7 @@ final readonly class AttributeMetaData implements Equatable
             /* @phpstan-ignore argument.type (as we don't have positional attribute arguments) */
             array_map(
                 Initializer::fromPhpParserExpr(...),
-                $reflectionData->getArgumentsExpressions()
+                $reflectionData->getArgumentsExpressions(),
             ),
         );
     }

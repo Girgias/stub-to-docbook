@@ -30,7 +30,7 @@ final class Utils
                 $l,
                 $r,
             ),
-            fn(bool $carry, bool $item) => $carry && $item,
+            fn (bool $carry, bool $item) => $carry && $item,
             true,
         );
     }

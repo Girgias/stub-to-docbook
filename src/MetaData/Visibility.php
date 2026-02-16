@@ -14,8 +14,8 @@ enum Visibility
 
     public static function fromReflectionData(ReflectionProperty|ReflectionClassConstant|ReflectionMethod $reflectionData): self
     {
-        return $reflectionData->isPrivate() ?
-            Visibility::Private :
-            ($reflectionData->isProtected() ? Visibility::Protected : Visibility::Public);
+        return $reflectionData->isPrivate()
+            ? Visibility::Private
+            : ($reflectionData->isProtected() ? Visibility::Protected : Visibility::Public);
     }
 }

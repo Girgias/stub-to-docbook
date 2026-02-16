@@ -32,7 +32,7 @@ final readonly class UnionType implements Type
     {
         return implode([
             '<type class="union">',
-            ...array_map(fn(Type $type) => $type->toXml(), $this->types),
+            ...array_map(fn (Type $type) => $type->toXml(), $this->types),
             '</type>',
         ]);
     }
@@ -59,7 +59,7 @@ final readonly class UnionType implements Type
         $s = count($a->types) <=> count($b->types);
         if ($s === 0) {
             $cmps = array_map(
-                fn(SingleType $l, SingleType $r) => strcmp($l->name, $r->name),
+                fn (SingleType $l, SingleType $r) => strcmp($l->name, $r->name),
                 $a->types,
                 $b->types,
             );

@@ -34,7 +34,7 @@ final class PropertyMetaData
 
         $attributes = array_map(
             AttributeMetaData::fromReflectionData(...),
-            $reflectionData->getAttributes()
+            $reflectionData->getAttributes(),
         );
 
         $reflectionType = $reflectionData->getType();
