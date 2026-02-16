@@ -204,18 +204,6 @@ final readonly class FunctionMetaData implements Equatable
         return $name;
     }
 
-    /**
-     * Extract the class qualifier from a fully qualified method name.
-     * Returns null if no class qualifier is present.
-     */
-    private static function extractClassQualifier(string $name): ?string
-    {
-        if (str_contains($name, '::')) {
-            return explode('::', $name, 2)[0];
-        }
-        return null;
-    }
-
     public function isInherited(): bool
     {
         return $this->inheritedFrom !== null;
