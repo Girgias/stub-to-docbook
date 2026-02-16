@@ -49,7 +49,7 @@ final class ClassMetaData
         );
 
         $implements = array_map(
-            fn($interface) => $interface->getName(),
+            fn ($interface) => $interface->getName(),
             $reflectionData->getInterfaces(),
         );
 

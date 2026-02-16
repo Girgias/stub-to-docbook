@@ -3,12 +3,10 @@
 namespace Girgias\StubToDocbook\Tests\MetaData\Classes;
 
 use Girgias\StubToDocbook\MetaData\Classes\ClassMetaData;
-use Girgias\StubToDocbook\MetaData\Visibility;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
-use Girgias\StubToDocbook\Types\SingleType;
+use Girgias\StubToDocbook\Tests\ZendEngineStringSourceLocator;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\BetterReflection;
-use Girgias\StubToDocbook\Tests\ZendEngineStringSourceLocator;
 
 class ClassMetaDataTest extends TestCase
 {
@@ -132,7 +130,7 @@ STUB;
         self::assertSame('Base', $class->extends);
         self::assertCount(3, $class->methods);
 
-        $methodNames = array_map(fn($m) => $m->name, $class->methods);
+        $methodNames = array_map(fn ($m) => $m->name, $class->methods);
         self::assertContains('kept', $methodNames);
         self::assertContains('overridden', $methodNames);
         self::assertContains('alsoKept', $methodNames);
