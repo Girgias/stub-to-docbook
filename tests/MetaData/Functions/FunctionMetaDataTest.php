@@ -581,4 +581,105 @@ XML;
 
         self::assertTrue($fn->isSame($expectedFunction));
     }
+
+    public function test_to_method_synopsis_xml_basic_function(): void
+    {
+        $fn = new FunctionMetaData(
+            'array_pop',
+            [
+                new ParameterMetaData(
+                    'array',
+                    1,
+                    new SingleType('array'),
+                    isByRef: true,
+                ),
+            ],
+            new SingleType('mixed'),
+            'Core',
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($document);
+        $document->append($element);
+
+        $xml = $document->saveXml($element);
+
+        self::assertStringContainsString('<methodname>array_pop</methodname>', $xml);
+        self::assertStringContainsString('<type>mixed</type>', $xml);
+        self::assertStringContainsString('<type>array</type>', $xml);
+        self::assertStringContainsString('<parameter role="reference">array</parameter>', $xml);
+        self::assertStringNotContainsString('<void/>', $xml);
+    }
+
+    public function test_to_method_synopsis_xml_void_function(): void
+    {
+        $fn = new FunctionMetaData(
+            'gc_collect_cycles',
+            [],
+            new SingleType('int'),
+            'Core',
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($document);
+        $document->append($element);
+
+        $xml = $document->saveXml($element);
+
+        self::assertStringContainsString('<void/>', $xml);
+        self::assertStringNotContainsString('<methodparam', $xml);
+    }
+
+    public function test_to_method_synopsis_xml_method_with_modifiers(): void
+    {
+        $fn = new FunctionMetaData(
+            'getMessage',
+            [],
+            new SingleType('string'),
+            'Core',
+            isFinal: true,
+            visibility: Visibility::Protected,
+            isStatic: true,
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($document, 'Exception');
+        $document->append($element);
+
+        $xml = $document->saveXml($element);
+
+        self::assertStringContainsString('<modifier>final</modifier>', $xml);
+        self::assertStringContainsString('<modifier>protected</modifier>', $xml);
+        self::assertStringContainsString('<modifier>static</modifier>', $xml);
+        self::assertStringContainsString('<methodname>Exception::getMessage</methodname>', $xml);
+    }
+
+    public function test_to_method_synopsis_xml_optional_param_with_default(): void
+    {
+        $fn = new FunctionMetaData(
+            'substr',
+            [
+                new ParameterMetaData('string', 1, new SingleType('string')),
+                new ParameterMetaData('offset', 2, new SingleType('int')),
+                new ParameterMetaData(
+                    'length',
+                    3,
+                    new UnionType([new SingleType('int'), new SingleType('null')]),
+                    isOptional: true,
+                    defaultValue: new Initializer(InitializerVariant::Literal, 'null'),
+                ),
+            ],
+            new SingleType('string'),
+            'Core',
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($document);
+        $document->append($element);
+
+        $xml = $document->saveXml($element);
+
+        self::assertStringContainsString('choice="opt"', $xml);
+        self::assertStringContainsString('<initializer>null</initializer>', $xml);
+    }
 }

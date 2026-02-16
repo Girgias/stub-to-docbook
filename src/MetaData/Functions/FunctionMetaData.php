@@ -4,6 +4,7 @@ namespace Girgias\StubToDocbook\MetaData\Functions;
 
 use Dom\Element;
 use Dom\Text;
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
@@ -185,6 +186,95 @@ final readonly class FunctionMetaData implements Equatable
             visibility: $visibility,
             isDeprecated: $isDeprecated,
         );
+    }
+
+    /**
+     * DocBook 5.2 <methodsynopsis> generation
+     */
+    public function toMethodSynopsisXml(XMLDocument $document, ?string $className = null): Element
+    {
+        $methodsynopsis = $document->createElement('methodsynopsis');
+
+        if ($this->isFinal) {
+            $modifier = $document->createElement('modifier');
+            $modifier->textContent = 'final';
+            $methodsynopsis->append($modifier);
+        }
+        if ($this->isAbstract) {
+            $modifier = $document->createElement('modifier');
+            $modifier->textContent = 'abstract';
+            $methodsynopsis->append($modifier);
+        }
+        if ($this->visibility !== Visibility::Public) {
+            $modifier = $document->createElement('modifier');
+            $modifier->textContent = $this->visibility->value;
+            $methodsynopsis->append($modifier);
+        }
+        if ($this->isStatic) {
+            $modifier = $document->createElement('modifier');
+            $modifier->textContent = 'static';
+            $methodsynopsis->append($modifier);
+        }
+
+        foreach ($this->attributes as $attribute) {
+            $modifier = $document->createElement('modifier');
+            $modifier->setAttribute('role', 'attribute');
+            $modifier->textContent = $attribute->name;
+            $methodsynopsis->append($modifier);
+        }
+
+        $typeFragment = $document->createDocumentFragment();
+        $typeFragment->appendXml($this->returnType->toXml());
+        $methodsynopsis->append($typeFragment);
+
+        $methodname = $document->createElement('methodname');
+        $methodname->textContent = $className !== null
+            ? $className . '::' . $this->name
+            : $this->name;
+        $methodsynopsis->append($methodname);
+
+        if (count($this->parameters) === 0) {
+            $methodsynopsis->append($document->createElement('void'));
+        } else {
+            foreach ($this->parameters as $param) {
+                $methodparam = $document->createElement('methodparam');
+
+                if ($param->isOptional) {
+                    $methodparam->setAttribute('choice', 'opt');
+                }
+                if ($param->isVariadic) {
+                    $methodparam->setAttribute('rep', 'repeat');
+                }
+
+                foreach ($param->attributes as $attr) {
+                    $modifier = $document->createElement('modifier');
+                    $modifier->setAttribute('role', 'attribute');
+                    $modifier->textContent = $attr->name;
+                    $methodparam->append($modifier);
+                }
+
+                $paramTypeFragment = $document->createDocumentFragment();
+                $paramTypeFragment->appendXml($param->type->toXml());
+                $methodparam->append($paramTypeFragment);
+
+                $parameter = $document->createElement('parameter');
+                $parameter->textContent = $param->name;
+                if ($param->isByRef) {
+                    $parameter->setAttribute('role', 'reference');
+                }
+                $methodparam->append($parameter);
+
+                if ($param->defaultValue !== null) {
+                    $initializer = $document->createElement('initializer');
+                    $initializer->textContent = $param->defaultValue->value;
+                    $methodparam->append($initializer);
+                }
+
+                $methodsynopsis->append($methodparam);
+            }
+        }
+
+        return $methodsynopsis;
     }
 
     private static function parseNameWithPossibleClassQualifier(string $name): string
