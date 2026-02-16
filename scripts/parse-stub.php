@@ -1,7 +1,7 @@
 <?php
 
-use Dom\XMLDocument;
 use Girgias\StubToDocbook\Differ\ConstantListDiffer;
+use Girgias\StubToDocbook\Documentation\DocBookLoader;
 use Girgias\StubToDocbook\Documentation\DocumentedConstantParser;
 use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Reports\ConstantDocumentationReport;
@@ -9,22 +9,7 @@ use Girgias\StubToDocbook\Reports\ConstantDocumentationReport;
 $totalDocConst = 0;
 function file_to_doc_constants(string $path)
 {
-    $content = file_get_contents($path);
-    $content = str_replace(
-        [
-            '&true;',
-            '&false;',
-            '&null;',
-        ],
-        [
-            '<constant xmlns="http://docbook.org/ns/docbook">true</constant>',
-            '<constant xmlns="http://docbook.org/ns/docbook">false</constant>',
-            '<constant xmlns="http://docbook.org/ns/docbook">null</constant>',
-        ],
-        $content,
-    );
-    $content = str_replace('&', '&amp;', $content);
-    $dom = XMLDocument::createFromString($content);
+    $dom = DocBookLoader::loadFile($path);
     //echo "File $path\n";
     // TODO: Determine extension properly from file path
     $listOfDocumentedConstantList = DocumentedConstantParser::parse($dom, 'UNKNOWN');
