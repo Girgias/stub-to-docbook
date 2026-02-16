@@ -6,4 +6,5 @@ enum DocumentedConstantListType
 {
     case VarEntryList;
     case Table;
+    case TokenList;
 }
