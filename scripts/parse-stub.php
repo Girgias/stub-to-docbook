@@ -80,6 +80,7 @@ echo 'There are currently:', PHP_EOL,
     count($status->missing), ' missing constants', PHP_EOL,
     count($status->incorrectTypes), ' constants with incorrect types documented', PHP_EOL,
     count($status->incorrectIdForLinking), ' documented constants with incorrect IDs for linking', PHP_EOL,
+    count($status->deprecatedInStub), ' deprecated constants (in stubs)', PHP_EOL,
     $status->valid, ' valid constants', PHP_EOL;
 echo "Total doc constants parsed = $totalDocConst\n";
 echo "Total stub constants parsed = ", count($constants), "\n";

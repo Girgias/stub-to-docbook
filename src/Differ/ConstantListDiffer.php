@@ -13,6 +13,7 @@ class ConstantListDiffer
         $missingDocs = [];
         $incorrectTypes = [];
         $incorrectIdForLinking = [];
+        $deprecatedInStub = [];
 
         foreach ($fromStubs->constants as $name => $constant) {
             if (!array_key_exists($name, $docConstants)) {
@@ -30,6 +31,9 @@ class ConstantListDiffer
             if ($constant->id !== $docConstants[$name]->id) {
                 $incorrectIdForLinking[$name] = $docConstants[$name];
             }
+            if ($constant->isDeprecated) {
+                $deprecatedInStub[] = $constant;
+            }
         }
 
         return new ConstantListDiff(
@@ -37,6 +41,7 @@ class ConstantListDiffer
             $incorrectTypes,
             new ConstantList($missingDocs),
             new ConstantList($incorrectIdForLinking),
+            $deprecatedInStub,
         );
     }
 }
