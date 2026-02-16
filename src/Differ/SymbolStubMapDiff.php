@@ -2,11 +2,8 @@
 
 namespace Girgias\StubToDocbook\Differ;
 
-use Girgias\StubToDocbook\MetaData\ConstantMetaData;
-use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
-
 /**
- * @template T of FunctionMetaData|ConstantMetaData
+ * @template T of object{name: string, isDeprecated: bool}
  */
 final class SymbolStubMapDiff
 {
