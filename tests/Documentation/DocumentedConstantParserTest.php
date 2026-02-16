@@ -146,7 +146,7 @@ FILE;
         self::assertSame('STDOUT', $constants[1]->constants['STDOUT']->name);
     }
 
-    const /* string */ TOKEN_LIST = <<<'FILE'
+    public const /* string */ TOKEN_LIST = <<<'FILE'
 <?xml version="1.0" encoding="utf-8"?>
 <appendix xml:id="tokens" xmlns="http://docbook.org/ns/docbook">
  <title>List of Parser Tokens</title>
