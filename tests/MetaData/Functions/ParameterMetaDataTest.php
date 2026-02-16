@@ -366,6 +366,7 @@ STUB;
         $element = $param->toMethodParamXml($document);
         $document->append($element);
         $xml = $document->saveXml($element);
+        self::assertIsString($xml);
 
         self::assertSame('<methodparam><type>string</type><parameter>name</parameter></methodparam>', $xml);
     }
@@ -384,6 +385,7 @@ STUB;
         $element = $param->toMethodParamXml($document);
         $document->append($element);
         $xml = $document->saveXml($element);
+        self::assertIsString($xml);
 
         self::assertStringContainsString('choice="opt"', $xml);
         self::assertStringContainsString('<initializer>null</initializer>', $xml);
@@ -397,6 +399,7 @@ STUB;
         $element = $param->toMethodParamXml($document);
         $document->append($element);
         $xml = $document->saveXml($element);
+        self::assertIsString($xml);
 
         self::assertStringContainsString('<parameter role="reference">array</parameter>', $xml);
     }
@@ -409,6 +412,7 @@ STUB;
         $element = $param->toMethodParamXml($document);
         $document->append($element);
         $xml = $document->saveXml($element);
+        self::assertIsString($xml);
 
         self::assertStringContainsString('rep="repeat"', $xml);
     }
@@ -426,6 +430,7 @@ STUB;
         $element = $param->toMethodParamXml($document);
         $document->append($element);
         $xml = $document->saveXml($element);
+        self::assertIsString($xml);
 
         self::assertStringContainsString('<modifier role="attribute">', $xml);
         self::assertStringContainsString('\SensitiveParameter', $xml);
