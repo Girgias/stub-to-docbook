@@ -69,7 +69,7 @@ final class ExclusionList
     {
         return array_filter(
             $symbols,
-            fn(string $name) => !$excludeCheck($name),
+            fn (string $name) => !$excludeCheck($name),
             ARRAY_FILTER_USE_KEY,
         );
     }
