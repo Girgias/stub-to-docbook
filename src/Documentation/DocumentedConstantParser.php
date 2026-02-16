@@ -46,25 +46,12 @@ class DocumentedConstantParser
 
         $tables = $doc->getElementsByTagName('table');
         foreach ($tables as $table) {
-            // echo "Has <table> constants\n";
-            // TODO Parse THEAD to determine the structure of the table as those are inconsistent
             $thead = $table->getElementsByTagName("thead")->item(0);
             $theadEntries = $thead->getElementsByTagName("row")->item(0)->getElementsByTagName("entry");
-            if (count($theadEntries) !== 3) {
-                //$col = 1;
-                //foreach ($theadEntries as $theadEntry) {
-                //    echo 'Column ', $col++, ': ', $theadEntry->textContent, "\n";
-                //}
-                // TODO Handle exoteric docs
-                $constants[] = new ConstantList([], DocumentedConstantListType::Table);
-                continue;
-            }
-            if (str_contains($theadEntries->item(2)->textContent, 'Notes')) {
-                // TODO Handle exoteric docs
-                $col = 1;
-                foreach ($theadEntries as $theadEntry) {
-                    echo 'Column ', $col++, ': ', $theadEntry->textContent, "\n";
-                }
+            $columnCount = count($theadEntries);
+
+            $columnLayout = self::determineTableColumnLayout($theadEntries);
+            if ($columnLayout === null) {
                 $constants[] = new ConstantList([], DocumentedConstantListType::Table);
                 continue;
             }
@@ -77,23 +64,28 @@ class DocumentedConstantParser
                     $id = $row->getAttribute('xml:id');
                 }
                 $entries = $row->getElementsByTagName("entry");
-                assert(count($entries) === 3);
-                $constantEntry = $entries[0];
-                $typeEntry = $entries[1];
-                $descriptionEntry = $entries[2];
+                if (count($entries) !== $columnCount) {
+                    continue;
+                }
 
+                $constantEntry = $entries[$columnLayout['constant']];
                 $manualConstantTags = $constantEntry->getElementsByTagName("constant");
-                assert(count($manualConstantTags) === 1);
+                if ($manualConstantTags->length === 0) {
+                    continue;
+                }
                 $manualConstantName = $manualConstantTags[0]->textContent;
 
-                $manualTypeTags = $typeEntry->getElementsByTagName("type");
-                if (count($manualTypeTags) === 0) {
-                    $manualType = null;
-                } else {
-                    assert(count($manualTypeTags) === 1);
-                    $manualType = DocumentedTypeParser::parse($manualTypeTags[0]);
-                    assert($manualType instanceof SingleType);
+                $manualType = null;
+                if ($columnLayout['type'] !== null) {
+                    $typeEntry = $entries[$columnLayout['type']];
+                    $manualTypeTags = $typeEntry->getElementsByTagName("type");
+                    if (count($manualTypeTags) === 1) {
+                        $manualType = DocumentedTypeParser::parse($manualTypeTags[0]);
+                        assert($manualType instanceof SingleType);
+                    }
                 }
+
+                $descriptionEntry = $columnLayout['description'] !== null ? $entries[$columnLayout['description']] : null;
 
                 $individualList[$manualConstantName] = new ConstantMetaData(
                     $manualConstantName,
@@ -110,5 +102,42 @@ class DocumentedConstantParser
             throw new \Exception("No <varlistentry> or <row> tags");
         }
         return $constants;
+    }
+
+    /**
+     * Determine column positions for constant, type, and description
+     * based on the table header content.
+     *
+     * @return array{constant: int, type: int|null, description: int|null}|null
+     */
+    private static function determineTableColumnLayout(\Dom\HTMLCollection $headerEntries): ?array
+    {
+        $columnCount = count($headerEntries);
+        $headers = [];
+        foreach ($headerEntries as $entry) {
+            $headers[] = strtolower(trim($entry->textContent));
+        }
+
+        // Standard 3-column layout: Constant, Type, Description/Value
+        if ($columnCount === 3 && !str_contains($headers[2], 'notes')) {
+            return ['constant' => 0, 'type' => 1, 'description' => 2];
+        }
+
+        // 2-column layout: Constant, Description (no type column)
+        if ($columnCount === 2) {
+            return ['constant' => 0, 'type' => null, 'description' => 1];
+        }
+
+        // 4-column layout: Constant, Type, Value/Description, Notes
+        if ($columnCount === 4) {
+            return ['constant' => 0, 'type' => 1, 'description' => 2];
+        }
+
+        // 3-column with Notes: Constant, Value, Notes
+        if ($columnCount === 3 && str_contains($headers[2], 'notes')) {
+            return ['constant' => 0, 'type' => null, 'description' => 1];
+        }
+
+        return null;
     }
 }
