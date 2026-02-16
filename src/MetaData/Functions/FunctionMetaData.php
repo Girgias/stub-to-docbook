@@ -241,7 +241,40 @@ final readonly class FunctionMetaData implements Equatable
             $methodsynopsis->append($document->createElement('void'));
         } else {
             foreach ($this->parameters as $param) {
-                $methodsynopsis->append($param->toMethodParamXml($document));
+                $methodparam = $document->createElement('methodparam');
+
+                if ($param->isOptional) {
+                    $methodparam->setAttribute('choice', 'opt');
+                }
+                if ($param->isVariadic) {
+                    $methodparam->setAttribute('rep', 'repeat');
+                }
+
+                foreach ($param->attributes as $attr) {
+                    $modifier = $document->createElement('modifier');
+                    $modifier->setAttribute('role', 'attribute');
+                    $modifier->textContent = $attr->name;
+                    $methodparam->append($modifier);
+                }
+
+                $paramTypeFragment = $document->createDocumentFragment();
+                $paramTypeFragment->appendXml($param->type->toXml());
+                $methodparam->append($paramTypeFragment);
+
+                $parameter = $document->createElement('parameter');
+                $parameter->textContent = $param->name;
+                if ($param->isByRef) {
+                    $parameter->setAttribute('role', 'reference');
+                }
+                $methodparam->append($parameter);
+
+                if ($param->defaultValue !== null) {
+                    $initializer = $document->createElement('initializer');
+                    $initializer->textContent = $param->defaultValue->value;
+                    $methodparam->append($initializer);
+                }
+
+                $methodsynopsis->append($methodparam);
             }
         }
 
