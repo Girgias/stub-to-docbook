@@ -62,10 +62,10 @@ final class Initializer implements Equatable
             throw new \Exception('<initializer> tag has more than 1 child node');
         }
         $child = $element->firstElementChild;
-        /** @phpstan-ignore match.unhandled */
         return match ($child->tagName) {
             'constant' => new self(InitializerVariant::Constant, $child->textContent),
             'literal' => new self(InitializerVariant::Literal, $child->textContent),
+            default => throw new \Exception('Unexpected <initializer> child tag: <' . $child->tagName . '>'),
         };
     }
 
@@ -78,6 +78,7 @@ final class Initializer implements Equatable
                 => new self(InitializerVariant::Constant, self::phpParserExprToString($expr)),
             BitwiseOr::class => new self(InitializerVariant::BitMask, self::phpParserExprToString($expr)),
             FuncCall::class => new self(InitializerVariant::Function, self::phpParserExprToString($expr)),
+            default => throw new \Exception('Unsupported PHP parser expression: ' . $expr::class),
         };
     }
 

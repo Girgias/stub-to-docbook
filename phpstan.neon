@@ -45,12 +45,6 @@ parameters:
             path: scripts/stub-utils.php
 
         -
-            message: '#^Match expression does not handle remaining value\: class\-string\<PhpParser\\Node\\Expr\>&literal\-string$#'
-            identifier: match.unhandled
-            count: 1
-            path: src/MetaData/Initializer.php
-
-        -
             message: '#^Parameter \#2 \$actualXml of static method PHPUnit\\Framework\\Assert\:\:assertXmlStringEqualsXmlString\(\) expects string, string\|false given\.$#'
             identifier: argument.type
             count: 2
