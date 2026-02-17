@@ -23,7 +23,7 @@ final class DocBookLoader
      */
     public static function loadFile(string $path): XMLDocument
     {
-        $content = file_get_contents($path);
+        $content = @file_get_contents($path);
         if ($content === false) {
             throw new \RuntimeException('Failed to read file: ' . $path);
         }
