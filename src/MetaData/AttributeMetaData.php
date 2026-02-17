@@ -3,6 +3,7 @@
 namespace Girgias\StubToDocbook\MetaData;
 
 use Dom\Element;
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\FP\Equatable;
 use Roave\BetterReflection\Reflection\ReflectionAttribute;
 
@@ -24,6 +25,17 @@ final readonly class AttributeMetaData implements Equatable
             fn (Initializer $l, Initializer $r) => (int) !$r->isSame($l),
         );
         return $this->name === $other->name && $diff === [];
+    }
+
+    /**
+     * DocBook 5.2 <modifier role="attribute"> generation
+     */
+    public function toModifierXml(XMLDocument $document): Element
+    {
+        $modifier = $document->createElement('modifier');
+        $modifier->setAttribute('role', 'attribute');
+        $modifier->textContent = '#[' . $this->name . ']';
+        return $modifier;
     }
 
     public static function fromReflectionData(ReflectionAttribute $reflectionData): self

@@ -151,4 +151,17 @@ STUB;
         );
         self::assertTrue($expected->isSame($attribute));
     }
+
+    public function test_to_modifier_xml(): void
+    {
+        $attribute = new AttributeMetaData('\\Deprecated');
+
+        $document = XMLDocument::createEmpty();
+        $element = $attribute->toModifierXml($document);
+        $document->append($element);
+        $xml = $document->saveXml($element);
+        self::assertIsString($xml);
+
+        self::assertSame('<modifier role="attribute">#[\Deprecated]</modifier>', $xml);
+    }
 }
