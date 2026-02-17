@@ -119,6 +119,7 @@ final class ClassMetaData
         // Look for extends in classsynopsisinfo text
         $infoTags = $xpath->query('.//db:classsynopsisinfo', $element);
         foreach ($infoTags as $info) {
+            assert($info instanceof Element);
             if (str_contains($info->textContent, 'extends')) {
                 $extendClassNames = $info->getElementsByTagName('classname');
                 if ($extendClassNames->length > 0) {
@@ -139,6 +140,7 @@ final class ClassMetaData
         $constants = [];
         $fieldSynopsisTags = $xpath->query('.//db:fieldsynopsis', $element);
         foreach ($fieldSynopsisTags as $fieldTag) {
+            assert($fieldTag instanceof Element);
             $constantTags = $fieldTag->getElementsByTagName('constant');
             if ($constantTags->length > 0) {
                 $constantName = $constantTags[0]->textContent;
@@ -180,6 +182,7 @@ final class ClassMetaData
         // Parse properties from fieldsynopsis without <constant>
         $properties = [];
         foreach ($fieldSynopsisTags as $fieldTag) {
+            assert($fieldTag instanceof Element);
             $constantTags = $fieldTag->getElementsByTagName('constant');
             if ($constantTags->length === 0) {
                 $properties[] = PropertyMetaData::parseFromDoc($fieldTag);
@@ -190,6 +193,7 @@ final class ClassMetaData
         $methods = [];
         $methodSynopsisTags = $xpath->query('.//db:methodsynopsis', $element);
         foreach ($methodSynopsisTags as $methodTag) {
+            assert($methodTag instanceof Element);
             $methods[] = FunctionMetaData::parseFromDoc($methodTag, $extension);
         }
 
