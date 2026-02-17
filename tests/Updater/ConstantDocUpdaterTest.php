@@ -37,6 +37,7 @@ XML;
         self::assertTrue($result);
 
         $output = $doc->saveXml($entry);
+        self::assertIsString($output);
         self::assertStringContainsString('<type>int</type>', $output);
         self::assertStringNotContainsString('<type>string</type>', $output);
     }
@@ -66,6 +67,7 @@ XML;
         self::assertTrue($result);
 
         $output = $doc->saveXml($row);
+        self::assertIsString($output);
         self::assertStringContainsString('<type>float</type>', $output);
         self::assertStringNotContainsString('<type>string</type>', $output);
     }
