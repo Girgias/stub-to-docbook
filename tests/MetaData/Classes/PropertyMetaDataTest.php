@@ -2,6 +2,7 @@
 
 namespace Girgias\StubToDocbook\Tests\MetaData\Classes;
 
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Classes\PropertyMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
@@ -277,5 +278,52 @@ STUB;
         $expectedAttr = new AttributeMetaData('\MyAttr', ['name' => new Initializer(InitializerVariant::Literal, '"bar"')]);
         self::assertCount(1, $prop->attributes);
         self::assertTrue($expectedAttr->isSame($prop->attributes[0]));
+    }
+
+    public function test_parse_from_doc_basic(): void
+    {
+        $xml = '<fieldsynopsis><modifier>public</modifier><type>int</type><varname>y</varname></fieldsynopsis>';
+        $document = XMLDocument::createFromString($xml);
+        $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
+
+        self::assertSame('y', $prop->name);
+        self::assertTrue((new SingleType('int'))->isSame($prop->type));
+        self::assertSame(Visibility::Public, $prop->visibility);
+        self::assertNull($prop->defaultValue);
+        self::assertFalse($prop->isReadOnly);
+        self::assertFalse($prop->isStatic);
+    }
+
+    public function test_parse_from_doc_protected_readonly(): void
+    {
+        $xml = '<fieldsynopsis><modifier>protected</modifier><modifier>readonly</modifier><type>string</type><varname>name</varname></fieldsynopsis>';
+        $document = XMLDocument::createFromString($xml);
+        $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
+
+        self::assertSame('name', $prop->name);
+        self::assertSame(Visibility::Protected, $prop->visibility);
+        self::assertTrue($prop->isReadOnly);
+    }
+
+    public function test_parse_from_doc_with_initializer(): void
+    {
+        $xml = '<fieldsynopsis><modifier>public</modifier><type>int</type><varname>count</varname><initializer>0</initializer></fieldsynopsis>';
+        $document = XMLDocument::createFromString($xml);
+        $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
+
+        self::assertSame('count', $prop->name);
+        self::assertNotNull($prop->defaultValue);
+        self::assertSame(InitializerVariant::Literal, $prop->defaultValue->variant);
+        self::assertSame('0', $prop->defaultValue->value);
+    }
+
+    public function test_parse_from_doc_static(): void
+    {
+        $xml = '<fieldsynopsis><modifier>public</modifier><modifier>static</modifier><type>int</type><varname>instances</varname></fieldsynopsis>';
+        $document = XMLDocument::createFromString($xml);
+        $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
+
+        self::assertSame('instances', $prop->name);
+        self::assertTrue($prop->isStatic);
     }
 }
