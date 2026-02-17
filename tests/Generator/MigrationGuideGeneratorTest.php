@@ -17,6 +17,7 @@ class MigrationGuideGeneratorTest extends TestCase
         );
 
         $xml = $doc->saveXml($section);
+        self::assertIsString($xml);
         self::assertStringContainsString('<title>New Functions</title>', $xml);
         self::assertStringContainsString('<function>array_any</function>', $xml);
         self::assertStringContainsString('<function>array_all</function>', $xml);
@@ -33,6 +34,7 @@ class MigrationGuideGeneratorTest extends TestCase
         );
 
         $xml = $doc->saveXml($section);
+        self::assertIsString($xml);
         self::assertStringContainsString('<title>Deprecated Functions</title>', $xml);
         self::assertStringContainsString('<function>utf8_encode</function>', $xml);
         self::assertStringContainsString('<function>utf8_decode</function>', $xml);
@@ -47,6 +49,7 @@ class MigrationGuideGeneratorTest extends TestCase
         );
 
         $xml = $doc->saveXml($section);
+        self::assertIsString($xml);
         self::assertStringContainsString('<title>New Constants</title>', $xml);
         self::assertStringContainsString('<constant>PHP_MAJOR_VERSION</constant>', $xml);
         self::assertStringContainsString('<constant>PHP_MINOR_VERSION</constant>', $xml);
