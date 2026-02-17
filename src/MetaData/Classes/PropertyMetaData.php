@@ -155,4 +155,5 @@ final class PropertyMetaData
             isDeprecated: $reflectionData->isDeprecated(),
         );
     }
+
 }

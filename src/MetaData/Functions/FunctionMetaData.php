@@ -61,6 +61,8 @@ final readonly class FunctionMetaData implements Equatable
         $reflectionType = $reflectionData->getReturnType();
         if ($reflectionType !== null) {
             $returnType = ReflectionTypeParser::convertFromReflectionType($reflectionData->getReturnType());
+        } elseif ($reflectionData instanceof ReflectionMethod && $reflectionData->getName() === '__construct') {
+            $returnType = new \Girgias\StubToDocbook\Types\SingleType('void');
         } else {
             /* We need to grab the type from the doc comment */
             $comment = $reflectionData->getDocComment()
