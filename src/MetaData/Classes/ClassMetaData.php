@@ -40,7 +40,7 @@ final class ClassMetaData
 
         $methods = array_map(
             FunctionMetaData::fromReflectionData(...),
-            $reflectionData->getMethods(),
+            $reflectionData->getImmediateMethods(),
         );
 
         $constants = array_map(
