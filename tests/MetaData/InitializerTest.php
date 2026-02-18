@@ -160,4 +160,46 @@ class InitializerTest extends TestCase
         self::assertSame(InitializerVariant::Literal, $initializer->variant);
         self::assertSame("'raw str'", $initializer->value);
     }
+
+    public function test_literal_initializer_to_xml(): void
+    {
+        $initializer = new Initializer(InitializerVariant::Literal, '[]');
+
+        $document = XMLDocument::createEmpty();
+        $element = $initializer->toInitializerXml($document);
+        $document->append($element);
+        $xml = $document->saveXml($element);
+
+        self::assertIsString($xml);
+
+        self::assertSame('<initializer><literal>[]</literal></initializer>', $xml);
+    }
+
+    public function test_constant_initializer_to_xml(): void
+    {
+        $initializer = new Initializer(InitializerVariant::Constant, 'PHP_EOL');
+
+        $document = XMLDocument::createEmpty();
+        $element = $initializer->toInitializerXml($document);
+        $document->append($element);
+        $xml = $document->saveXml($element);
+
+        self::assertIsString($xml);
+
+        self::assertSame('<initializer><constant>PHP_EOL</constant></initializer>', $xml);
+    }
+
+    public function test_bitmask_initializer_to_xml(): void
+    {
+        $initializer = new Initializer(InitializerVariant::BitMask, 'FLAG_1|FLAG_2');
+
+        $document = XMLDocument::createEmpty();
+        $element = $initializer->toInitializerXml($document);
+        $document->append($element);
+        $xml = $document->saveXml($element);
+
+        self::assertIsString($xml);
+
+        self::assertSame('<initializer>FLAG_1|FLAG_2</initializer>', $xml);
+    }
 }

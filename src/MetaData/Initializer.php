@@ -3,6 +3,7 @@
 namespace Girgias\StubToDocbook\MetaData;
 
 use Dom\Element;
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\FP\Equatable;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
@@ -67,6 +68,32 @@ final class Initializer implements Equatable
             'constant' => new self(InitializerVariant::Constant, $child->textContent),
             'literal' => new self(InitializerVariant::Literal, $child->textContent),
         };
+    }
+
+    /**
+     * DocBook 5.2 <initializer> generation
+     */
+    public function toInitializerXml(XMLDocument $document): Element
+    {
+        $initializer = $document->createElement('initializer');
+        /* TODO: ideally individual bitmask flags would be wrapped in constant tag */
+        $childElement = match ($this->variant) {
+            InitializerVariant::Constant, InitializerVariant::Enum
+                => $document->createElement('constant'),
+            InitializerVariant::Literal
+                => $document->createElement('literal'),
+            InitializerVariant::BitMask
+                => $this->value,
+            InitializerVariant::Function => throw new \Exception("Initializers should not be a function variant ideally"),
+            InitializerVariant::Text => throw new \Exception("Initializers should not be a text variant ideally"),
+        };
+        if ($childElement instanceof Element) {
+            $childElement->textContent = $this->value;
+            $initializer->appendChild($childElement);
+        } else {
+            $initializer->textContent = $this->value;
+        }
+        return $initializer;
     }
 
     public static function fromPhpParserExpr(Expr $expr): self
