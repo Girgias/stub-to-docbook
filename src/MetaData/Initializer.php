@@ -91,7 +91,7 @@ final class Initializer implements Equatable
             $childElement->textContent = $this->value;
             $initializer->appendChild($childElement);
         } else {
-            $initializer->textContent = $this->value;   
+            $initializer->textContent = $this->value;
         }
         return $initializer;
     }
