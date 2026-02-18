@@ -32,6 +32,7 @@ final readonly class AttributeMetaData implements Equatable
      */
     public function toModifierXml(XMLDocument $document): Element
     {
+        /* TODO: handle attribute parameters after XML markup has been determined */
         $modifier = $document->createElement('modifier');
         $modifier->setAttribute('role', 'attribute');
         $modifier->textContent = '#[' . $this->name . ']';
