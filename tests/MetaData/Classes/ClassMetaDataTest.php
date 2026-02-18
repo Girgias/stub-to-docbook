@@ -128,12 +128,8 @@ STUB;
 
         self::assertSame('Child', $class->name);
         self::assertSame('Base', $class->extends);
-        self::assertCount(3, $class->methods);
-
-        $methodNames = array_map(fn ($m) => $m->name, $class->methods);
-        self::assertContains('kept', $methodNames);
-        self::assertContains('overridden', $methodNames);
-        self::assertContains('alsoKept', $methodNames);
+        self::assertCount(1, $class->methods);
+        self::assertSame('overridden', $class->methods[0]->name);
     }
 
     public function test_readonly_class(): void
