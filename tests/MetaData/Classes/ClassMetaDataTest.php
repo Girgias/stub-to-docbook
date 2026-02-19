@@ -131,6 +131,57 @@ STUB;
         self::assertCount(1, $class->methods);
         self::assertSame('overridden', $class->methods[0]->name);
     }
+    public function test_class_with_inherited_and_overridden_constants(): void
+    {
+        $stub = <<<'STUB'
+<?php
+class Base {
+    public const KEEP = 10;
+    public const OVERRIDE = 25;
+    public const KEEP_2 = 42;
+}
+class Child extends Base {
+    public const OVERRIDE = 86;
+}
+STUB;
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $rc = $reflector->reflectClass('Child');
+        $class = ClassMetaData::fromReflectionData($rc);
+
+        self::assertSame('Child', $class->name);
+        self::assertSame('Base', $class->extends);
+        self::assertCount(1, $class->constants);
+        self::assertSame('OVERRIDE', $class->constants[0]->name);
+    }
+
+    public function test_class_with_inherited_and_overridden_properties(): void
+    {
+        $stub = <<<'STUB'
+<?php
+class Base {
+    public $keep = 10;
+    public $override = 25;
+    public $keep_2 = 42;
+}
+class Child extends Base {
+    public $override = 86;
+}
+STUB;
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $rc = $reflector->reflectClass('Child');
+        $class = ClassMetaData::fromReflectionData($rc);
+
+        self::assertSame('Child', $class->name);
+        self::assertSame('Base', $class->extends);
+        self::assertCount(1, $class->properties);
+        self::assertSame('override', $class->properties[0]->name);
+    }
 
     public function test_readonly_class(): void
     {

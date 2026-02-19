@@ -35,7 +35,7 @@ final class ClassMetaData
     {
         $properties = array_map(
             PropertyMetaData::fromReflectionData(...),
-            $reflectionData->getProperties(),
+            $reflectionData->getImmediateProperties(),
         );
 
         $methods = array_map(
@@ -45,7 +45,7 @@ final class ClassMetaData
 
         $constants = array_map(
             ConstantMetaData::fromReflectionData(...),
-            $reflectionData->getConstants(),
+            $reflectionData->getImmediateConstants(),
         );
 
         $implements = array_map(
