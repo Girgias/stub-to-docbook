@@ -111,4 +111,43 @@ class DocumentedConstantParser
         }
         return $constants;
     }
+
+    /**
+     * Parse token constant list from a DocBook document (e.g. appendices/tokens.xml).
+     * Token constants are all of type int.
+     *
+     * @return ConstantList
+     */
+    public static function parseTokenList(XMLDocument $doc, string $extension): ConstantList
+    {
+        $individualList = [];
+        $tables = $doc->getElementsByTagName('table');
+        foreach ($tables as $table) {
+            $tbody = $table->getElementsByTagName("tbody")->item(0);
+            if ($tbody === null) {
+                continue;
+            }
+            foreach ($tbody->getElementsByTagName("row") as $row) {
+                $entries = $row->getElementsByTagName("entry");
+                if (count($entries) < 1) {
+                    continue;
+                }
+                $constantTags = $entries[0]->getElementsByTagName("constant");
+                if ($constantTags->length === 0) {
+                    continue;
+                }
+                $constantName = $constantTags[0]->textContent;
+                $id = 'constant.' . xmlify_labels($constantName);
+
+                $individualList[$constantName] = new ConstantMetaData(
+                    $constantName,
+                    new SingleType('int'),
+                    $extension,
+                    $id,
+                );
+            }
+        }
+
+        return new ConstantList($individualList, DocumentedConstantListType::TokenList);
+    }
 }

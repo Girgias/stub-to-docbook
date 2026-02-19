@@ -145,4 +145,49 @@ FILE;
         self::assertArrayHasKey('STDOUT', $constants[1]->constants);
         self::assertSame('STDOUT', $constants[1]->constants['STDOUT']->name);
     }
+
+    public const /* string */ TOKEN_LIST = <<<'FILE'
+<?xml version="1.0" encoding="utf-8"?>
+<appendix xml:id="tokens" xmlns="http://docbook.org/ns/docbook">
+ <title>List of Parser Tokens</title>
+ <table>
+  <title>Tokens</title>
+  <tgroup cols="2">
+   <thead>
+    <row>
+     <entry>Token</entry>
+     <entry>Syntax</entry>
+    </row>
+   </thead>
+   <tbody>
+    <row>
+     <entry><constant>T_ABSTRACT</constant></entry>
+     <entry>abstract</entry>
+    </row>
+    <row>
+     <entry><constant>T_AND_EQUAL</constant></entry>
+     <entry>&amp;amp;=</entry>
+    </row>
+    <row>
+     <entry><constant>T_ARRAY</constant></entry>
+     <entry>array()</entry>
+    </row>
+   </tbody>
+  </tgroup>
+ </table>
+</appendix>
+FILE;
+
+    public function test_parsing_token_list(): void
+    {
+        $document = XMLDocument::createFromString(self::TOKEN_LIST);
+        $tokenList = DocumentedConstantParser::parseTokenList($document, 'tokenizer');
+
+        self::assertCount(3, $tokenList);
+        self::assertArrayHasKey('T_ABSTRACT', $tokenList->constants);
+        self::assertSame('int', $tokenList->constants['T_ABSTRACT']->type->name);
+        self::assertSame('constant.t-abstract', $tokenList->constants['T_ABSTRACT']->id);
+        self::assertArrayHasKey('T_AND_EQUAL', $tokenList->constants);
+        self::assertArrayHasKey('T_ARRAY', $tokenList->constants);
+    }
 }
