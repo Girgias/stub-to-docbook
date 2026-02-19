@@ -117,6 +117,120 @@ End:
 
 FILE;
 
+    public const /* string */ TABLE_3COL = <<<'FILE'
+<?xml version="1.0" encoding="utf-8"?>
+<appendix xml:id="test.constants" xmlns="http://docbook.org/ns/docbook">
+ <table>
+  <title>Test Constants</title>
+  <tgroup cols="3">
+   <thead>
+    <row>
+     <entry>Constant</entry>
+     <entry>Type</entry>
+     <entry>Description</entry>
+    </row>
+   </thead>
+   <tbody>
+    <row xml:id="constant.test-one">
+     <entry><constant>TEST_ONE</constant></entry>
+     <entry><type>int</type></entry>
+     <entry>First test constant</entry>
+    </row>
+    <row xml:id="constant.test-two">
+     <entry><constant>TEST_TWO</constant></entry>
+     <entry><type>string</type></entry>
+     <entry>Second test constant</entry>
+    </row>
+   </tbody>
+  </tgroup>
+ </table>
+</appendix>
+FILE;
+
+    public const /* string */ TABLE_2COL = <<<'FILE'
+<?xml version="1.0" encoding="utf-8"?>
+<appendix xml:id="test.constants" xmlns="http://docbook.org/ns/docbook">
+ <table>
+  <title>Test Constants</title>
+  <tgroup cols="2">
+   <thead>
+    <row>
+     <entry>Constant</entry>
+     <entry>Description</entry>
+    </row>
+   </thead>
+   <tbody>
+    <row>
+     <entry><constant>NO_TYPE_CONST</constant></entry>
+     <entry>A constant without a type column</entry>
+    </row>
+   </tbody>
+  </tgroup>
+ </table>
+</appendix>
+FILE;
+
+    public const /* string */ TABLE_NOTES = <<<'FILE'
+<?xml version="1.0" encoding="utf-8"?>
+<appendix xml:id="test.constants" xmlns="http://docbook.org/ns/docbook">
+ <table>
+  <title>Test Constants</title>
+  <tgroup cols="3">
+   <thead>
+    <row>
+     <entry>Constant</entry>
+     <entry>Value</entry>
+     <entry>Notes</entry>
+    </row>
+   </thead>
+   <tbody>
+    <row>
+     <entry><constant>NOTES_CONST</constant></entry>
+     <entry>42</entry>
+     <entry>Some note</entry>
+    </row>
+   </tbody>
+  </tgroup>
+ </table>
+</appendix>
+FILE;
+
+    public function test_parsing_table_3col(): void
+    {
+        $document = XMLDocument::createFromString(self::TABLE_3COL);
+        $constants = DocumentedConstantParser::parse($document, 'test');
+
+        self::assertCount(1, $constants);
+        self::assertCount(2, $constants[0]);
+        self::assertArrayHasKey('TEST_ONE', $constants[0]->constants);
+        self::assertSame('int', $constants[0]->constants['TEST_ONE']->type->name);
+        self::assertSame('constant.test-one', $constants[0]->constants['TEST_ONE']->id);
+        self::assertArrayHasKey('TEST_TWO', $constants[0]->constants);
+        self::assertSame('string', $constants[0]->constants['TEST_TWO']->type->name);
+    }
+
+    public function test_parsing_table_2col(): void
+    {
+        $document = XMLDocument::createFromString(self::TABLE_2COL);
+        $constants = DocumentedConstantParser::parse($document, 'test');
+
+        self::assertCount(1, $constants);
+        self::assertCount(1, $constants[0]);
+        self::assertArrayHasKey('NO_TYPE_CONST', $constants[0]->constants);
+        self::assertNull($constants[0]->constants['NO_TYPE_CONST']->type);
+    }
+
+    public function test_parsing_table_with_notes(): void
+    {
+        $document = XMLDocument::createFromString(self::TABLE_NOTES);
+        $constants = DocumentedConstantParser::parse($document, 'test');
+
+        self::assertCount(1, $constants);
+        self::assertCount(1, $constants[0]);
+        self::assertArrayHasKey('NOTES_CONST', $constants[0]->constants);
+        self::assertNull($constants[0]->constants['NOTES_CONST']->type);
+    }
+
     public function test_parsing_xml(): void
     {
         $document = XMLDocument::createFromString(self::TEST_FILE);
