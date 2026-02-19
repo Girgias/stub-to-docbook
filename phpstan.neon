@@ -21,12 +21,6 @@ parameters:
             path: scripts/parse-stub.php
 
         -
-            message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|false given\.$#'
-            identifier: argument.type
-            count: 1
-            path: scripts/parse-stub.php
-
-        -
             message: '#^Only iterables can be unpacked, list\<string\>\|false given\.$#'
             identifier: arrayUnpacking.nonIterable
             count: 2
