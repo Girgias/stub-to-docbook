@@ -66,7 +66,9 @@ $master_reflector = get_reflector($master_dir);
 $master_constants = ConstantList::fromReflectionDataArray($master_reflector->reflectAllConstants(), IGNORED_CONSTANTS);
 $master_functions = from_better_reflection_list_to_metadata(FunctionMetaData::class, $master_reflector->reflectAllFunctions());
 
+/** @var SymbolStubMapDiff<ConstantMetaData> $diffC */
 $diffC = SymbolListDiffer::stubDiff($prior_version_constants->constants, $master_constants->constants);
+/** @var SymbolStubMapDiff<FunctionMetaData> $diffF */
 $diffF = SymbolListDiffer::stubDiff($prior_version_functions, $master_functions);
 
 echo "Total 8.4 constants parsed = ", count($prior_version_constants), "; functions parsed = ", count($prior_version_functions), "\n";
