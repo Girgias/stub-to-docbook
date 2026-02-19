@@ -58,11 +58,11 @@ final class ClassMetaData
             $reflectionData->getAttributes(),
         );
 
-        $parentClass = $reflectionData->getParentClass();
+        $parentClass = $reflectionData->getParentClassName();
 
         return new self(
             $reflectionData->getName(),
-            $parentClass?->getName(),
+            $parentClass,
             array_values($properties),
             array_values($methods),
             array_values($constants),
