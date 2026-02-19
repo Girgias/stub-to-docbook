@@ -22,12 +22,12 @@ The stub files are parsed with [`Roave/BetterReflection`](https://github.com/Roa
 
 - [x] Use PHP 8.4 new DOM classes
 - [ ] DocParser needs to deal with entities that cannot be expanded
-- [ ] Set-up CI
+- [x] Set-up CI
 - [ ] Set-up Static Analysis:
   - [x] PHPStan level 7 (level 8 seems improbable due to DOM hell)
   - [ ] Set-up Psalm?
   - [ ] Set-up Mago?
-- [ ] Set-up Code Style requirements
+- [x] Set-up Code Style requirements
 - [x] Parsing of stub files (handled by `Roave/BetterReflection`)
   - Create a `ZendReflector` class that handles filtering out `UNKNOWN` constant from `reflectAllConstants()`?
 - [ ] Parsing of Documentation sources for constants
@@ -36,13 +36,14 @@ The stub files are parsed with [`Roave/BetterReflection`](https://github.com/Roa
   - [ ] Handle Deprecated attribute for global constants
 - [x] Parsing of Documentation sources for functions
   - [ ] Handle pages with multiple methodsynopsis
-  - [ ] Parsing of Documentation sources for methods
+  - [x] Parsing of Documentation sources for methods
     - [x] `final` modifier
     - [x] `static` modifier
-    - [ ] Inherited?
+    - [x] ~~Inherited?~~ (we don't need to deal with this)
 - [ ] Parsing of Documentation sources for classes
-  - [ ] Properties (no cases where attributes are attached)
+  - [x] Properties (no cases where attributes are attached)
   - [ ] Constants (no cases where attributes are attached)
+  - [ ] Need to think how to parse subfolder methods
 - [ ] Parsing of Documentation sources for enums
 - [ ] Diff
   - [ ] Between stub and documentation
