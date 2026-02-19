@@ -32,6 +32,7 @@ final readonly class FunctionMetaData implements Equatable
         readonly bool $isFinal = false,
         readonly Visibility $visibility = Visibility::Public,
         readonly bool $isDeprecated = false,
+        readonly ?string $inheritedFrom = null,
     ) {}
 
     /**
@@ -49,6 +50,7 @@ final readonly class FunctionMetaData implements Equatable
             && $this->isFinal === $other->isFinal
             && $this->visibility === $other->visibility
             && $this->isDeprecated === $other->isDeprecated
+            && $this->inheritedFrom === $other->inheritedFrom
         ;
     }
 
@@ -77,10 +79,16 @@ final readonly class FunctionMetaData implements Equatable
             $reflectionData->getAttributes(),
         );
 
+        $inheritedFrom = null;
         if ($reflectionData instanceof ReflectionMethod) {
             $isFinal = $reflectionData->isFinal();
             $isAbstract = $reflectionData->isAbstract();
             $visibility = Visibility::fromReflectionData($reflectionData);
+            $declaringClass = $reflectionData->getDeclaringClass()->getName();
+            $implementingClass = $reflectionData->getImplementingClass()->getName();
+            if ($declaringClass !== $implementingClass) {
+                $inheritedFrom = $declaringClass;
+            }
         }
 
         return new self(
@@ -95,6 +103,7 @@ final readonly class FunctionMetaData implements Equatable
             isFinal: $isFinal,
             visibility: $visibility,
             isDeprecated: $reflectionData->isDeprecated(),
+            inheritedFrom: $inheritedFrom,
         );
     }
 
@@ -190,9 +199,14 @@ final readonly class FunctionMetaData implements Equatable
     private static function parseNameWithPossibleClassQualifier(string $name): string
     {
         if (str_contains($name, '::')) {
-            return explode('::', $name)[1];
+            return explode('::', $name, 2)[1];
         }
         return $name;
+    }
+
+    public function isInherited(): bool
+    {
+        return $this->inheritedFrom !== null;
     }
 
     /**
