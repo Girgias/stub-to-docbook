@@ -144,6 +144,10 @@ STUB;
         self::assertCount(1, $diff->deprecated);
         self::assertArrayHasKey('will_be_deprecated', $diff->deprecated);
         self::assertSame('will_be_deprecated', $diff->deprecated['will_be_deprecated']->name);
+
+        self::assertCount(2, $diff->modified);
+        self::assertArrayHasKey('signature_change', $diff->modified);
+        self::assertArrayHasKey('will_be_deprecated', $diff->modified);
     }
 
     public function test_constant_diff_between_two_stub_files(): void
