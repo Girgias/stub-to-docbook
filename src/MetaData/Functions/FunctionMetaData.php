@@ -207,6 +207,9 @@ final readonly class FunctionMetaData implements Equatable
     public function toMethodSynopsisXml(XMLDocument $document, ?string $className = null): Element
     {
         $methodsynopsis = $document->createElement('methodsynopsis');
+        if ($className) {
+            $methodsynopsis->setAttribute('role', $className);
+        }
 
         if ($this->isFinal) {
             $modifier = $document->createElement('modifier');
@@ -218,9 +221,10 @@ final readonly class FunctionMetaData implements Equatable
             $modifier->textContent = 'abstract';
             $methodsynopsis->append($modifier);
         }
-        if ($this->visibility !== Visibility::Public) {
+        if ($className) {
             $modifier = $document->createElement('modifier');
             $modifier->textContent = match ($this->visibility) {
+                Visibility::Public => 'public',
                 Visibility::Protected => 'protected',
                 Visibility::Private => 'private',
             };

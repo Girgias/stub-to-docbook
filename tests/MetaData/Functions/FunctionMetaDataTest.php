@@ -750,4 +750,175 @@ XML;
         self::assertStringContainsString('choice="opt"', $xml);
         self::assertStringContainsString('<initializer><literal>null</literal></initializer>', $xml);
     }
+
+    public function test_e2e_function_methodsynopsis_xml(): void
+    {
+        $xml = <<<'XML'
+<methodsynopsis>
+ <type>string</type><methodname>test_function</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+        $newDocument = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($newDocument);
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = <<<'XML'
+<methodsynopsis>
+ <type>bool</type><methodname>test_variadic</methodname>
+ <methodparam><type>mixed</type><parameter>var</parameter></methodparam>
+ <methodparam rep="repeat"><type>mixed</type><parameter>vars</parameter></methodparam>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+        $newDocument = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($newDocument);
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = <<<'XML'
+<methodsynopsis>
+ <modifier role="attribute">#[\Deprecated]</modifier>
+ <type>bool</type><methodname>test_attribute</methodname>
+ <methodparam><type>mixed</type><parameter>param1</parameter></methodparam>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+        $newDocument = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($newDocument);
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = <<<'XML'
+<methodsynopsis role="WeakReference">
+ <modifier>public</modifier> <type class="union"><type>object</type><type>null</type></type><methodname>WeakReference::get</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+        $newDocument = XMLDocument::createEmpty();
+        // TODO: Should we need to pass the class name?
+        $element = $fn->toMethodSynopsisXml($newDocument, 'WeakReference');
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        /** Removed parameters for test simplicity */
+        $xml = <<<'XML'
+<methodsynopsis role="SplHeap">
+ <modifier>protected</modifier> <type>int</type><methodname>SplHeap::compare</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+        $newDocument = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($newDocument, 'SplHeap');
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = <<<'XML'
+<methodsynopsis role="ReflectionFunctionAbstract">
+ <modifier>private</modifier> <type>void</type><methodname>ReflectionFunctionAbstract::__clone</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+        $newDocument = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($newDocument, 'ReflectionFunctionAbstract');
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = <<<'XML'
+<methodsynopsis role="Exception">
+ <modifier>final</modifier> <modifier>public</modifier> <type>string</type><methodname>Exception::getMessage</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+        $newDocument = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($newDocument, 'Exception');
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = <<<'XML'
+<methodsynopsis role="WeakReference">
+ <modifier>public</modifier> <modifier>static</modifier> <type>WeakReference</type><methodname>WeakReference::create</methodname>
+ <methodparam><type>object</type><parameter>object</parameter></methodparam>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+        $newDocument = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($newDocument, 'WeakReference');
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = <<<'XML'
+<methodsynopsis role="Foo">
+ <modifier>public</modifier> <modifier>abstract</modifier> <type>void</type><methodname>Foo::bar</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+        $newDocument = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($newDocument, 'Foo');
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = <<<'XML'
+<methodsynopsis>
+ <modifier role="attribute">#[\Deprecated]</modifier>
+ <type class="union"><type>string</type><type>false</type></type><methodname>test_complete_function</methodname>
+ <methodparam><type>string</type><parameter>param_typical</parameter></methodparam>
+ <methodparam><type>array</type><parameter role="reference">param_reference</parameter></methodparam>
+ <methodparam><modifier role="attribute">#[\SensitiveParameter]</modifier><type>string</type><parameter>param_sensitive</parameter></methodparam>
+ <methodparam choice="opt"><type class="union"><type>int</type><type>null</type></type><parameter>param_optional</parameter><initializer><constant>SOME_CONST</constant></initializer></methodparam>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+        $newDocument = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($newDocument);
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
 }
