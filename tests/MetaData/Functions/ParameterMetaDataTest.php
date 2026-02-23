@@ -358,6 +358,153 @@ STUB;
         )));
     }
 
+    public function test_to_method_param_xml_basic(): void
+    {
+        $param = new ParameterMetaData('name', 1, new SingleType('string'));
+
+        $document = XMLDocument::createEmpty();
+        $element = $param->toMethodParamXml($document);
+        $document->append($element);
+        $xml = $document->saveXml($element);
+        self::assertIsString($xml);
+
+        self::assertSame('<methodparam><type>string</type><parameter>name</parameter></methodparam>', $xml);
+    }
+
+    public function test_to_method_param_xml_optional_with_default(): void
+    {
+        $param = new ParameterMetaData(
+            'length',
+            1,
+            new UnionType([new SingleType('int'), new SingleType('null')]),
+            isOptional: true,
+            defaultValue: new Initializer(InitializerVariant::Literal, 'null'),
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $param->toMethodParamXml($document);
+        $document->append($element);
+        $xml = $document->saveXml($element);
+        self::assertIsString($xml);
+
+        self::assertStringContainsString('choice="opt"', $xml);
+        self::assertStringContainsString('<initializer><literal>null</literal></initializer>', $xml);
+    }
+
+    public function test_to_method_param_xml_by_ref(): void
+    {
+        $param = new ParameterMetaData('array', 1, new SingleType('array'), isByRef: true);
+
+        $document = XMLDocument::createEmpty();
+        $element = $param->toMethodParamXml($document);
+        $document->append($element);
+        $xml = $document->saveXml($element);
+        self::assertIsString($xml);
+
+        self::assertStringContainsString('<parameter role="reference">array</parameter>', $xml);
+    }
+
+    public function test_to_method_param_xml_variadic(): void
+    {
+        $param = new ParameterMetaData('args', 1, new SingleType('mixed'), isVariadic: true);
+
+        $document = XMLDocument::createEmpty();
+        $element = $param->toMethodParamXml($document);
+        $document->append($element);
+        $xml = $document->saveXml($element);
+        self::assertIsString($xml);
+
+        self::assertStringContainsString('rep="repeat"', $xml);
+    }
+
+    public function test_to_method_param_xml_with_attribute(): void
+    {
+        $param = new ParameterMetaData(
+            'key',
+            1,
+            new SingleType('string'),
+            attributes: [new AttributeMetaData('\\SensitiveParameter')],
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $param->toMethodParamXml($document);
+        $document->append($element);
+        $xml = $document->saveXml($element);
+        self::assertIsString($xml);
+
+        self::assertStringContainsString('<modifier role="attribute">', $xml);
+        self::assertStringContainsString('#[\SensitiveParameter]', $xml);
+    }
+
+    public function test_e2e_method_param_xml(): void
+    {
+        $xml = '<methodparam><type>string</type><parameter>param_name</parameter></methodparam>';
+        $document = XMLDocument::createFromString($xml);
+        $param = ParameterMetaData::parseFromMethodParamDocTag($document->firstElementChild, 1);
+        $newDocument = XMLDocument::createEmpty();
+        $element = $param->toMethodParamXml($newDocument);
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = '<methodparam><type>string</type><parameter role="reference">param_name</parameter></methodparam>';
+        $document = XMLDocument::createFromString($xml);
+        $param = ParameterMetaData::parseFromMethodParamDocTag($document->firstElementChild, 1);
+        $newDocument = XMLDocument::createEmpty();
+        $element = $param->toMethodParamXml($newDocument);
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = '<methodparam><modifier role="attribute">#[\SensitiveParameter]</modifier><type>string</type><parameter>param_name</parameter></methodparam>';
+        $document = XMLDocument::createFromString($xml);
+        $param = ParameterMetaData::parseFromMethodParamDocTag($document->firstElementChild, 1);
+        $newDocument = XMLDocument::createEmpty();
+        $element = $param->toMethodParamXml($newDocument);
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = '<methodparam rep="repeat"><type>string</type><parameter>param_name</parameter></methodparam>';
+        $document = XMLDocument::createFromString($xml);
+        $param = ParameterMetaData::parseFromMethodParamDocTag($document->firstElementChild, 1);
+        $newDocument = XMLDocument::createEmpty();
+        $element = $param->toMethodParamXml($newDocument);
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = '<methodparam choice="opt"><type>string</type><parameter>param_name</parameter></methodparam>';
+        $document = XMLDocument::createFromString($xml);
+        $param = ParameterMetaData::parseFromMethodParamDocTag($document->firstElementChild, 1);
+        $newDocument = XMLDocument::createEmpty();
+        $element = $param->toMethodParamXml($newDocument);
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = '<methodparam choice="opt"><type>string</type><parameter>param_name</parameter><initializer><constant>SOME_CONST</constant></initializer></methodparam>';
+        $document = XMLDocument::createFromString($xml);
+        $param = ParameterMetaData::parseFromMethodParamDocTag($document->firstElementChild, 1);
+        $newDocument = XMLDocument::createEmpty();
+        $element = $param->toMethodParamXml($newDocument);
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
     public function test_var_list_entry_parameter_parsing(): void
     {
         $xml = <<<'XML'

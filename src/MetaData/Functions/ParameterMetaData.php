@@ -5,6 +5,7 @@ namespace Girgias\StubToDocbook\MetaData\Functions;
 use Dom\Element;
 use Dom\NodeList;
 use Dom\Text;
+use Dom\XMLDocument;
 use Dom\XPath;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
@@ -81,6 +82,43 @@ final readonly class ParameterMetaData implements Equatable
             isVariadic: $reflectionData->isVariadic(),
             attributes: $attributes,
         );
+    }
+
+    /**
+     * DocBook 5.2 <methodparam> generation
+     */
+    public function toMethodParamXml(XMLDocument $document): Element
+    {
+        $methodparam = $document->createElement('methodparam');
+
+        if ($this->isOptional) {
+            $methodparam->setAttribute('choice', 'opt');
+        }
+        if ($this->isVariadic) {
+            $methodparam->setAttribute('rep', 'repeat');
+        }
+
+        foreach ($this->attributes as $attr) {
+            $methodparam->append($attr->toModifierXml($document));
+        }
+
+        $typeFragment = $document->createDocumentFragment();
+        $typeFragment->appendXml($this->type->toXml());
+        $methodparam->append($typeFragment);
+
+        $parameter = $document->createElement('parameter');
+        $parameter->textContent = $this->name;
+        if ($this->isByRef) {
+            $parameter->setAttribute('role', 'reference');
+        }
+        $methodparam->append($parameter);
+
+        if ($this->defaultValue !== null) {
+            $initializer = $this->defaultValue->toInitializerXml($document);
+            $methodparam->append($initializer);
+        }
+
+        return $methodparam;
     }
 
     /**
