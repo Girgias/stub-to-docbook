@@ -748,6 +748,6 @@ XML;
         self::assertIsString($xml);
 
         self::assertStringContainsString('choice="opt"', $xml);
-        self::assertStringContainsString('<initializer>null</initializer>', $xml);
+        self::assertStringContainsString('<initializer><literal>null</literal></initializer>', $xml);
     }
 }
