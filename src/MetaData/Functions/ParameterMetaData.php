@@ -99,10 +99,7 @@ final readonly class ParameterMetaData implements Equatable
         }
 
         foreach ($this->attributes as $attr) {
-            $modifier = $document->createElement('modifier');
-            $modifier->setAttribute('role', 'attribute');
-            $modifier->textContent = $attr->name;
-            $methodparam->append($modifier);
+            $methodparam->append($attr->toModifierXml($document));
         }
 
         $typeFragment = $document->createDocumentFragment();
@@ -117,8 +114,7 @@ final readonly class ParameterMetaData implements Equatable
         $methodparam->append($parameter);
 
         if ($this->defaultValue !== null) {
-            $initializer = $document->createElement('initializer');
-            $initializer->textContent = $this->defaultValue->value;
+            $initializer = $this->defaultValue->toInitializerXml($document);
             $methodparam->append($initializer);
         }
 
