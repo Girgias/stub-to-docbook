@@ -445,6 +445,7 @@ STUB;
         $element = $param->toMethodParamXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
 
         self::assertXmlStringEqualsXmlString($xml, $newXml);
 
@@ -455,6 +456,7 @@ STUB;
         $element = $param->toMethodParamXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
 
         self::assertXmlStringEqualsXmlString($xml, $newXml);
 
@@ -465,6 +467,7 @@ STUB;
         $element = $param->toMethodParamXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
 
         self::assertXmlStringEqualsXmlString($xml, $newXml);
 
@@ -475,6 +478,7 @@ STUB;
         $element = $param->toMethodParamXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
 
         self::assertXmlStringEqualsXmlString($xml, $newXml);
 
@@ -485,6 +489,7 @@ STUB;
         $element = $param->toMethodParamXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
 
         self::assertXmlStringEqualsXmlString($xml, $newXml);
 
@@ -495,6 +500,7 @@ STUB;
         $element = $param->toMethodParamXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
 
         self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
