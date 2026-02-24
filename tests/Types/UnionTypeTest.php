@@ -36,6 +36,78 @@ class UnionTypeTest extends TestCase
         self::assertTrue($unionType2->isSame($unionType1));
     }
 
+    /** Checking that all built-in types can be normalised in a proper way */
+    public function test_normalization_simple_unions_builtin_types(): void
+    {
+        $unionType1 = new UnionType([
+            new SingleType('callable'),
+            new SingleType('object'),
+            new SingleType('array'),
+            new SingleType('string'),
+            new SingleType('int'),
+            new SingleType('float'),
+            new SingleType('bool'),
+            new SingleType('false'),
+            new SingleType('true'),
+            new SingleType('void'),
+            new SingleType('never'),
+            new SingleType('null'),
+        ]);
+        $unionType2 = new UnionType([
+            new SingleType('callable'),
+            new SingleType('string'),
+            new SingleType('array'),
+            new SingleType('true'),
+            new SingleType('null'),
+            new SingleType('object'),
+            new SingleType('int'),
+            new SingleType('void'),
+            new SingleType('never'),
+            new SingleType('float'),
+            new SingleType('false'),
+            new SingleType('bool'),
+        ]);
+
+        self::assertTrue($unionType1->isSame($unionType2));
+        self::assertTrue($unionType2->isSame($unionType1));
+    }
+
+    public function test_normalization_simple_unions_user_types(): void
+    {
+        $unionType1 = new UnionType([
+            new SingleType('A'),
+            new SingleType('T'),
+            new SingleType('X'),
+        ]);
+        $unionType2 = new UnionType([
+            new SingleType('T'),
+            new SingleType('X'),
+            new SingleType('A'),
+        ]);
+
+        self::assertTrue($unionType1->isSame($unionType2));
+        self::assertTrue($unionType2->isSame($unionType1));
+    }
+
+    public function test_normalization_simple_unions_builtin_and_user_types(): void
+    {
+        $unionType1 = new UnionType([
+            new SingleType('A'),
+            new SingleType('X'),
+            new SingleType('string'),
+            new SingleType('int'),
+        ]);
+        $unionType2 = new UnionType([
+            new SingleType('int'),
+            new SingleType('X'),
+            new SingleType('string'),
+            new SingleType('A'),
+        ]);
+
+        self::assertTrue($unionType1->isSame($unionType2));
+        self::assertTrue($unionType2->isSame($unionType1));
+    }
+
     public function test_normalization_dnf(): void
     {
         $unionType1 = new UnionType([
