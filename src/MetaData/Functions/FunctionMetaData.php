@@ -4,6 +4,7 @@ namespace Girgias\StubToDocbook\MetaData\Functions;
 
 use Dom\Element;
 use Dom\Text;
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
@@ -198,6 +199,67 @@ final readonly class FunctionMetaData implements Equatable
             visibility: $visibility,
             isDeprecated: $isDeprecated,
         );
+    }
+
+    /**
+     * DocBook 5.2 <methodsynopsis> generation
+     */
+    public function toMethodSynopsisXml(XMLDocument $document): Element
+    {
+        $methodsynopsis = $document->createElement('methodsynopsis');
+        if ($this->class) {
+            $classNameWithEscapedNamespace = str_replace('\\', '\\\\', $this->class);
+            $methodsynopsis->setAttribute('role', $classNameWithEscapedNamespace);
+        }
+
+        if ($this->isFinal) {
+            $modifier = $document->createElement('modifier');
+            $modifier->textContent = 'final';
+            $methodsynopsis->append($modifier);
+        }
+        if ($this->isAbstract) {
+            $modifier = $document->createElement('modifier');
+            $modifier->textContent = 'abstract';
+            $methodsynopsis->append($modifier);
+        }
+        if ($this->class) {
+            $modifier = $document->createElement('modifier');
+            $modifier->textContent = match ($this->visibility) {
+                Visibility::Public => 'public',
+                Visibility::Protected => 'protected',
+                Visibility::Private => 'private',
+            };
+            $methodsynopsis->append($modifier);
+        }
+        if ($this->isStatic) {
+            $modifier = $document->createElement('modifier');
+            $modifier->textContent = 'static';
+            $methodsynopsis->append($modifier);
+        }
+
+        foreach ($this->attributes as $attribute) {
+            $methodsynopsis->append($attribute->toModifierXml($document));
+        }
+
+        $typeFragment = $document->createDocumentFragment();
+        $typeFragment->appendXml($this->returnType->toXml());
+        $methodsynopsis->append($typeFragment);
+
+        $methodname = $document->createElement('methodname');
+        $methodname->textContent = $this->class !== null
+            ? $this->class . '::' . $this->name
+            : $this->name;
+        $methodsynopsis->append($methodname);
+
+        if ($this->parameters === []) {
+            $methodsynopsis->append($document->createElement('void'));
+        } else {
+            foreach ($this->parameters as $param) {
+                $methodsynopsis->append($param->toMethodParamXml($document));
+            }
+        }
+
+        return $methodsynopsis;
     }
 
     private static function parseNameWithPossibleClassQualifier(string $name): string
