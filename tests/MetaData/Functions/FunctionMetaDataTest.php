@@ -778,6 +778,7 @@ XML;
  <methodparam choice="opt"><type class="union"><type>int</type><type>null</type></type><parameter>length</parameter><initializer><constant>null</constant></initializer></methodparam>
 </methodsynopsis>
 XML;
+
         $fn = new FunctionMetaData(
             'substr',
             [
