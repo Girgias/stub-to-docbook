@@ -4,6 +4,7 @@ namespace Girgias\StubToDocbook\MetaData\Classes;
 
 use Dom\Element;
 use Dom\Text;
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
@@ -60,6 +61,27 @@ final class EnumCaseMetaData
         }
 
         return new self($name, $value);
+    }
+
+    public function toEnumItemXml(XMLDocument $document): Element
+    {
+        $enumitem = $document->createElement('enumitem');
+
+        $enumidentifier = $document->createElement('enumidentifier');
+        $enumidentifier->textContent = $this->name;
+        $enumitem->appendChild($enumidentifier);
+
+        if ($this->value) {
+            $enumvalue = $document->createElement('enumvalue');
+            $enumvalue->textContent = $this->value->value;
+            $enumitem->append($enumvalue);
+        }
+
+        /* Able to store existing descriptions? */
+        $enumitemdescription = $document->createElement('enumitemdescription');
+        $enumitem->appendChild($enumitemdescription);
+
+        return $enumitem;
     }
 
     public static function fromReflectionData(ReflectionEnumCase $reflectionData): self

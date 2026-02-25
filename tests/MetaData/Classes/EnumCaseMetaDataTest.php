@@ -4,6 +4,7 @@ namespace Girgias\StubToDocbook\Tests\MetaData\Classes;
 
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\Classes\EnumCaseMetaData;
+use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use PHPUnit\Framework\TestCase;
 
@@ -49,5 +50,46 @@ XML;
         self::assertNotNull($case->value);
         self::assertSame(InitializerVariant::Literal, $case->value->variant);
         self::assertSame('test', $case->value->value);
+    }
+
+    public function test_to_enum_item_xml_non_backed(): void
+    {
+        $xml = <<<'XML'
+<enumitem>
+ <enumidentifier>HalfAwayFromZero</enumidentifier>
+ <enumitemdescription/>
+</enumitem>
+XML;
+
+        $enumCase = new EnumCaseMetaData('HalfAwayFromZero');
+
+        $document = XMLDocument::createEmpty();
+        $element = $enumCase->toEnumItemXml($document);
+        $document->append($element);
+
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    public function test_to_enum_item_xml_backed(): void
+    {
+        $xml = <<<'XML'
+<enumitem>
+ <enumidentifier>HalfAwayFromZero</enumidentifier>
+ <enumvalue>42</enumvalue>
+ <enumitemdescription/>
+</enumitem>
+XML;
+
+        $enumCase = new EnumCaseMetaData('HalfAwayFromZero', new Initializer(InitializerVariant::Literal, '42'));
+
+        $document = XMLDocument::createEmpty();
+        $element = $enumCase->toEnumItemXml($document);
+        $document->append($element);
+
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
 }
