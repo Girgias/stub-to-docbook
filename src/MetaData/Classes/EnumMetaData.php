@@ -2,6 +2,8 @@
 
 namespace Girgias\StubToDocbook\MetaData\Classes;
 
+use Dom\Element;
+use Dom\Text;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 use Girgias\StubToDocbook\Types\ReflectionTypeParser;
@@ -65,6 +67,78 @@ final class EnumMetaData
             implements: array_values($implements),
             attributes: $attributes,
             isDeprecated: $reflectionData->isDeprecated(),
+        );
+    }
+
+    /**
+     * DocBook 5.2 <enumsynopsis> documentation
+     * URL: https://tdg.docbook.org/tdg/5.2/enumsynopsis
+     */
+    public static function parseFromDoc(Element $element, string $extension, string|null $namespace): self
+    {
+        if ($element->tagName !== 'enumsynopsis') {
+            throw new \Exception('Unexpected tag "' . $element->tagName . '"');
+        }
+
+        $name = null;
+        /* TODO: Determine XML markup for backed enums */
+        $backingType = null;
+        $cases = [];
+        $attributes = [];
+
+        foreach ($element->childNodes as $node) {
+            if ($node instanceof Text) {
+                continue;
+            }
+            if (($node instanceof Element) === false) {
+                throw new \Exception("Unexpected node type: " . $node::class);
+            }
+            /**
+             * enumsynopsis ::=
+             *   Sequence of:
+             *      info? (db.titleforbidden.info)
+             *      Zero or more of:
+             *          synopsisinfo
+             *      Zero or more of:
+             *          modifier
+             *          package
+             *      Optional sequence of:
+             *          enumname
+             *          Zero or more of:
+             *              modifier
+             *      One or more of:
+             *          enumitem
+             *      Zero or more of:
+             *          synopsisinfo
+             *
+             * @var 'info'|'synopsisinfo'|'modifier'|'package'|'enumname'|'enumitem' $tagName
+             */
+            $tagName = $node->tagName;
+            match ($tagName) {
+                'modifier' => $attributes[] = AttributeMetaData::parseFromDoc($node),
+                'enumitem' => $cases[] = EnumCaseMetaData::parseFromDoc($node),
+                'enumname' => $name = $node->textContent,
+                'info', 'package', 'synopsisinfo'
+                => throw new \Exception('"' . $tagName . '" child tag for <methodsynopsis> is not supported'),
+            };
+        }
+
+        $deprecatedAttributes = array_filter(
+            $attributes,
+            fn (AttributeMetaData $attr) => $attr->name === '\Deprecated',
+        );
+        $isDeprecated = count($deprecatedAttributes) === 1;
+
+        return new self(
+            $name,
+            $backingType,
+            cases: $cases,
+            methods: [],
+            extension: $extension,
+            namespace: $namespace,
+            implements: [],
+            attributes: $attributes,
+            isDeprecated: $isDeprecated,
         );
     }
 }

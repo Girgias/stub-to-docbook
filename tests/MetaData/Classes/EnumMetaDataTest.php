@@ -2,6 +2,7 @@
 
 namespace Girgias\StubToDocbook\Tests\MetaData\Classes;
 
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\Classes\EnumMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
@@ -235,5 +236,87 @@ STUB;
         self::assertNull($enum->cases[0]->value);
         self::assertSame('Spades', $enum->cases[3]->name);
         self::assertFalse($enum->isDeprecated);
+    }
+
+    public function test_unit_enum_parsing(): void
+    {
+        $xml = <<<'XML'
+<enumsynopsis>
+ <enumname>RoundingMode</enumname>
+
+ <enumitem>
+  <enumidentifier>HalfAwayFromZero</enumidentifier>
+  <enumitemdescription>
+   Round to the nearest integer.
+   If the decimal part is <literal>5</literal>,
+   round to the integer with the larger absolute value.
+  </enumitemdescription>
+ </enumitem>
+
+ <enumitem>
+  <enumidentifier>HalfTowardsZero</enumidentifier>
+  <enumitemdescription>
+   Round to the nearest integer.
+   If the decimal part is <literal>5</literal>,
+   round to the integer with the smaller absolute value.
+  </enumitemdescription>
+ </enumitem>
+
+ <enumitem>
+  <enumidentifier>HalfEven</enumidentifier>
+  <enumitemdescription>
+   Round to the nearest integer.
+   If the decimal part is <literal>5</literal>,
+   round to the even integer.
+  </enumitemdescription>
+ </enumitem>
+
+ <enumitem>
+  <enumidentifier>HalfOdd</enumidentifier>
+  <enumitemdescription>
+   Round to the nearest integer.
+   If the decimal part is <literal>5</literal>,
+   round to the odd integer.
+  </enumitemdescription>
+ </enumitem>
+
+ <enumitem>
+  <enumidentifier>TowardsZero</enumidentifier>
+  <enumitemdescription>
+   Round to the nearest integer with a smaller or equal absolute value.
+  </enumitemdescription>
+ </enumitem>
+
+ <enumitem>
+  <enumidentifier>AwayFromZero</enumidentifier>
+  <enumitemdescription>
+   Round to the nearest integer with a greater or equal absolute value.
+  </enumitemdescription>
+ </enumitem>
+
+ <enumitem>
+  <enumidentifier>NegativeInfinity</enumidentifier>
+  <enumitemdescription>
+   Round to the largest integer that is smaller or equal.
+  </enumitemdescription>
+ </enumitem>
+
+ <enumitem>
+  <enumidentifier>PositiveInfinity</enumidentifier>
+  <enumitemdescription>
+   Round to the smallest integer that is greater or equal.
+  </enumitemdescription>
+ </enumitem>
+
+</enumsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $enum = EnumMetaData::parseFromDoc($document->firstElementChild, 'none', null);
+
+        self::assertSame('RoundingMode', $enum->name);
+        self::assertNull($enum->backingType);
+        self::assertCount(8, $enum->cases);
+        self::assertSame('HalfAwayFromZero', $enum->cases[0]->name);
+        self::assertSame([], $enum->attributes);
     }
 }
