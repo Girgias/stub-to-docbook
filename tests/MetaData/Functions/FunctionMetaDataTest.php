@@ -539,7 +539,7 @@ XML;
     {
         $xml = <<<'XML'
 <methodsynopsis role="Foo">
- <modifier>public</modifier> <modifier>abstract</modifier> <type>void</type><methodname>Foo::bar</methodname>
+ <modifier>abstract</modifier> <modifier>public</modifier> <type>void</type><methodname>Foo::bar</methodname>
  <void/>
 </methodsynopsis>
 XML;
@@ -887,7 +887,7 @@ XML;
 
         $xml = <<<'XML'
 <methodsynopsis role="Foo">
- <modifier>public</modifier> <modifier>abstract</modifier> <type>void</type><methodname>Foo::bar</methodname>
+ <modifier>abstract</modifier> <modifier>public</modifier> <type>void</type><methodname>Foo::bar</methodname>
  <void/>
 </methodsynopsis>
 XML;
