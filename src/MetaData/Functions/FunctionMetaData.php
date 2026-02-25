@@ -251,7 +251,7 @@ final readonly class FunctionMetaData implements Equatable
             : $this->name;
         $methodsynopsis->append($methodname);
 
-        if (count($this->parameters) === 0) {
+        if ($this->parameters === []) {
             $methodsynopsis->append($document->createElement('void'));
         } else {
             foreach ($this->parameters as $param) {
