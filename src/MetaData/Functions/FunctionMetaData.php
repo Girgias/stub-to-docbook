@@ -27,6 +27,7 @@ final readonly class FunctionMetaData implements Equatable
         readonly string $extension,
         readonly bool $byRefReturn = false,
         readonly array $attributes = [],
+        readonly ?string $class = null,
         readonly bool $isStatic = false,
         readonly bool $isAbstract = false,
         readonly bool $isFinal = false,
@@ -44,6 +45,7 @@ final readonly class FunctionMetaData implements Equatable
             && $this->byRefReturn === $other->byRefReturn
             && Utils::equateList($this->parameters, $other->parameters)
             && Utils::equateList($this->attributes, $other->attributes)
+            && $this->class === $other->class
             && $this->isStatic === $other->isStatic
             && $this->isAbstract === $other->isAbstract
             && $this->isFinal === $other->isFinal
@@ -54,6 +56,7 @@ final readonly class FunctionMetaData implements Equatable
 
     public static function fromReflectionData(ReflectionFunction|ReflectionMethod $reflectionData): self
     {
+        $class = null;
         $isFinal = false;
         $isAbstract = false;
         $visibility = Visibility::Public;
@@ -78,6 +81,7 @@ final readonly class FunctionMetaData implements Equatable
         );
 
         if ($reflectionData instanceof ReflectionMethod) {
+            $class = $reflectionData->getDeclaringClass()->getName();
             $isFinal = $reflectionData->isFinal();
             $isAbstract = $reflectionData->isAbstract();
             $visibility = Visibility::fromReflectionData($reflectionData);
@@ -90,6 +94,7 @@ final readonly class FunctionMetaData implements Equatable
             extension: $reflectionData->getExtensionName(),
             byRefReturn: $reflectionData->returnsReference(),
             attributes: $attributes,
+            class: $class,
             isStatic: $reflectionData->isStatic(),
             isAbstract: $isAbstract,
             isFinal: $isFinal,
@@ -112,12 +117,19 @@ final readonly class FunctionMetaData implements Equatable
         $name = null;
         $returnType = null;
         $byRefReturn = false;
+        $class = null;
         $isStatic = false;
         $isFinal = false;
         $isAbstract = false;
         $visibility = Visibility::Public;
         $parameters = [];
         $attributes = [];
+
+        if ($element->hasAttribute('role')) {
+            $class = $element->getAttribute('role');
+            /* XML needs to escape \ but we get the raw one? */
+            $class = str_replace('\\\\', '\\', $class);
+        }
 
         foreach ($element->childNodes as $node) {
             if ($node instanceof Text) {
@@ -179,6 +191,7 @@ final readonly class FunctionMetaData implements Equatable
             extension: $extension,
             byRefReturn: $byRefReturn,
             attributes: $attributes,
+            class: $class,
             isStatic: $isStatic,
             isAbstract: $isAbstract,
             isFinal: $isFinal,

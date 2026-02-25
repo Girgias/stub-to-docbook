@@ -148,6 +148,7 @@ STUB;
             [],
             new SingleType('void'),
             'internal',
+            class: 'Foo',
         );
 
         self::assertTrue($fn->isSame($expectedFunction));
@@ -174,6 +175,7 @@ STUB;
             [],
             new SingleType('void'),
             'internal',
+            class: 'Foo',
             visibility: Visibility::Protected,
         );
 
@@ -201,6 +203,7 @@ STUB;
             [],
             new SingleType('void'),
             'internal',
+            class: 'Foo',
             visibility: Visibility::Private,
         );
 
@@ -228,6 +231,7 @@ STUB;
             [],
             new SingleType('void'),
             'internal',
+            class: 'Foo',
             isFinal: true,
         );
 
@@ -255,6 +259,7 @@ STUB;
             [],
             new SingleType('void'),
             'internal',
+            class: 'Foo',
             isStatic: true,
         );
 
@@ -282,9 +287,40 @@ STUB;
             [],
             new SingleType('void'),
             'internal',
+            class: 'Foo',
             isAbstract: true,
         );
 
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_namespaced_public_method_from_reflection_data(): void
+    {
+        $stub = <<<'STUB'
+<?php
+namespace Bar;
+
+class Foo {
+    public function method(): void {}
+}
+STUB;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionFunction = $reflector->reflectClass('Bar\\Foo')->getMethod('method');
+        $fn = FunctionMetaData::fromReflectionData($reflectionFunction);
+
+        $expectedFunction = new FunctionMetaData(
+            'method',
+            [],
+            new SingleType('void'),
+            'internal',
+            class: 'Bar\\Foo',
+        );
+
+        self::assertSame('Bar\\Foo', $fn->class);
         self::assertTrue($fn->isSame($expectedFunction));
     }
 
@@ -394,6 +430,7 @@ XML;
                 new SingleType('object'),
             ]),
             'none',
+            class: 'WeakReference',
         );
 
         self::assertTrue($fn->isSame($expectedFunction));
@@ -416,6 +453,7 @@ XML;
             [],
             new SingleType('int'),
             'none',
+            class: 'SplHeap',
             visibility: Visibility::Protected,
         );
 
@@ -438,6 +476,7 @@ XML;
             [],
             new SingleType('void'),
             'none',
+            class: 'ReflectionFunctionAbstract',
             visibility: Visibility::Private,
         );
 
@@ -460,6 +499,7 @@ XML;
             [],
             new SingleType('string'),
             'none',
+            class: 'Exception',
             isFinal: true,
         );
 
@@ -488,12 +528,12 @@ XML;
             ],
             new SingleType('WeakReference'),
             'none',
+            class: 'WeakReference',
             isStatic: true,
         );
 
         self::assertTrue($fn->isSame($expectedFunction));
     }
-
 
     public function test_abstract_method_parsing_with_public_visibility(): void
     {
@@ -511,6 +551,7 @@ XML;
             [],
             new SingleType('void'),
             'none',
+            class: 'Foo',
             isAbstract: true,
         );
 
@@ -579,6 +620,29 @@ XML;
             isDeprecated: true,
         );
 
+        self::assertTrue($fn->isSame($expectedFunction));
+    }
+
+    public function test_namespaced_method_parsing(): void
+    {
+        $xml = <<<'XML'
+<methodsynopsis role="Random\\Engine\\Xoshiro256StarStar">
+ <modifier>public</modifier> <type>string</type><methodname>Random\Engine\Xoshiro256StarStar::generate</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+
+        $expectedFunction = new FunctionMetaData(
+            'generate',
+            [],
+            new SingleType('string'),
+            'none',
+            class: 'Random\\Engine\\Xoshiro256StarStar',
+        );
+
+        self::assertSame('Random\\Engine\\Xoshiro256StarStar', $fn->class);
         self::assertTrue($fn->isSame($expectedFunction));
     }
 }
