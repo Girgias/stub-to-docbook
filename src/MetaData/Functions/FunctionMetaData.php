@@ -204,11 +204,12 @@ final readonly class FunctionMetaData implements Equatable
     /**
      * DocBook 5.2 <methodsynopsis> generation
      */
-    public function toMethodSynopsisXml(XMLDocument $document, ?string $className = null): Element
+    public function toMethodSynopsisXml(XMLDocument $document): Element
     {
         $methodsynopsis = $document->createElement('methodsynopsis');
-        if ($className) {
-            $methodsynopsis->setAttribute('role', $className);
+        if ($this->class) {
+            $classNameWithEscapedNamespace = str_replace('\\', '\\\\', $this->class);
+            $methodsynopsis->setAttribute('role', $classNameWithEscapedNamespace);
         }
 
         if ($this->isFinal) {
@@ -221,7 +222,7 @@ final readonly class FunctionMetaData implements Equatable
             $modifier->textContent = 'abstract';
             $methodsynopsis->append($modifier);
         }
-        if ($className) {
+        if ($this->class) {
             $modifier = $document->createElement('modifier');
             $modifier->textContent = match ($this->visibility) {
                 Visibility::Public => 'public',
@@ -245,8 +246,8 @@ final readonly class FunctionMetaData implements Equatable
         $methodsynopsis->append($typeFragment);
 
         $methodname = $document->createElement('methodname');
-        $methodname->textContent = $className !== null
-            ? $className . '::' . $this->name
+        $methodname->textContent = $this->class !== null
+            ? $this->class . '::' . $this->name
             : $this->name;
         $methodsynopsis->append($methodname);
 

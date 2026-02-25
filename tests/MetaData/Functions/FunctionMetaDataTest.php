@@ -648,6 +648,13 @@ XML;
 
     public function test_to_method_synopsis_xml_basic_function(): void
     {
+        $xml = <<<'XML'
+<methodsynopsis>
+ <type>mixed</type><methodname>array_pop</methodname>
+ <methodparam><type>array</type><parameter role="reference">array</parameter></methodparam>
+</methodsynopsis>
+XML;
+
         $fn = new FunctionMetaData(
             'array_pop',
             [
@@ -666,18 +673,20 @@ XML;
         $element = $fn->toMethodSynopsisXml($document);
         $document->append($element);
 
-        $xml = $document->saveXml($element);
-        self::assertIsString($xml);
-
-        self::assertStringContainsString('<methodname>array_pop</methodname>', $xml);
-        self::assertStringContainsString('<type>mixed</type>', $xml);
-        self::assertStringContainsString('<type>array</type>', $xml);
-        self::assertStringContainsString('<parameter role="reference">array</parameter>', $xml);
-        self::assertStringNotContainsString('<void/>', $xml);
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
 
     public function test_to_method_synopsis_xml_void_function(): void
     {
+        $xml = <<<'XML'
+<methodsynopsis>
+ <type>int</type><methodname>gc_collect_cycles</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+
         $fn = new FunctionMetaData(
             'gc_collect_cycles',
             [],
@@ -689,40 +698,86 @@ XML;
         $element = $fn->toMethodSynopsisXml($document);
         $document->append($element);
 
-        $xml = $document->saveXml($element);
-        self::assertIsString($xml);
-
-        self::assertStringContainsString('<void/>', $xml);
-        self::assertStringNotContainsString('<methodparam', $xml);
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
 
-    public function test_to_method_synopsis_xml_method_with_modifiers(): void
+    public function test_to_method_synopsis_xml_method_with_final_modifier(): void
     {
+        $xml = <<<'XML'
+<methodsynopsis role="Exception">
+ <modifier>final</modifier> <modifier>public</modifier> <type>string</type><methodname>Exception::getMessage</methodname>
+ <void/>
+</methodsynopsis>
+XML;
+
         $fn = new FunctionMetaData(
             'getMessage',
             [],
             new SingleType('string'),
             'Core',
-            isStatic: true,
+            class: 'Exception',
             isFinal: true,
-            visibility: Visibility::Protected,
+            visibility: Visibility::Public,
         );
 
         $document = XMLDocument::createEmpty();
-        $element = $fn->toMethodSynopsisXml($document, 'Exception');
+        $element = $fn->toMethodSynopsisXml($document);
         $document->append($element);
 
-        $xml = $document->saveXml($element);
-        self::assertIsString($xml);
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
 
-        self::assertStringContainsString('<modifier>final</modifier>', $xml);
-        self::assertStringContainsString('<modifier>protected</modifier>', $xml);
-        self::assertStringContainsString('<modifier>static</modifier>', $xml);
-        self::assertStringContainsString('<methodname>Exception::getMessage</methodname>', $xml);
+    public function test_to_method_synopsis_xml_method_with_static_modifier(): void
+    {
+        $xml = <<<'XML'
+<methodsynopsis role="BackedEnum">
+ <modifier>public</modifier> <modifier>static</modifier> <type>static</type><methodname>BackedEnum::from</methodname>
+ <methodparam><type class="union"><type>string</type><type>int</type></type><parameter>value</parameter></methodparam>
+</methodsynopsis>
+XML;
+
+        $fn = new FunctionMetaData(
+            'from',
+            [
+                new ParameterMetaData(
+                    'value',
+                    1,
+                    new UnionType([
+                        new SingleType('int'),
+                        new SingleType('string'),
+                    ]),
+                ),
+            ],
+            new SingleType('static'),
+            'Core',
+            class: 'BackedEnum',
+            isStatic: true,
+            visibility: Visibility::Public,
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($document);
+        $document->append($element);
+
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
 
     public function test_to_method_synopsis_xml_optional_param_with_default(): void
     {
+        $xml = <<<'XML'
+<methodsynopsis>
+ <type>string</type><methodname>substr</methodname>
+ <methodparam><type>string</type><parameter>string</parameter></methodparam>
+ <methodparam><type>int</type><parameter>offset</parameter></methodparam>
+ <methodparam choice="opt"><type class="union"><type>int</type><type>null</type></type><parameter>length</parameter><initializer><constant>null</constant></initializer></methodparam>
+</methodsynopsis>
+XML;
         $fn = new FunctionMetaData(
             'substr',
             [
@@ -733,7 +788,7 @@ XML;
                     3,
                     new UnionType([new SingleType('int'), new SingleType('null')]),
                     isOptional: true,
-                    defaultValue: new Initializer(InitializerVariant::Literal, 'null'),
+                    defaultValue: new Initializer(InitializerVariant::Constant, 'null'),
                 ),
             ],
             new SingleType('string'),
@@ -744,11 +799,9 @@ XML;
         $element = $fn->toMethodSynopsisXml($document);
         $document->append($element);
 
-        $xml = $document->saveXml($element);
-        self::assertIsString($xml);
-
-        self::assertStringContainsString('choice="opt"', $xml);
-        self::assertStringContainsString('<initializer><literal>null</literal></initializer>', $xml);
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
 
     public function test_e2e_function_methodsynopsis_xml(): void
@@ -812,8 +865,7 @@ XML;
         $document = XMLDocument::createFromString($xml);
         $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
         $newDocument = XMLDocument::createEmpty();
-        // TODO: Should we need to pass the class name?
-        $element = $fn->toMethodSynopsisXml($newDocument, 'WeakReference');
+        $element = $fn->toMethodSynopsisXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
         self::assertIsString($newXml);
@@ -830,7 +882,7 @@ XML;
         $document = XMLDocument::createFromString($xml);
         $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
         $newDocument = XMLDocument::createEmpty();
-        $element = $fn->toMethodSynopsisXml($newDocument, 'SplHeap');
+        $element = $fn->toMethodSynopsisXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
         self::assertIsString($newXml);
@@ -846,7 +898,7 @@ XML;
         $document = XMLDocument::createFromString($xml);
         $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
         $newDocument = XMLDocument::createEmpty();
-        $element = $fn->toMethodSynopsisXml($newDocument, 'ReflectionFunctionAbstract');
+        $element = $fn->toMethodSynopsisXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
         self::assertIsString($newXml);
@@ -862,7 +914,7 @@ XML;
         $document = XMLDocument::createFromString($xml);
         $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
         $newDocument = XMLDocument::createEmpty();
-        $element = $fn->toMethodSynopsisXml($newDocument, 'Exception');
+        $element = $fn->toMethodSynopsisXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
         self::assertIsString($newXml);
@@ -878,7 +930,7 @@ XML;
         $document = XMLDocument::createFromString($xml);
         $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
         $newDocument = XMLDocument::createEmpty();
-        $element = $fn->toMethodSynopsisXml($newDocument, 'WeakReference');
+        $element = $fn->toMethodSynopsisXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
         self::assertIsString($newXml);
@@ -894,7 +946,7 @@ XML;
         $document = XMLDocument::createFromString($xml);
         $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
         $newDocument = XMLDocument::createEmpty();
-        $element = $fn->toMethodSynopsisXml($newDocument, 'Foo');
+        $element = $fn->toMethodSynopsisXml($newDocument);
         $newDocument->append($element);
         $newXml = $newDocument->saveXml($element);
         self::assertIsString($newXml);
@@ -909,6 +961,22 @@ XML;
  <methodparam><type>array</type><parameter role="reference">param_reference</parameter></methodparam>
  <methodparam><modifier role="attribute">#[\SensitiveParameter]</modifier><type>string</type><parameter>param_sensitive</parameter></methodparam>
  <methodparam choice="opt"><type class="union"><type>int</type><type>null</type></type><parameter>param_optional</parameter><initializer><constant>SOME_CONST</constant></initializer></methodparam>
+</methodsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $fn = FunctionMetaData::parseFromDoc($document->firstElementChild, 'none');
+        $newDocument = XMLDocument::createEmpty();
+        $element = $fn->toMethodSynopsisXml($newDocument);
+        $newDocument->append($element);
+        $newXml = $newDocument->saveXml($element);
+        self::assertIsString($newXml);
+
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+
+        $xml = <<<'XML'
+<methodsynopsis role="Random\\Engine\\Xoshiro256StarStar">
+ <modifier>public</modifier> <type>string</type><methodname>Random\Engine\Xoshiro256StarStar::generate</methodname>
+ <void/>
 </methodsynopsis>
 XML;
         $document = XMLDocument::createFromString($xml);
