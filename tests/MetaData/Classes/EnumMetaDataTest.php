@@ -319,4 +319,6 @@ XML;
         self::assertSame('HalfAwayFromZero', $enum->cases[0]->name);
         self::assertSame([], $enum->attributes);
     }
+
+    /* TODO: add parsing tests for attributes, backing type, and deprecated the moment the XML is figured out */
 }
