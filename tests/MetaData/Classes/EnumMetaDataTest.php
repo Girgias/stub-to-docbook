@@ -34,6 +34,7 @@ STUB;
         $enum = EnumMetaData::fromReflectionData($rc);
 
         self::assertSame('Suit', $enum->name);
+        self::assertNull($enum->namespace);
         self::assertNull($enum->backingType);
         self::assertCount(4, $enum->cases);
         self::assertSame('Hearts', $enum->cases[0]->name);
@@ -60,6 +61,7 @@ STUB;
         $enum = EnumMetaData::fromReflectionData($rc);
 
         self::assertSame('Color', $enum->name);
+        self::assertNull($enum->namespace);
         self::assertNotNull($enum->backingType);
         self::assertTrue((new SingleType('string'))->isSame($enum->backingType));
         self::assertCount(2, $enum->cases);
@@ -195,5 +197,36 @@ STUB;
         $enum = EnumMetaData::fromReflectionData($rc);
 
         self::assertContains('HasLabel', $enum->implements);
+    }
+
+    public function test_unit_enum_in_namespace(): void
+    {
+        $stub = <<<'STUB'
+<?php
+namespace Foo\Bar;
+
+enum Suit {
+    case Hearts;
+    case Diamonds;
+    case Clubs;
+    case Spades;
+}
+STUB;
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $rc = $reflector->reflectClass('Foo\\Bar\\Suit');
+        self::assertInstanceOf(ReflectionEnum::class, $rc);
+        $enum = EnumMetaData::fromReflectionData($rc);
+
+        self::assertSame('Suit', $enum->name);
+        self::assertSame('Foo\\Bar', $enum->namespace);
+        self::assertNull($enum->backingType);
+        self::assertCount(4, $enum->cases);
+        self::assertSame('Hearts', $enum->cases[0]->name);
+        self::assertNull($enum->cases[0]->value);
+        self::assertSame('Spades', $enum->cases[3]->name);
+        self::assertFalse($enum->isDeprecated);
     }
 }

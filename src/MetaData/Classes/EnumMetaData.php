@@ -22,6 +22,7 @@ final class EnumMetaData
         readonly array $cases,
         readonly array $methods,
         readonly string $extension,
+        readonly string|null $namespace = null,
         readonly array $implements = [],
         readonly array $attributes = [],
         readonly bool $isDeprecated = false,
@@ -55,11 +56,12 @@ final class EnumMetaData
         );
 
         return new self(
-            $reflectionData->getName(),
+            $reflectionData->getShortName(),
             $backingType,
             $cases,
             $methods,
             extension: $reflectionData->getExtensionName(),
+            namespace: $reflectionData->getNamespaceName(),
             implements: array_values($implements),
             attributes: $attributes,
             isDeprecated: $reflectionData->isDeprecated(),
