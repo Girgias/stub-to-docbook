@@ -37,12 +37,42 @@ final readonly class UnionType implements Type
         ]);
     }
 
+    private static function singleTypeWeight(SingleType $t): int
+    {
+        return match ($t->name) {
+            'callable', => 3,
+            'object',   => 4,
+            'array',    => 5,
+            'string',   => 6,
+            'int',      => 7,
+            'float',    => 8,
+            'bool',     => 9,
+            'false',    => 10,
+            'true',     => 11,
+            'void',     => 12,
+            'never',    => 13,
+            'null',     => 14,
+            default     => 0,
+        };
+    }
+
+    /** Sort types according to PHP's zend_type_to_string_resolved() so that Reflection output matches */
+    private static function sortSingleTypes(SingleType $a, SingleType $b): int
+    {
+        $weightA = self::singleTypeWeight($a);
+        $weightB = self::singleTypeWeight($b);
+        if ($weightA === $weightB && $weightA === 0) {
+            return strcasecmp($a->name, $b->name);
+        }
+        return $weightA <=> $weightB;
+    }
+
     private static function sortDnfTypes(SingleType|IntersectionType $a, SingleType|IntersectionType $b): int
     {
         if ($a::class === $b::class) {
             return match ($a::class) {
-                /** @phpstan-ignore property.notFound (See https://github.com/phpstan/phpstan/issues/12206) */
-                SingleType::class => strcmp($a->name, $b->name),
+                /** @phpstan-ignore argument.type (See https://github.com/phpstan/phpstan/issues/12206) */
+                SingleType::class => self::sortSingleTypes($a, $b),
                 /** @phpstan-ignore argument.type (See https://github.com/phpstan/phpstan/issues/12206) */
                 IntersectionType::class => self::sortIntersectionTypes($a, $b),
             };
@@ -59,7 +89,7 @@ final readonly class UnionType implements Type
         $s = count($a->types) <=> count($b->types);
         if ($s === 0) {
             $cmps = array_map(
-                fn (SingleType $l, SingleType $r) => strcmp($l->name, $r->name),
+                fn (SingleType $l, SingleType $r) => self::sortSingleTypes($l, $r),
                 $a->types,
                 $b->types,
             );
