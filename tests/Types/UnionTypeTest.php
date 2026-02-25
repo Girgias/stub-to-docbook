@@ -72,6 +72,42 @@ class UnionTypeTest extends TestCase
         self::assertTrue($unionType2->isSame($unionType1));
     }
 
+    public function test_generated_simple_union_builtin_types_xml(): void
+    {
+        $types = [
+            'callable',
+            'object',
+            'array',
+            'string',
+            'int',
+            'float',
+            'bool',
+            'false',
+            'true',
+            'void',
+            'never',
+            'null',
+        ];
+        $expected = '<type class="union"><type>' . implode('</type><type>', $types) . '</type></type>';
+
+        $unionType = new UnionType([
+            new SingleType('callable'),
+            new SingleType('string'),
+            new SingleType('array'),
+            new SingleType('true'),
+            new SingleType('null'),
+            new SingleType('object'),
+            new SingleType('int'),
+            new SingleType('void'),
+            new SingleType('never'),
+            new SingleType('float'),
+            new SingleType('false'),
+            new SingleType('bool'),
+        ]);
+
+        self::assertSame($expected, $unionType->toXml());
+    }
+
     public function test_normalization_simple_unions_user_types(): void
     {
         $unionType1 = new UnionType([
@@ -87,6 +123,24 @@ class UnionTypeTest extends TestCase
 
         self::assertTrue($unionType1->isSame($unionType2));
         self::assertTrue($unionType2->isSame($unionType1));
+    }
+
+    public function test_generated_simple_union_user_types_xml(): void
+    {
+        $types = [
+            'A',
+            'T',
+            'X',
+        ];
+        $expected = '<type class="union"><type>' . implode('</type><type>', $types) . '</type></type>';
+
+        $unionType = new UnionType([
+            new SingleType('T'),
+            new SingleType('X'),
+            new SingleType('A'),
+        ]);
+
+        self::assertSame($expected, $unionType->toXml());
     }
 
     public function test_normalization_simple_unions_builtin_and_user_types(): void
@@ -106,6 +160,26 @@ class UnionTypeTest extends TestCase
 
         self::assertTrue($unionType1->isSame($unionType2));
         self::assertTrue($unionType2->isSame($unionType1));
+    }
+
+    public function test_generated_simple_union_builtin_and_user_types_xml(): void
+    {
+        $types = [
+            'A',
+            'X',
+            'string',
+            'int',
+        ];
+        $expected = '<type class="union"><type>' . implode('</type><type>', $types) . '</type></type>';
+
+        $unionType = new UnionType([
+            new SingleType('int'),
+            new SingleType('X'),
+            new SingleType('string'),
+            new SingleType('A'),
+        ]);
+
+        self::assertSame($expected, $unionType->toXml());
     }
 
     public function test_normalization_dnf(): void
