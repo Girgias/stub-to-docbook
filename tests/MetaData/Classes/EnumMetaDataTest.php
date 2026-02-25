@@ -40,6 +40,7 @@ STUB;
         self::assertSame('Hearts', $enum->cases[0]->name);
         self::assertNull($enum->cases[0]->value);
         self::assertSame('Spades', $enum->cases[3]->name);
+        self::assertSame([], $enum->implements);
         self::assertFalse($enum->isDeprecated);
     }
 
@@ -68,6 +69,7 @@ STUB;
         self::assertSame('Red', $enum->cases[0]->name);
         self::assertNotNull($enum->cases[0]->value);
         self::assertSame("'red'", $enum->cases[0]->value->value);
+        self::assertSame([], $enum->implements);
     }
 
     public function test_backed_int_enum(): void
@@ -95,6 +97,7 @@ STUB;
         self::assertTrue(
             (new Initializer(InitializerVariant::Literal, '1'))->isSame($enum->cases[0]->value),
         );
+        self::assertSame([], $enum->implements);
     }
 
     public function test_enum_with_method(): void
@@ -118,6 +121,7 @@ STUB;
         self::assertCount(1, $enum->cases);
         self::assertCount(1, $enum->methods);
         self::assertSame('color', $enum->methods[0]->name);
+        self::assertSame([], $enum->implements);
     }
 
     public function test_deprecated_enum_case(): void
@@ -147,6 +151,7 @@ STUB;
         self::assertSame('Diamonds', $enum->cases[1]->name);
         self::assertCount(1, $enum->cases[1]->attributes);
         self::assertSame('\Deprecated', $enum->cases[1]->attributes[0]->name);
+        self::assertSame([], $enum->implements);
     }
 
     public function test_enum_with_attribute(): void
@@ -173,6 +178,7 @@ STUB;
         self::assertCount(2, $enum->cases);
         self::assertFalse($enum->cases[0]->isDeprecated);
         self::assertFalse($enum->cases[1]->isDeprecated);
+        self::assertSame([], $enum->implements);
     }
 
     public function test_enum_implementing_interface(): void
@@ -196,6 +202,7 @@ STUB;
         self::assertInstanceOf(ReflectionEnum::class, $rc);
         $enum = EnumMetaData::fromReflectionData($rc);
 
+        self::assertCount(1, $enum->implements);
         self::assertContains('HasLabel', $enum->implements);
     }
 
