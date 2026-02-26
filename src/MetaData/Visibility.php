@@ -2,6 +2,7 @@
 
 namespace Girgias\StubToDocbook\MetaData;
 
+use Dom\Element;
 use Dom\XMLDocument;
 use Roave\BetterReflection\Reflection\ReflectionClassConstant;
 use Roave\BetterReflection\Reflection\ReflectionMethod;
@@ -20,7 +21,7 @@ enum Visibility
             : ($reflectionData->isProtected() ? Visibility::Protected : Visibility::Public);
     }
 
-    public function toModifierXml(XMLDocument $document)
+    public function toModifierXml(XMLDocument $document): Element
     {
         $modifier = $document->createElement('modifier');
         $modifier->textContent = match ($this) {
