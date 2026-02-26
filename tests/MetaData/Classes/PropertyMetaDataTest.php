@@ -380,4 +380,132 @@ XML;
         );
         self::assertTrue($expectedProperty->isSame($prop));
     }
+
+    public function test_to_field_synopsis_xml_basic(): void
+    {
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>public</modifier>
+ <type>int</type>
+ <varname>propName</varname>
+</fieldsynopsis>
+XML;
+
+        $prop = new PropertyMetaData(
+            'propName',
+            new SingleType('int'),
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $prop->toFieldSynopsisXml($document);
+        $document->append($element);
+
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    public function test_to_field_synopsis_xml_readonly(): void
+    {
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>public</modifier>
+ <modifier>readonly</modifier>
+ <type>int</type>
+ <varname>propName</varname>
+</fieldsynopsis>
+XML;
+
+        $prop = new PropertyMetaData(
+            'propName',
+            new SingleType('int'),
+            isReadOnly: true,
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $prop->toFieldSynopsisXml($document);
+        $document->append($element);
+
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    public function test_to_field_synopsis_xml_static(): void
+    {
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>public</modifier>
+ <modifier>static</modifier>
+ <type>int</type>
+ <varname>propName</varname>
+</fieldsynopsis>
+XML;
+
+        $prop = new PropertyMetaData(
+            'propName',
+            new SingleType('int'),
+            isStatic: true,
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $prop->toFieldSynopsisXml($document);
+        $document->append($element);
+
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    public function test_to_field_synopsis_xml_initializer(): void
+    {
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>public</modifier>
+ <type>int</type>
+ <varname>propName</varname>
+ <initializer><literal>42</literal></initializer>
+</fieldsynopsis>
+XML;
+
+        $prop = new PropertyMetaData(
+            'propName',
+            new SingleType('int'),
+            defaultValue: new Initializer(InitializerVariant::Literal, '42'),
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $prop->toFieldSynopsisXml($document);
+        $document->append($element);
+
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    public function test_to_field_synopsis_xml_final(): void
+    {
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>final</modifier>
+ <modifier>public</modifier>
+ <type>int</type>
+ <varname>propName</varname>
+</fieldsynopsis>
+XML;
+
+        $prop = new PropertyMetaData(
+            'propName',
+            new SingleType('int'),
+            isFinal: true,
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $prop->toFieldSynopsisXml($document);
+        $document->append($element);
+
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
 }
