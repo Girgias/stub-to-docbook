@@ -317,6 +317,23 @@ STUB;
         self::assertSame('0', $prop->defaultValue->value);
     }
 
+    public function test_parse_from_doc_final(): void
+    {
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>final</modifier>
+ <modifier>public</modifier>
+ <type>int</type>
+ <varname>propName</varname>
+</fieldsynopsis>
+XML;
+        $document = XMLDocument::createFromString($xml);
+        $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
+
+        self::assertSame('propName', $prop->name);
+        self::assertTrue($prop->isFinal);
+    }
+
     public function test_parse_from_doc_static(): void
     {
         $xml = '<fieldsynopsis><modifier>public</modifier><modifier>static</modifier><type>int</type><varname>instances</varname></fieldsynopsis>';

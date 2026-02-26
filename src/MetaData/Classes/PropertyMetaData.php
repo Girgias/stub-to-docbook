@@ -46,6 +46,7 @@ final class PropertyMetaData
         $visibility = Visibility::Public;
         $isStatic = false;
         $isReadOnly = false;
+        $isFinal = false;
         $attributes = [];
 
         foreach ($element->childNodes as $node) {
@@ -76,7 +77,7 @@ final class PropertyMetaData
              */
             $tagName = $node->tagName;
             match ($tagName) {
-                'modifier' => self::parseModifierTag($node, $isStatic, $isReadOnly, $visibility, $attributes),
+                'modifier' => self::parseModifierTag($node, $isReadOnly, $isStatic, $isFinal, $visibility, $attributes),
                 'type' => $type = DocumentedTypeParser::parse($node),
                 'varname' => $name = $node->textContent,
                 'initializer' => $defaultValue = Initializer::parseFromDoc($node),
@@ -99,6 +100,7 @@ final class PropertyMetaData
             attributes: $attributes,
             isReadOnly: $isReadOnly,
             isStatic: $isStatic,
+            isFinal: $isFinal,
             isDeprecated: $isDeprecated,
         );
     }
@@ -108,8 +110,9 @@ final class PropertyMetaData
      */
     private static function parseModifierTag(
         Element $element,
-        bool &$isStatic,
         bool &$isReadOnly,
+        bool &$isStatic,
+        bool &$isFinal,
         Visibility &$visibility,
         array &$attributes,
     ): void {
@@ -119,6 +122,7 @@ final class PropertyMetaData
             'private' => $visibility = Visibility::Private,
             'static' => $isStatic = true,
             'readonly' => $isReadOnly = true,
+            'final' => $isFinal = true,
             default => $attributes[] = AttributeMetaData::parseFromDoc($element),
         };
     }
