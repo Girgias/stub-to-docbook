@@ -7,5 +7,7 @@ final readonly class VersionEntry
     public function __construct(
         readonly string $name,
         readonly string $from,
+        readonly ?string $deprecated = null,
+        readonly ?string $removed = null,
     ) {}
 }

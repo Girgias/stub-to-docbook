@@ -24,6 +24,12 @@ final class VersionsXmlGenerator
             $element = $doc->createElement('function');
             $element->setAttribute('name', $entry->name);
             $element->setAttribute('from', $entry->from);
+            if ($entry->deprecated !== null) {
+                $element->setAttribute('deprecated', $entry->deprecated);
+            }
+            if ($entry->removed !== null) {
+                $element->setAttribute('removed', $entry->removed);
+            }
             $root->append("\n ", $element);
         }
         $root->append("\n");

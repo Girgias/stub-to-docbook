@@ -19,7 +19,14 @@ final class VersionsXmlParser
             $name = $function->getAttribute('name');
             $from = $function->getAttribute('from');
             if ($name !== '' && $from !== '') {
-                $entries[$name] = new VersionEntry($name, $from);
+                $deprecated = $function->getAttribute('deprecated');
+                $removed = $function->getAttribute('removed');
+                $entries[$name] = new VersionEntry(
+                    $name,
+                    $from,
+                    $deprecated !== '' ? $deprecated : null,
+                    $removed !== '' ? $removed : null,
+                );
             }
         }
         return $entries;
