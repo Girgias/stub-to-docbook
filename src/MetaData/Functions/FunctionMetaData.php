@@ -222,14 +222,9 @@ final readonly class FunctionMetaData implements Equatable
             $modifier->textContent = 'abstract';
             $methodsynopsis->append($modifier);
         }
+        /* Add visibility for class methods */
         if ($this->class) {
-            $modifier = $document->createElement('modifier');
-            $modifier->textContent = match ($this->visibility) {
-                Visibility::Public => 'public',
-                Visibility::Protected => 'protected',
-                Visibility::Private => 'private',
-            };
-            $methodsynopsis->append($modifier);
+            $methodsynopsis->append($this->visibility->toModifierXml($document));
         }
         if ($this->isStatic) {
             $modifier = $document->createElement('modifier');
