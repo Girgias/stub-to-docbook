@@ -282,7 +282,13 @@ STUB;
 
     public function test_parse_from_doc_basic(): void
     {
-        $xml = '<fieldsynopsis><modifier>public</modifier><type>int</type><varname>y</varname></fieldsynopsis>';
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>public</modifier>
+ <type>int</type>
+ <varname>y</varname>
+</fieldsynopsis>
+XML;
         $document = XMLDocument::createFromString($xml);
         $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
 
@@ -296,7 +302,14 @@ STUB;
 
     public function test_parse_from_doc_protected_readonly(): void
     {
-        $xml = '<fieldsynopsis><modifier>protected</modifier><modifier>readonly</modifier><type>string</type><varname>name</varname></fieldsynopsis>';
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>protected</modifier>
+ <modifier>readonly</modifier>
+ <type>string</type>
+ <varname>name</varname>
+</fieldsynopsis>
+XML;
         $document = XMLDocument::createFromString($xml);
         $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
 
@@ -307,7 +320,14 @@ STUB;
 
     public function test_parse_from_doc_with_initializer(): void
     {
-        $xml = '<fieldsynopsis><modifier>public</modifier><type>int</type><varname>count</varname><initializer>0</initializer></fieldsynopsis>';
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>public</modifier>
+ <type>int</type>
+ <varname>count</varname>
+ <initializer>0</initializer>
+</fieldsynopsis>
+XML;
         $document = XMLDocument::createFromString($xml);
         $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
 
@@ -336,7 +356,14 @@ XML;
 
     public function test_parse_from_doc_static(): void
     {
-        $xml = '<fieldsynopsis><modifier>public</modifier><modifier>static</modifier><type>int</type><varname>instances</varname></fieldsynopsis>';
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>public</modifier>
+ <modifier>static</modifier>
+ <type>int</type>
+ <varname>instances</varname>
+</fieldsynopsis>
+XML;
         $document = XMLDocument::createFromString($xml);
         $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
 
