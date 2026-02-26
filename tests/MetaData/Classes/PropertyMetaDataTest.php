@@ -508,4 +508,10 @@ XML;
         self::assertIsString($newXml);
         self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
+
+    // TODO: add generation test for attributes
+    public function test_stub_e2e_tests()
+    {
+        // TODO: do them from stub, maybe after implementing equatable interface?
+    }
 }
