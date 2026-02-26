@@ -29,6 +29,38 @@ final class PropertyMetaData
         readonly bool $isDeprecated = false,
     ) {}
 
+    public static function fromReflectionData(ReflectionProperty $reflectionData): self
+    {
+        $name = $reflectionData->getName();
+        $type = null;
+
+        $attributes = array_map(
+            AttributeMetaData::fromReflectionData(...),
+            $reflectionData->getAttributes(),
+        );
+
+        $reflectionType = $reflectionData->getType();
+        if ($reflectionType !== null) {
+            $type = ReflectionTypeParser::convertFromReflectionType($reflectionData->getType());
+        }
+
+        $defaultValue = $reflectionData->getDefaultValueExpression();
+        if ($defaultValue) {
+            $defaultValue = Initializer::fromPhpParserExpr($defaultValue);
+        }
+
+        return new self(
+            $name,
+            $type,
+            defaultValue: $defaultValue,
+            visibility: Visibility::fromReflectionData($reflectionData),
+            attributes: $attributes,
+            isReadOnly: $reflectionData->isReadOnly(),
+            isStatic: $reflectionData->isStatic(),
+            isFinal: $reflectionData->isFinal(),
+            isDeprecated: $reflectionData->isDeprecated(),
+        );
+    }
 
     /**
      * DocBook 5.2 <fieldsynopsis> documentation
@@ -125,38 +157,5 @@ final class PropertyMetaData
             'final' => $isFinal = true,
             default => $attributes[] = AttributeMetaData::parseFromDoc($element),
         };
-    }
-
-    public static function fromReflectionData(ReflectionProperty $reflectionData): self
-    {
-        $name = $reflectionData->getName();
-        $type = null;
-
-        $attributes = array_map(
-            AttributeMetaData::fromReflectionData(...),
-            $reflectionData->getAttributes(),
-        );
-
-        $reflectionType = $reflectionData->getType();
-        if ($reflectionType !== null) {
-            $type = ReflectionTypeParser::convertFromReflectionType($reflectionData->getType());
-        }
-
-        $defaultValue = $reflectionData->getDefaultValueExpression();
-        if ($defaultValue) {
-            $defaultValue = Initializer::fromPhpParserExpr($defaultValue);
-        }
-
-        return new self(
-            $name,
-            $type,
-            defaultValue: $defaultValue,
-            visibility: Visibility::fromReflectionData($reflectionData),
-            attributes: $attributes,
-            isReadOnly: $reflectionData->isReadOnly(),
-            isStatic: $reflectionData->isStatic(),
-            isFinal: $reflectionData->isFinal(),
-            isDeprecated: $reflectionData->isDeprecated(),
-        );
     }
 }
