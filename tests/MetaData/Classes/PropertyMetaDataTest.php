@@ -31,15 +31,11 @@ STUB;
         $rc = $reflector->reflectClass('Foo');
         $prop = PropertyMetaData::fromReflectionData($rc->getProperty('prop'));
 
-        self::assertSame('prop', $prop->name);
-        self::assertNull($prop->type);
-        self::assertNull($prop->defaultValue);
-        self::assertSame(Visibility::Public, $prop->visibility);
-        self::assertSame([], $prop->attributes);
-        self::assertFalse($prop->isReadOnly);
-        self::assertFalse($prop->isStatic);
-        self::assertFalse($prop->isFinal);
-        self::assertFalse($prop->isDeprecated);
+        $expectedProperty = new PropertyMetaData(
+            'prop',
+            null,
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_protected_property(): void
@@ -57,15 +53,12 @@ STUB;
         $rc = $reflector->reflectClass('Foo');
         $prop = PropertyMetaData::fromReflectionData($rc->getProperty('prop'));
 
-        self::assertSame('prop', $prop->name);
-        self::assertNull($prop->type);
-        self::assertNull($prop->defaultValue);
-        self::assertSame(Visibility::Protected, $prop->visibility);
-        self::assertSame([], $prop->attributes);
-        self::assertFalse($prop->isReadOnly);
-        self::assertFalse($prop->isStatic);
-        self::assertFalse($prop->isFinal);
-        self::assertFalse($prop->isDeprecated);
+        $expectedProperty = new PropertyMetaData(
+            'prop',
+            null,
+            visibility: Visibility::Protected,
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_private_property(): void
@@ -83,15 +76,12 @@ STUB;
         $rc = $reflector->reflectClass('Foo');
         $prop = PropertyMetaData::fromReflectionData($rc->getProperty('prop'));
 
-        self::assertSame('prop', $prop->name);
-        self::assertNull($prop->type);
-        self::assertNull($prop->defaultValue);
-        self::assertSame(Visibility::Private, $prop->visibility);
-        self::assertSame([], $prop->attributes);
-        self::assertFalse($prop->isReadOnly);
-        self::assertFalse($prop->isStatic);
-        self::assertFalse($prop->isFinal);
-        self::assertFalse($prop->isDeprecated);
+        $expectedProperty = new PropertyMetaData(
+            'prop',
+            null,
+            visibility: Visibility::Private,
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_static_property(): void
@@ -109,15 +99,12 @@ STUB;
         $rc = $reflector->reflectClass('Foo');
         $prop = PropertyMetaData::fromReflectionData($rc->getProperty('prop'));
 
-        self::assertSame('prop', $prop->name);
-        self::assertNull($prop->type);
-        self::assertNull($prop->defaultValue);
-        self::assertSame(Visibility::Public, $prop->visibility);
-        self::assertSame([], $prop->attributes);
-        self::assertFalse($prop->isReadOnly);
-        self::assertTrue($prop->isStatic);
-        self::assertFalse($prop->isFinal);
-        self::assertFalse($prop->isDeprecated);
+        $expectedProperty = new PropertyMetaData(
+            'prop',
+            null,
+            isStatic: true,
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_final_property(): void
@@ -135,15 +122,12 @@ STUB;
         $rc = $reflector->reflectClass('Foo');
         $prop = PropertyMetaData::fromReflectionData($rc->getProperty('prop'));
 
-        self::assertSame('prop', $prop->name);
-        self::assertNull($prop->type);
-        self::assertNull($prop->defaultValue);
-        self::assertSame(Visibility::Public, $prop->visibility);
-        self::assertSame([], $prop->attributes);
-        self::assertFalse($prop->isReadOnly);
-        self::assertFalse($prop->isStatic);
-        self::assertTrue($prop->isFinal);
-        self::assertFalse($prop->isDeprecated);
+        $expectedProperty = new PropertyMetaData(
+            'prop',
+            null,
+            isFinal: true,
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_typed_property(): void
@@ -161,15 +145,11 @@ STUB;
         $rc = $reflector->reflectClass('Foo');
         $prop = PropertyMetaData::fromReflectionData($rc->getProperty('prop'));
 
-        self::assertSame('prop', $prop->name);
-        self::assertTrue((new SingleType('int'))->isSame($prop->type));
-        self::assertNull($prop->defaultValue);
-        self::assertSame(Visibility::Public, $prop->visibility);
-        self::assertSame([], $prop->attributes);
-        self::assertFalse($prop->isReadOnly);
-        self::assertFalse($prop->isStatic);
-        self::assertFalse($prop->isFinal);
-        self::assertFalse($prop->isDeprecated);
+        $expectedProperty = new PropertyMetaData(
+            'prop',
+            new SingleType('int'),
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_typed_readonly_property(): void
@@ -187,15 +167,12 @@ STUB;
         $rc = $reflector->reflectClass('Foo');
         $prop = PropertyMetaData::fromReflectionData($rc->getProperty('prop'));
 
-        self::assertSame('prop', $prop->name);
-        self::assertTrue((new SingleType('int'))->isSame($prop->type));
-        self::assertNull($prop->defaultValue);
-        self::assertSame(Visibility::Public, $prop->visibility);
-        self::assertSame([], $prop->attributes);
-        self::assertTrue($prop->isReadOnly);
-        self::assertFalse($prop->isStatic);
-        self::assertFalse($prop->isFinal);
-        self::assertFalse($prop->isDeprecated);
+        $expectedProperty = new PropertyMetaData(
+            'prop',
+            new SingleType('int'),
+            isReadOnly: true,
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_property_with_default_value(): void
@@ -213,15 +190,12 @@ STUB;
         $rc = $reflector->reflectClass('Foo');
         $prop = PropertyMetaData::fromReflectionData($rc->getProperty('prop'));
 
-        self::assertSame('prop', $prop->name);
-        self::assertNull($prop->type);
-        self::assertTrue((new Initializer(InitializerVariant::Literal, '42'))->isSame($prop->defaultValue));
-        self::assertSame(Visibility::Public, $prop->visibility);
-        self::assertSame([], $prop->attributes);
-        self::assertFalse($prop->isReadOnly);
-        self::assertFalse($prop->isStatic);
-        self::assertFalse($prop->isFinal);
-        self::assertFalse($prop->isDeprecated);
+        $expectedProperty = new PropertyMetaData(
+            'prop',
+            null,
+            defaultValue: new Initializer(InitializerVariant::Literal, '42'),
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_typed_property_with_default_value(): void
@@ -239,15 +213,12 @@ STUB;
         $rc = $reflector->reflectClass('Foo');
         $prop = PropertyMetaData::fromReflectionData($rc->getProperty('prop'));
 
-        self::assertSame('prop', $prop->name);
-        self::assertTrue((new SingleType('int'))->isSame($prop->type));
-        self::assertTrue((new Initializer(InitializerVariant::Literal, '42'))->isSame($prop->defaultValue));
-        self::assertSame(Visibility::Public, $prop->visibility);
-        self::assertSame([], $prop->attributes);
-        self::assertFalse($prop->isReadOnly);
-        self::assertFalse($prop->isStatic);
-        self::assertFalse($prop->isFinal);
-        self::assertFalse($prop->isDeprecated);
+        $expectedProperty = new PropertyMetaData(
+            'prop',
+            new SingleType('int'),
+            defaultValue: new Initializer(InitializerVariant::Literal, '42'),
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_property_with_attribute(): void
@@ -266,18 +237,44 @@ STUB;
         $rc = $reflector->reflectClass('Foo');
         $prop = PropertyMetaData::fromReflectionData($rc->getProperty('prop'));
 
-        self::assertSame('prop', $prop->name);
-        self::assertNull($prop->type);
-        self::assertNull($prop->defaultValue);
-        self::assertSame(Visibility::Public, $prop->visibility);
-        self::assertFalse($prop->isReadOnly);
-        self::assertFalse($prop->isStatic);
-        self::assertFalse($prop->isFinal);
-        self::assertFalse($prop->isDeprecated);
+        $expectedProperty = new PropertyMetaData(
+            'prop',
+            null,
+            attributes: [
+                new AttributeMetaData(
+                    '\MyAttr',
+                    ['name' => new Initializer(InitializerVariant::Literal, '"bar"')],
+                ),
+            ],
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
+    }
 
-        $expectedAttr = new AttributeMetaData('\MyAttr', ['name' => new Initializer(InitializerVariant::Literal, '"bar"')]);
-        self::assertCount(1, $prop->attributes);
-        self::assertTrue($expectedAttr->isSame($prop->attributes[0]));
+    public function test_property_with_deprecated_attribute(): void
+    {
+        $stub = <<<'STUB'
+<?php
+class Foo {
+    #[\Deprecated]
+    public $prop;
+}
+STUB;
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator($stub, $astLocator),
+        ]);
+        $rc = $reflector->reflectClass('Foo');
+        $prop = PropertyMetaData::fromReflectionData($rc->getProperty('prop'));
+
+        $expectedProperty = new PropertyMetaData(
+            'prop',
+            null,
+            attributes: [
+                new AttributeMetaData('\Deprecated'),
+            ],
+            isDeprecated: true,
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_parse_from_doc_basic(): void
@@ -292,12 +289,11 @@ XML;
         $document = XMLDocument::createFromString($xml);
         $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
 
-        self::assertSame('y', $prop->name);
-        self::assertTrue((new SingleType('int'))->isSame($prop->type));
-        self::assertSame(Visibility::Public, $prop->visibility);
-        self::assertNull($prop->defaultValue);
-        self::assertFalse($prop->isReadOnly);
-        self::assertFalse($prop->isStatic);
+        $expectedProperty = new PropertyMetaData(
+            'y',
+            new SingleType('int'),
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_parse_from_doc_protected_readonly(): void
@@ -313,9 +309,13 @@ XML;
         $document = XMLDocument::createFromString($xml);
         $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
 
-        self::assertSame('name', $prop->name);
-        self::assertSame(Visibility::Protected, $prop->visibility);
-        self::assertTrue($prop->isReadOnly);
+        $expectedProperty = new PropertyMetaData(
+            'name',
+            new SingleType('string'),
+            visibility: Visibility::Protected,
+            isReadOnly: true,
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_parse_from_doc_with_initializer(): void
@@ -331,10 +331,12 @@ XML;
         $document = XMLDocument::createFromString($xml);
         $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
 
-        self::assertSame('count', $prop->name);
-        self::assertNotNull($prop->defaultValue);
-        self::assertSame(InitializerVariant::Literal, $prop->defaultValue->variant);
-        self::assertSame('0', $prop->defaultValue->value);
+        $expectedProperty = new PropertyMetaData(
+            'count',
+            new SingleType('int'),
+            defaultValue: new Initializer(InitializerVariant::Literal, '0'),
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_parse_from_doc_final(): void
@@ -350,8 +352,12 @@ XML;
         $document = XMLDocument::createFromString($xml);
         $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
 
-        self::assertSame('propName', $prop->name);
-        self::assertTrue($prop->isFinal);
+        $expectedProperty = new PropertyMetaData(
+            'propName',
+            new SingleType('int'),
+            isFinal: true,
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 
     public function test_parse_from_doc_static(): void
@@ -367,7 +373,11 @@ XML;
         $document = XMLDocument::createFromString($xml);
         $prop = PropertyMetaData::parseFromDoc($document->firstElementChild);
 
-        self::assertSame('instances', $prop->name);
-        self::assertTrue($prop->isStatic);
+        $expectedProperty = new PropertyMetaData(
+            'instances',
+            new SingleType('int'),
+            isStatic: true,
+        );
+        self::assertTrue($expectedProperty->isSame($prop));
     }
 }
