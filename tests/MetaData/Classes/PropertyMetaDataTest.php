@@ -3,6 +3,7 @@
 namespace Girgias\StubToDocbook\Tests\MetaData\Classes;
 
 use Dom\XMLDocument;
+use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Classes\PropertyMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
@@ -397,10 +398,8 @@ XML;
         );
 
         $document = XMLDocument::createEmpty();
-        $element = $prop->toFieldSynopsisXml($document);
-        $document->append($element);
+        $newXml = $document->saveXml($prop->toFieldSynopsisXml($document));
 
-        $newXml = $document->saveXml($element);
         self::assertIsString($newXml);
         self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
@@ -423,10 +422,8 @@ XML;
         );
 
         $document = XMLDocument::createEmpty();
-        $element = $prop->toFieldSynopsisXml($document);
-        $document->append($element);
+        $newXml = $document->saveXml($prop->toFieldSynopsisXml($document));
 
-        $newXml = $document->saveXml($element);
         self::assertIsString($newXml);
         self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
@@ -449,10 +446,8 @@ XML;
         );
 
         $document = XMLDocument::createEmpty();
-        $element = $prop->toFieldSynopsisXml($document);
-        $document->append($element);
+        $newXml = $document->saveXml($prop->toFieldSynopsisXml($document));
 
-        $newXml = $document->saveXml($element);
         self::assertIsString($newXml);
         self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
@@ -475,10 +470,8 @@ XML;
         );
 
         $document = XMLDocument::createEmpty();
-        $element = $prop->toFieldSynopsisXml($document);
-        $document->append($element);
+        $newXml = $document->saveXml($prop->toFieldSynopsisXml($document));
 
-        $newXml = $document->saveXml($element);
         self::assertIsString($newXml);
         self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
@@ -502,16 +495,63 @@ XML;
 
         $document = XMLDocument::createEmpty();
         $element = $prop->toFieldSynopsisXml($document);
-        $document->append($element);
-
         $newXml = $document->saveXml($element);
+
         self::assertIsString($newXml);
         self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
 
-    // TODO: add generation test for attributes
+    /** TODO: Mode integration tests to another class
+     * #[PHPUnit\Framework\Attributes\CoversNothing]
+     * */
     public function test_stub_e2e_tests()
     {
-        // TODO: do them from stub, maybe after implementing equatable interface?
+        $stub = <<<'STUB'
+<?php
+class Foo {
+    public $prop1;
+    public int $prop2;
+    public int $prop3 = 42;
+    public readonly int $prop4;
+    final public string $prop5;
+    public static string $prop6;
+    #[\MyAttr(name: "bar")]
+    public $prop7;
+    #[\Deprecated]
+    public $prop8;
+    protected $prop9;
+    private $prop10;
+}
+STUB;
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionData = $reflector->reflectClass('Foo');
+
+        $props = array_map(
+            PropertyMetaData::fromReflectionData(...),
+            $reflectionData->getProperties(),
+        );
+
+        $fn = static function (PropertyMetaData $prop): string {
+            $document = XMLDocument::createEmpty();
+            return $document->saveXml($prop->toFieldSynopsisXml($document));
+        };
+        $xmls = array_map(
+            $fn,
+            $props,
+        );
+
+        $fn2 = static function (string $rawXml): PropertyMetaData {
+            $document = XMLDocument::createFromString($rawXml);
+            return PropertyMetaData::parseFromDoc($document->firstElementChild);
+        };
+        $parsedProps = array_map(
+            $fn2,
+            $xmls,
+        );
+
+        self::assertTrue(Utils::equateList($props, $parsedProps));
     }
 }

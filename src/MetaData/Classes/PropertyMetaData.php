@@ -190,9 +190,11 @@ final class PropertyMetaData implements Equatable
             $fieldsynopsis->append($modifier);
         }
 
-        $typeFragment = $document->createDocumentFragment();
-        $typeFragment->appendXml($this->type->toXml());
-        $fieldsynopsis->append($typeFragment);
+        if ($this->type !== null) {
+            $typeFragment = $document->createDocumentFragment();
+            $typeFragment->appendXml($this->type->toXml());
+            $fieldsynopsis->append($typeFragment);
+        }
 
         $varname = $document->createElement('varname');
         $varname->textContent = $this->name;
