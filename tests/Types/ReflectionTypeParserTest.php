@@ -10,6 +10,7 @@ use Girgias\StubToDocbook\Types\UnionType;
 use PHPUnit\Framework\TestCase;
 use Roave\BetterReflection\BetterReflection;
 use Roave\BetterReflection\Reflection\ReflectionFunction;
+use Roave\BetterReflection\Reflection\ReflectionUnionType;
 use Roave\BetterReflection\SourceLocator\Type\StringSourceLocator;
 
 class ReflectionTypeParserTest extends TestCase
@@ -94,6 +95,17 @@ STUB;
                 ),
             ),
         );
+    }
+
+    public function test_better_reflection_nullable_type_is_provided_as_union_acceptance_test(): void
+    {
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator(self::STUB_FILE_STR, $astLocator),
+        ]);
+        $reflectionType = $reflector->reflectFunction('simple_nullable_type')->getReturnType();
+        self::assertInstanceOf(ReflectionUnionType::class, $reflectionType);
     }
 
     public function test_can_retrieve_constants(): void
