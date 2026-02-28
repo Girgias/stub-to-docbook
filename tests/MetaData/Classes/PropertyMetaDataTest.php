@@ -504,7 +504,7 @@ XML;
     /** TODO: Mode integration tests to another class
      * #[PHPUnit\Framework\Attributes\CoversNothing]
      * */
-    public function test_stub_e2e_tests()
+    public function test_stub_e2e_tests(): void
     {
         $stub = <<<'STUB'
 <?php
@@ -531,11 +531,12 @@ STUB;
 
         $props = array_map(
             PropertyMetaData::fromReflectionData(...),
-            $reflectionData->getProperties(),
+            array_values($reflectionData->getProperties()),
         );
 
         $fn = static function (PropertyMetaData $prop): string {
             $document = XMLDocument::createEmpty();
+            /** @phpstan-ignore return.type (saveXml() cannot fail here so always return string) */
             return $document->saveXml($prop->toFieldSynopsisXml($document));
         };
         $xmls = array_map(
