@@ -4,6 +4,7 @@ namespace Girgias\StubToDocbook\MetaData\Classes;
 
 use Dom\Element;
 use Dom\Text;
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\FP\Equatable;
 use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
@@ -156,6 +157,54 @@ final class PropertyMetaData implements Equatable
             isFinal: $isFinal,
             isDeprecated: $isDeprecated,
         );
+    }
+
+    /**
+     * DocBook 5.2 <fieldsynopsis> generation
+     */
+    public function toFieldSynopsisXml(XMLDocument $document): Element
+    {
+        $fieldsynopsis = $document->createElement('fieldsynopsis');
+
+        /* TODO: Properly figure out XML markup for property attributes */
+        foreach ($this->attributes as $attribute) {
+            $fieldsynopsis->append($attribute->toModifierXml($document));
+        }
+
+        if ($this->isFinal) {
+            $modifier = $document->createElement('modifier');
+            $modifier->textContent = 'final';
+            $fieldsynopsis->append($modifier);
+        }
+        /* Add visibility */
+        $fieldsynopsis->append($this->visibility->toModifierXml($document));
+
+        if ($this->isReadOnly) {
+            $modifier = $document->createElement('modifier');
+            $modifier->textContent = 'readonly';
+            $fieldsynopsis->append($modifier);
+        }
+        if ($this->isStatic) {
+            $modifier = $document->createElement('modifier');
+            $modifier->textContent = 'static';
+            $fieldsynopsis->append($modifier);
+        }
+
+        if ($this->type !== null) {
+            $typeFragment = $document->createDocumentFragment();
+            $typeFragment->appendXml($this->type->toXml());
+            $fieldsynopsis->append($typeFragment);
+        }
+
+        $varname = $document->createElement('varname');
+        $varname->textContent = $this->name;
+        $fieldsynopsis->append($varname);
+
+        if ($this->defaultValue) {
+            $fieldsynopsis->append($this->defaultValue->toInitializerXml($document));
+        }
+
+        return $fieldsynopsis;
     }
 
     /**

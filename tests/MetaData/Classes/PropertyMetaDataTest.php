@@ -3,6 +3,7 @@
 namespace Girgias\StubToDocbook\Tests\MetaData\Classes;
 
 use Dom\XMLDocument;
+use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Classes\PropertyMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
@@ -379,5 +380,179 @@ XML;
             isStatic: true,
         );
         self::assertTrue($expectedProperty->isSame($prop));
+    }
+
+    public function test_to_field_synopsis_xml_basic(): void
+    {
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>public</modifier>
+ <type>int</type>
+ <varname>propName</varname>
+</fieldsynopsis>
+XML;
+
+        $prop = new PropertyMetaData(
+            'propName',
+            new SingleType('int'),
+        );
+
+        $document = XMLDocument::createEmpty();
+        $newXml = $document->saveXml($prop->toFieldSynopsisXml($document));
+
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    public function test_to_field_synopsis_xml_readonly(): void
+    {
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>public</modifier>
+ <modifier>readonly</modifier>
+ <type>int</type>
+ <varname>propName</varname>
+</fieldsynopsis>
+XML;
+
+        $prop = new PropertyMetaData(
+            'propName',
+            new SingleType('int'),
+            isReadOnly: true,
+        );
+
+        $document = XMLDocument::createEmpty();
+        $newXml = $document->saveXml($prop->toFieldSynopsisXml($document));
+
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    public function test_to_field_synopsis_xml_static(): void
+    {
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>public</modifier>
+ <modifier>static</modifier>
+ <type>int</type>
+ <varname>propName</varname>
+</fieldsynopsis>
+XML;
+
+        $prop = new PropertyMetaData(
+            'propName',
+            new SingleType('int'),
+            isStatic: true,
+        );
+
+        $document = XMLDocument::createEmpty();
+        $newXml = $document->saveXml($prop->toFieldSynopsisXml($document));
+
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    public function test_to_field_synopsis_xml_initializer(): void
+    {
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>public</modifier>
+ <type>int</type>
+ <varname>propName</varname>
+ <initializer><literal>42</literal></initializer>
+</fieldsynopsis>
+XML;
+
+        $prop = new PropertyMetaData(
+            'propName',
+            new SingleType('int'),
+            defaultValue: new Initializer(InitializerVariant::Literal, '42'),
+        );
+
+        $document = XMLDocument::createEmpty();
+        $newXml = $document->saveXml($prop->toFieldSynopsisXml($document));
+
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    public function test_to_field_synopsis_xml_final(): void
+    {
+        $xml = <<<'XML'
+<fieldsynopsis>
+ <modifier>final</modifier>
+ <modifier>public</modifier>
+ <type>int</type>
+ <varname>propName</varname>
+</fieldsynopsis>
+XML;
+
+        $prop = new PropertyMetaData(
+            'propName',
+            new SingleType('int'),
+            isFinal: true,
+        );
+
+        $document = XMLDocument::createEmpty();
+        $element = $prop->toFieldSynopsisXml($document);
+        $newXml = $document->saveXml($element);
+
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    /** TODO: Mode integration tests to another class
+     * #[PHPUnit\Framework\Attributes\CoversNothing]
+     * */
+    public function test_stub_e2e_tests(): void
+    {
+        $stub = <<<'STUB'
+<?php
+class Foo {
+    public $prop1;
+    public int $prop2;
+    public int $prop3 = 42;
+    public readonly int $prop4;
+    final public string $prop5;
+    public static string $prop6;
+    #[\MyAttr(name: "bar")]
+    public $prop7;
+    #[\Deprecated]
+    public $prop8;
+    protected $prop9;
+    private $prop10;
+}
+STUB;
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new StringSourceLocator($stub, $astLocator),
+        ]);
+        $reflectionData = $reflector->reflectClass('Foo');
+
+        $props = array_map(
+            PropertyMetaData::fromReflectionData(...),
+            array_values($reflectionData->getProperties()),
+        );
+
+        $fn = static function (PropertyMetaData $prop): string {
+            $document = XMLDocument::createEmpty();
+            /** @phpstan-ignore return.type (saveXml() cannot fail here so always return string) */
+            return $document->saveXml($prop->toFieldSynopsisXml($document));
+        };
+        $xmls = array_map(
+            $fn,
+            $props,
+        );
+
+        $fn2 = static function (string $rawXml): PropertyMetaData {
+            $document = XMLDocument::createFromString($rawXml);
+            return PropertyMetaData::parseFromDoc($document->firstElementChild);
+        };
+        $parsedProps = array_map(
+            $fn2,
+            $xmls,
+        );
+
+        self::assertTrue(Utils::equateList($props, $parsedProps));
     }
 }
