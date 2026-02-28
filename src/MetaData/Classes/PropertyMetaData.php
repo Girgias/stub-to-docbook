@@ -4,6 +4,8 @@ namespace Girgias\StubToDocbook\MetaData\Classes;
 
 use Dom\Element;
 use Dom\Text;
+use Girgias\StubToDocbook\FP\Equatable;
+use Girgias\StubToDocbook\FP\Utils;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\Visibility;
@@ -12,7 +14,7 @@ use Girgias\StubToDocbook\Types\ReflectionTypeParser;
 use Girgias\StubToDocbook\Types\Type;
 use Roave\BetterReflection\Reflection\ReflectionProperty;
 
-final class PropertyMetaData
+final class PropertyMetaData implements Equatable
 {
     /**
      * @param list<AttributeMetaData> $attributes
@@ -28,6 +30,25 @@ final class PropertyMetaData
         readonly bool $isFinal = false,
         readonly bool $isDeprecated = false,
     ) {}
+
+    /**
+     * @param PropertyMetaData $other
+     */
+    public function isSame(mixed $other): bool
+    {
+        return $this->name === $other->name
+            /** TODO: Should all properties have types? */
+            && $this->type === $other->type || ($this->type !== null && $other->type !== null && $this->type->isSame($other->type))
+            /** We use == here because we want to compare the properties not identity */
+            && $this->defaultValue == $other->defaultValue
+            && $this->visibility === $other->visibility
+            && Utils::equateList($this->attributes, $other->attributes)
+            && $this->isReadOnly === $other->isReadOnly
+            && $this->isStatic === $other->isStatic
+            && $this->isFinal === $other->isFinal
+            && $this->isDeprecated === $other->isDeprecated
+        ;
+    }
 
     public static function fromReflectionData(ReflectionProperty $reflectionData): self
     {
