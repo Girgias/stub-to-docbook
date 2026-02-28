@@ -71,18 +71,7 @@ final class ReflectionTypeParser
     ): Type
     {
         if ($reflectionType instanceof ReflectionNamedType) {
-            $type = $reflectionType->getName();
-            if (
-                $reflectionType->allowsNull()
-                && $type[0] === '?'
-            ) {
-                $type = ltrim($type, '?');
-                return new UnionType([
-                    new SingleType($type),
-                    new SingleType('null'),
-                ]);
-            }
-            return new SingleType($type);
+            return new SingleType($reflectionType->getName());
         }
         return self::fromReflectionTypeList($reflectionType);
     }
