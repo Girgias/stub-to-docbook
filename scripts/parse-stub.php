@@ -7,9 +7,13 @@ use Girgias\StubToDocbook\MetaData\Lists\ConstantList;
 use Girgias\StubToDocbook\Reports\ConstantDocumentationReport;
 
 $totalDocConst = 0;
-function file_to_doc_constants(string $path)
+/** @return array<int, \Girgias\StubToDocbook\MetaData\ConstantMetaData> */
+function file_to_doc_constants(string $path): array
 {
     $content = file_get_contents($path);
+    if ($content === false) {
+        throw new \RuntimeException("Failed to read file: $path");
+    }
     $content = str_replace(
         [
             '&true;',
@@ -60,8 +64,8 @@ $doc_constants_files = [
     $doc_en_repo . 'appendices/reserved.constants.core.xml',
     // TODO Handle properly the table parsing
     $doc_en_repo . 'appendices/tokens.xml',
-    ...glob($doc_en_repo . 'reference/*/constants.xml'),
-    ...glob($doc_en_repo . 'reference/*/constants_*.xml'),
+    ...(glob($doc_en_repo . 'reference/*/constants.xml') ?: []),
+    ...(glob($doc_en_repo . 'reference/*/constants_*.xml') ?: []),
 ];
 
 $doc_constants = array_diff($doc_constants_files, $IGNORE_DOC_CONSTANT_FILES);

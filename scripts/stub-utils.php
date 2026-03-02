@@ -32,8 +32,8 @@ const IGNORED_STUB_FILES = [
 function get_reflector(string $path): Reflector
 {
     $files = [
-        ...glob($path . '*/*.stub.php'),
-        ...glob($path . '*/*/*.stub.php'),
+        ...(glob($path . '*/*.stub.php') ?: []),
+        ...(glob($path . '*/*/*.stub.php') ?: []),
     ];
     $ignored_files = array_map(
         fn (string $file) => $path . $file,
@@ -43,9 +43,12 @@ function get_reflector(string $path): Reflector
 
     $astLocator = (new BetterReflection())->astLocator();
     $file_locators = array_map(
-        fn (string $file) => new ZendEngineSingleFileSourceLocator($file, $astLocator),
+        function (string $file) use ($astLocator) {
+            assert($file !== '');
+            return new ZendEngineSingleFileSourceLocator($file, $astLocator);
+        },
         $stubs,
     );
 
-    return ZendEngineReflector::newZendEngineReflector($file_locators);
+    return ZendEngineReflector::newZendEngineReflector(array_values($file_locators));
 }
