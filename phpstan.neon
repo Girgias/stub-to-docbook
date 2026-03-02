@@ -9,24 +9,6 @@ parameters:
     # To be addressed in follow-up commits
     ignoreErrors:
         -
-            message: '#^Function file_to_doc_constants\(\) has no return type specified\.$#'
-            identifier: missingType.return
-            count: 1
-            path: scripts/parse-stub.php
-
-        -
-            message: '#^Only iterables can be unpacked, list\<string\>\|false given\.$#'
-            identifier: arrayUnpacking.nonIterable
-            count: 2
-            path: scripts/parse-stub.php
-
-        -
-            message: '#^Parameter \#3 \$subject of function str_replace expects array\<string\>\|string, string\|false given\.$#'
-            identifier: argument.type
-            count: 1
-            path: scripts/parse-stub.php
-
-        -
             message: '#^Only iterables can be unpacked, list\<string\>\|false given\.$#'
             identifier: arrayUnpacking.nonIterable
             count: 2
