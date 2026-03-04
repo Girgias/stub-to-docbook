@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<refentry xml:id="function.multi-synopsis" xmlns="http://docbook.org/ns/docbook">
+ <refnamediv>
+  <refname>multi_synopsis</refname>
+  <refpurpose>A function with multiple methodsynopsis</refpurpose>
+ </refnamediv>
+
+ <refsect1 role="description">
+  &reftitle.description;
+  <methodsynopsis>
+   <type>string</type><methodname>multi_synopsis</methodname>
+   <methodparam><type>string</type><parameter>input</parameter></methodparam>
+  </methodsynopsis>
+  <methodsynopsis>
+   <type>bool</type><methodname>multi_synopsis</methodname>
+   <methodparam><type>string</type><parameter>input</parameter></methodparam>
+   <methodparam><type>int</type><parameter>flags</parameter></methodparam>
+  </methodsynopsis>
+ </refsect1>
+
+ <refsect1 role="parameters">
+  &reftitle.parameters;
+  <variablelist>
+   <varlistentry>
+    <term><parameter>input</parameter></term>
+    <listitem>
+     <simpara>
+      The input string.
+     </simpara>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+ </refsect1>
+</refentry>

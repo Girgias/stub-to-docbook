@@ -56,27 +56,30 @@ final class DocumentedFunction
 
     public static function parseFromDoc(Element $element, string $extension): ?DocumentedFunction
     {
+        $result = self::parseAllFromDoc($element, $extension);
+        return $result[0] ?? null;
+    }
+
+    /**
+     * Parse all methodsynopsis variants from a doc page.
+     * @return list<DocumentedFunction>
+     */
+    public static function parseAllFromDoc(Element $element, string $extension): array
+    {
         $id = $element->id;
-        $parameters = [];
 
         $doc = $element->ownerDocument;
         $xpath = new XPath($doc);
         $xpath->registerNamespace('db', 'http://docbook.org/ns/docbook');
-        /** @var NodeList<Element> $methodSynopsis */
-        $methodSynopsis = $xpath->query('db:refsect1[@role="description"]//db:methodsynopsis', $element);
-        if ($methodSynopsis->length === 0) {
+        /** @var NodeList<Element> $methodSynopsisList */
+        $methodSynopsisList = $xpath->query('db:refsect1[@role="description"]//db:methodsynopsis', $element);
+        if ($methodSynopsisList->length === 0) {
             throw new \Exception('No <methodsynopsis> tag found for function ' . $id);
         }
-        if ($methodSynopsis->length > 1) {
-            // TODO Handle more than 1 <methodsynopsis> tag
-            return null;
-        }
-        $fn = FunctionMetaData::parseFromDoc($methodSynopsis[0], $extension);
 
-        /* We only want to select the <varlistentry> from the top level <variablelist>.
-         * However, dumb XML markup means that we might encounter a para tag */
         /** @var NodeList<Element> $varListEntries */
         $varListEntries = $xpath->query('db:refsect1[@role="parameters"]//db:variablelist/db:varlistentry', $element);
+        $parameters = [];
         $paramNum = 1;
         foreach ($varListEntries as $parameter) {
             $parameters[] = ParameterMetaData::parseFromVaListEntryDocTag($parameter, $paramNum);
@@ -85,11 +88,17 @@ final class DocumentedFunction
 
         /** @var NodeList<Element> $parameterTags */
         $parameterTags = $xpath->query('db:parameter', $element);
-        $parameterTags = array_map(
+        $parameterTagValues = array_map(
             fn (Element $paramTag) => $paramTag->textContent,
             iterator_to_array($parameterTags, false),
         );
 
-        return new self($id, $fn, $parameters, $parameterTags);
+        $results = [];
+        foreach ($methodSynopsisList as $methodSynopsis) {
+            $fn = FunctionMetaData::parseFromDoc($methodSynopsis, $extension);
+            $results[] = new self($id, $fn, $parameters, $parameterTagValues);
+        }
+
+        return $results;
     }
 }

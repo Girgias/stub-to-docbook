@@ -19,6 +19,7 @@ class DocumentedFunctionTest extends TestCase
     private const GMP_INIT = __DIR__ . '/xml/gmp-init.xml';
     private const ISSET = __DIR__ . '/xml/isset.xml';
     private const PASSWORD_HASH = __DIR__ . '/xml/password-hash.xml';
+    private const MULTI_SYNOPSIS = __DIR__ . '/xml/multi-synopsis.xml';
     public function loadXml(string $file): Element
     {
         $str = file_get_contents($file);
@@ -160,5 +161,36 @@ class DocumentedFunctionTest extends TestCase
         self::assertTrue($expectedDocumentedParams[0]->isSame($documentedFunction->documentedParameters[0]));
         self::assertTrue($expectedDocumentedParams[1]->isSame($documentedFunction->documentedParameters[1]));
         self::assertTrue($documentedFunction->areAllParameterTagsReferencingFunctionParameters());
+    }
+
+    public function test_parsing_multiple_methodsynopsis(): void
+    {
+        $root = $this->loadXml(self::MULTI_SYNOPSIS);
+        $results = DocumentedFunction::parseAllFromDoc($root, 'test');
+
+        self::assertCount(2, $results);
+
+        // First synopsis: multi_synopsis(string $input): string
+        self::assertInstanceOf(SingleType::class, $results[0]->functionMetaData->returnType);
+        self::assertSame('string', $results[0]->functionMetaData->returnType->name);
+        self::assertCount(1, $results[0]->functionMetaData->parameters);
+        self::assertSame('input', $results[0]->functionMetaData->parameters[0]->name);
+
+        // Second synopsis: multi_synopsis(string $input, int $flags): bool
+        self::assertInstanceOf(SingleType::class, $results[1]->functionMetaData->returnType);
+        self::assertSame('bool', $results[1]->functionMetaData->returnType->name);
+        self::assertCount(2, $results[1]->functionMetaData->parameters);
+        self::assertSame('input', $results[1]->functionMetaData->parameters[0]->name);
+        self::assertSame('flags', $results[1]->functionMetaData->parameters[1]->name);
+
+        // Both share the same documented parameters and id
+        self::assertSame($results[0]->id, $results[1]->id);
+        self::assertSame($results[0]->documentedParameters, $results[1]->documentedParameters);
+
+        // parseFromDoc still returns just the first one
+        $single = DocumentedFunction::parseFromDoc($root, 'test');
+        self::assertNotNull($single);
+        self::assertInstanceOf(SingleType::class, $single->functionMetaData->returnType);
+        self::assertSame('string', $single->functionMetaData->returnType->name);
     }
 }
