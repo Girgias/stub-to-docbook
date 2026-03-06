@@ -3,6 +3,7 @@
 namespace Girgias\StubToDocbook\Tests\MetaData\Classes;
 
 use Dom\XMLDocument;
+use Girgias\StubToDocbook\MetaData\Classes\EnumCaseMetaData;
 use Girgias\StubToDocbook\MetaData\Classes\EnumMetaData;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
@@ -318,6 +319,41 @@ XML;
         self::assertCount(8, $enum->cases);
         self::assertSame('HalfAwayFromZero', $enum->cases[0]->name);
         self::assertSame([], $enum->attributes);
+    }
+
+    public function test_unit_to_enum_synopsis(): void
+    {
+        $xml = <<<'XML'
+<enumsynopsis>
+  <enumname>LogLevel</enumname>
+  <enumitem>
+    <enumidentifier>Error</enumidentifier>
+    <enumvalue>1</enumvalue>
+    <enumitemdescription/>
+  </enumitem>
+  <enumitem>
+    <enumidentifier>Warning</enumidentifier>
+    <enumitemdescription/>
+  </enumitem>
+</enumsynopsis>
+XML;
+
+        $enum = new EnumMetaData(
+            'LogLevel',
+            backingType: null,
+            cases: [
+                new EnumCaseMetaData('Error', new Initializer(InitializerVariant::Literal, '1')),
+                new EnumCaseMetaData('Warning'),
+            ],
+            methods: [],
+            extension: 'internal',
+        );
+
+        $document = XMLDocument::createEmpty();
+        $newXml = $document->saveXml($enum->toEnumSenumsynopsisXML($document));
+
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
 
     /* TODO: add parsing tests for attributes, backing type, and deprecated the moment the XML is figured out */
