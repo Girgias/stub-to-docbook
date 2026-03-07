@@ -4,6 +4,7 @@ namespace Girgias\StubToDocbook\MetaData\Classes;
 
 use Dom\Element;
 use Dom\Text;
+use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 use Girgias\StubToDocbook\Types\ReflectionTypeParser;
@@ -140,5 +141,23 @@ final class EnumMetaData
             attributes: $attributes,
             isDeprecated: $isDeprecated,
         );
+    }
+
+    /**
+     * DocBook 5.2 <enumsynopsis> generation
+     */
+    public function toEnumSenumsynopsisXML(XMLDocument $document): Element
+    {
+        $enumsynopsis = $document->createElement('enumsynopsis');
+
+        $enumname = $document->createElement('enumname');
+        $enumname->textContent = $this->name;
+        $enumsynopsis->append($enumname);
+
+        foreach ($this->cases as $case) {
+            $enumsynopsis->append($case->toEnumItemXml($document));
+        }
+
+        return $enumsynopsis;
     }
 }
