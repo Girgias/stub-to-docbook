@@ -75,24 +75,97 @@ XML;
         self::assertStringNotContainsString('name="foo" from="PHP 8.4" deprecated', $xml);
     }
 
-    public function test_merge_entries(): void
+    public function test_merge_adds_new_entries(): void
     {
         $existing = [
             'array_map' => new VersionEntry('array_map', 'PHP 4'),
-            'json_validate' => new VersionEntry('json_validate', 'PHP 8.3'),
         ];
         $new = [
-            'json_validate' => new VersionEntry('json_validate', 'PHP 8.3'),
+            'array_map' => new VersionEntry('array_map', 'PHP 4'),
             'new_function' => new VersionEntry('new_function', 'PHP 8.4'),
         ];
 
         $merged = VersionsXmlGenerator::merge($existing, $new);
 
-        self::assertCount(3, $merged);
-        // Existing entry should not be overwritten
+        self::assertCount(2, $merged);
         self::assertSame('PHP 4', $merged['array_map']->from);
-        // New entry should be added
         self::assertArrayHasKey('new_function', $merged);
         self::assertSame('PHP 8.4', $merged['new_function']->from);
+    }
+
+    public function test_merge_enriches_existing_with_deprecated(): void
+    {
+        $existing = [
+            'each' => new VersionEntry('each', 'PHP 4, PHP 5, PHP 7'),
+        ];
+        $new = [
+            'each' => new VersionEntry('each', 'PHP 4, PHP 5, PHP 7', 'PHP 7.2.0'),
+        ];
+
+        $merged = VersionsXmlGenerator::merge($existing, $new);
+
+        self::assertSame('PHP 7.2.0', $merged['each']->deprecated);
+        self::assertNull($merged['each']->removed);
+    }
+
+    public function test_merge_enriches_existing_with_removed(): void
+    {
+        $existing = [
+            'each' => new VersionEntry('each', 'PHP 4, PHP 5, PHP 7', 'PHP 7.2.0'),
+        ];
+        $new = [
+            'each' => new VersionEntry('each', 'PHP 4, PHP 5, PHP 7', 'PHP 7.2.0', 'PHP 8'),
+        ];
+
+        $merged = VersionsXmlGenerator::merge($existing, $new);
+
+        self::assertSame('PHP 7.2.0', $merged['each']->deprecated);
+        self::assertSame('PHP 8', $merged['each']->removed);
+    }
+
+    public function test_merge_does_not_overwrite_existing_attributes(): void
+    {
+        $existing = [
+            'each' => new VersionEntry('each', 'PHP 4, PHP 5, PHP 7', 'PHP 7.2.0', 'PHP 8'),
+        ];
+        $new = [
+            'each' => new VersionEntry('each', 'PHP 4, PHP 5, PHP 7'),
+        ];
+
+        $merged = VersionsXmlGenerator::merge($existing, $new);
+
+        self::assertSame('PHP 7.2.0', $merged['each']->deprecated);
+        self::assertSame('PHP 8', $merged['each']->removed);
+    }
+
+    public function test_merge_marks_missing_entries_as_removed(): void
+    {
+        $existing = [
+            'old_function' => new VersionEntry('old_function', 'PHP 4, PHP 5, PHP 7'),
+            'current_function' => new VersionEntry('current_function', 'PHP 8.0'),
+        ];
+        $new = [
+            'current_function' => new VersionEntry('current_function', 'PHP 8.0'),
+        ];
+
+        $merged = VersionsXmlGenerator::merge($existing, $new, 'PHP 8.0');
+
+        self::assertSame('PHP 8.0', $merged['old_function']->removed);
+        self::assertNull($merged['current_function']->removed);
+    }
+
+    public function test_merge_does_not_overwrite_existing_removed(): void
+    {
+        $existing = [
+            'old_function' => new VersionEntry('old_function', 'PHP 4', null, 'PHP 7.0'),
+        ];
+        $new = [
+            'other' => new VersionEntry('other', 'PHP 8.0'),
+        ];
+
+        $merged = VersionsXmlGenerator::merge($existing, $new, 'PHP 8.4');
+
+        // Should keep the original removed version, not overwrite with the new one
+        self::assertSame('PHP 7.0', $merged['old_function']->removed);
     }
 }
