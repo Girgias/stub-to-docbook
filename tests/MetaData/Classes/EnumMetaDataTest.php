@@ -325,16 +325,16 @@ XML;
     {
         $xml = <<<'XML'
 <enumsynopsis>
-  <enumname>LogLevel</enumname>
-  <enumitem>
-    <enumidentifier>Error</enumidentifier>
-    <enumvalue>1</enumvalue>
-    <enumitemdescription/>
-  </enumitem>
-  <enumitem>
-    <enumidentifier>Warning</enumidentifier>
-    <enumitemdescription/>
-  </enumitem>
+ <enumname>LogLevel</enumname>
+ <enumitem>
+  <enumidentifier>Error</enumidentifier>
+  <enumvalue>1</enumvalue>
+  <enumitemdescription/>
+ </enumitem>
+ <enumitem>
+  <enumidentifier>Warning</enumidentifier>
+  <enumitemdescription/>
+ </enumitem>
 </enumsynopsis>
 XML;
 
