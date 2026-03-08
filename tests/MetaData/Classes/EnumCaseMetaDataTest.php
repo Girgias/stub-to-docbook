@@ -4,6 +4,8 @@ namespace Girgias\StubToDocbook\Tests\MetaData\Classes;
 
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\Classes\EnumCaseMetaData;
+use Girgias\StubToDocbook\MetaData\Description;
+use Girgias\StubToDocbook\MetaData\DescriptionVariant;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use PHPUnit\Framework\TestCase;
@@ -85,6 +87,34 @@ XML;
         $enumCase = new EnumCaseMetaData('HalfAwayFromZero', new Initializer(InitializerVariant::Literal, '42'));
 
         $document = XMLDocument::createEmpty();
+        $element = $enumCase->toEnumItemXml($document);
+        $document->append($element);
+
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    public function test_to_enum_item_xml_with_description(): void
+    {
+        $xml = <<<'XML'
+<enumitem>
+ <enumidentifier>HalfAwayFromZero</enumidentifier>
+ <enumvalue>42</enumvalue>
+ <enumitemdescription>Round to the nearest integer. If the decimal part is 5, round to the integer with the larger absolute value.</enumitemdescription>
+</enumitem>
+XML;
+
+        $document = XMLDocument::createEmpty();
+        $enumCase = new EnumCaseMetaData(
+            'HalfAwayFromZero',
+            new Initializer(InitializerVariant::Literal, '42'),
+            description: new Description(
+                DescriptionVariant::Enum,
+                'Round to the nearest integer. If the decimal part is 5, round to the integer with the larger absolute value.',
+            ),
+        );
+
         $element = $enumCase->toEnumItemXml($document);
         $document->append($element);
 

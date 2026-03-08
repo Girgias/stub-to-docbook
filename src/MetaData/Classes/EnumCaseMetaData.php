@@ -6,6 +6,8 @@ use Dom\Element;
 use Dom\Text;
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
+use Girgias\StubToDocbook\MetaData\Description;
+use Girgias\StubToDocbook\MetaData\DescriptionVariant;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use Roave\BetterReflection\Reflection\ReflectionEnumCase;
@@ -20,6 +22,7 @@ final class EnumCaseMetaData
         readonly Initializer|null $value = null,
         readonly array $attributes = [],
         readonly bool $isDeprecated = false,
+        readonly public Description|null $description = null,
     ) {}
 
     /**
@@ -34,6 +37,7 @@ final class EnumCaseMetaData
 
         $name = null;
         $value = null;
+        $description = null;
 
         foreach ($element->childNodes as $node) {
             if ($node instanceof Text) {
@@ -56,11 +60,11 @@ final class EnumCaseMetaData
             match ($tagName) {
                 'enumidentifier' => $name = $node->textContent,
                 'enumvalue' => $value = new Initializer(InitializerVariant::Literal, $node->textContent),
-                'enumitemdescription' => null,
+                'enumitemdescription' => $description = Description::parseFromDoc($node),
             };
         }
 
-        return new self($name, $value);
+        return new self($name, $value, description: $description);
     }
 
     public function toEnumItemXml(XMLDocument $document): Element
@@ -77,9 +81,8 @@ final class EnumCaseMetaData
             $enumitem->append($enumvalue);
         }
 
-        /* Able to store existing descriptions? */
-        $enumitemdescription = $document->createElement('enumitemdescription');
-        $enumitem->appendChild($enumitemdescription);
+        $description = $this->description ?? new Description(DescriptionVariant::Enum, '');
+        $enumitem->appendChild($description->toDescriptionXml($document));
 
         return $enumitem;
     }
@@ -101,6 +104,7 @@ final class EnumCaseMetaData
             $value,
             attributes: $attributes,
             isDeprecated: $reflectionData->isDeprecated(),
+            description: Description::fromReflectionData($reflectionData),
         );
     }
 }

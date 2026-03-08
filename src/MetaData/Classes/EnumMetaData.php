@@ -6,6 +6,7 @@ use Dom\Element;
 use Dom\Text;
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\AttributeMetaData;
+use Girgias\StubToDocbook\MetaData\Description;
 use Girgias\StubToDocbook\MetaData\Functions\FunctionMetaData;
 use Girgias\StubToDocbook\Types\ReflectionTypeParser;
 use Girgias\StubToDocbook\Types\Type;
@@ -29,6 +30,7 @@ final class EnumMetaData
         readonly array $implements = [],
         readonly array $attributes = [],
         readonly bool $isDeprecated = false,
+        readonly Description|null $description = null,
     ) {}
 
     public static function fromReflectionData(ReflectionEnum $reflectionData): self
@@ -68,6 +70,7 @@ final class EnumMetaData
             implements: array_values($implements),
             attributes: $attributes,
             isDeprecated: $reflectionData->isDeprecated(),
+            description: Description::fromReflectionData($reflectionData),
         );
     }
 
