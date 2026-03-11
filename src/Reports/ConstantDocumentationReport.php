@@ -32,6 +32,7 @@ HTML_START,
         self::generateHtmlReportMissingConstants($fp, $differ->missing);
         self::generateHtmlReportIncorrectDocumentedConstantIdsForLinking($fp, $differ->incorrectIdForLinking);
         self::generateHtmlReportIncorrectConstantTypes($fp, $differ->incorrectTypes);
+        self::generateHtmlReportDeprecatedConstants($fp, $differ->deprecatedInStub);
 
         fputs($fp, <<<'HTML_END'
 </body>
@@ -178,6 +179,43 @@ HTML_MISSING_TABLE_START);
 HTML_MISSING_TABLE_END);
         } else {
             fputs($fp, '<p>No Documented Constants with Incorrect XML IDs for linking</p>');
+        }
+    }
+
+    /**
+     * @param resource $fp
+     * @param list<ConstantMetaData> $deprecatedConstants
+     */
+    private static function generateHtmlReportDeprecatedConstants($fp, array $deprecatedConstants): void
+    {
+        if (count($deprecatedConstants) > 0) {
+            fputs($fp, <<<'HTML_DEPRECATED'
+<section>
+ <h2>Deprecated Constants</h2>
+HTML_DEPRECATED);
+            fputs($fp, '<p>Constants marked as deprecated in stubs: ' . count($deprecatedConstants) . '</p>');
+            fputs($fp, <<<'HTML_DEPRECATED_TABLE_START'
+ <table>
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Type</th>
+      <th scope="col">Value</th>
+      <th scope="col">Extension</th>
+    </tr>
+  </thead>
+  <tbody>
+HTML_DEPRECATED_TABLE_START);
+            foreach ($deprecatedConstants as $constant) {
+                fputs($fp, self::generateHtmlReportRow($constant));
+            }
+            fputs($fp, <<<'HTML_DEPRECATED_TABLE_END'
+  </tbody>
+ </table>
+</section>
+HTML_DEPRECATED_TABLE_END);
+        } else {
+            fputs($fp, '<p>No deprecated constants</p>');
         }
     }
 }
