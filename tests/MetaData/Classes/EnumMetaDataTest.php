@@ -5,6 +5,7 @@ namespace Girgias\StubToDocbook\Tests\MetaData\Classes;
 use Dom\XMLDocument;
 use Girgias\StubToDocbook\MetaData\Classes\EnumCaseMetaData;
 use Girgias\StubToDocbook\MetaData\Classes\EnumMetaData;
+use Girgias\StubToDocbook\MetaData\DescriptionVariant;
 use Girgias\StubToDocbook\MetaData\Initializer;
 use Girgias\StubToDocbook\MetaData\InitializerVariant;
 use Girgias\StubToDocbook\Stubs\ZendEngineReflector;
@@ -236,6 +237,90 @@ STUB;
         self::assertSame('Hearts', $enum->cases[0]->name);
         self::assertNull($enum->cases[0]->value);
         self::assertSame('Spades', $enum->cases[3]->name);
+        self::assertFalse($enum->isDeprecated);
+    }
+
+    public function test_unit_enum_with_description(): void
+    {
+        $stub = <<<'STUB'
+<?php
+/**
+ * LogLevel represents the severity of a log message.
+ * It can be used to filter log messages based on their importance.
+ */
+enum LogLevel {
+    /**
+     * Error log level represents critical issues that require immediate attention.
+     */
+    case Error = 1;
+    /**
+     * Warning log level represents non-critical issues that should be addressed but do not require immediate attention.
+     */
+    case Warning;
+    /**
+     * Info log level represents errors that are not critical 
+     * and can be ignored in most cases.
+     * 
+     * @deprecated Info log level is deprecated and should not be used in new code.
+     */
+    case Info;
+
+    case Trace;
+}
+STUB;
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $rc = $reflector->reflectClass('LogLevel');
+        self::assertInstanceOf(ReflectionEnum::class, $rc);
+        $enum = EnumMetaData::fromReflectionData($rc);
+
+        self::assertSame('LogLevel', $enum->name);
+        self::assertSame(DescriptionVariant::Text, $enum->description->variant);
+        self::assertSame(
+            'LogLevel represents the severity of a log message.' . PHP_EOL
+            . 'It can be used to filter log messages based on their importance.',
+            $enum->description->value,
+        );
+
+        self::assertNull($enum->backingType);
+        self::assertCount(4, $enum->cases);
+
+        self::assertSame('Error', $enum->cases[0]->name);
+        self::assertEquals(
+            new Initializer(InitializerVariant::Literal, '1'),
+            $enum->cases[0]->value,
+        );
+
+        self::assertSame(DescriptionVariant::Enum, $enum->cases[0]->description->variant);
+        self::assertSame(
+            'Error log level represents critical issues that require immediate attention.',
+            $enum->cases[0]->description->value,
+        );
+
+        self::assertSame('Warning', $enum->cases[1]->name);
+        self::assertNull($enum->cases[1]->value);
+
+        self::assertSame(DescriptionVariant::Enum, $enum->cases[1]->description->variant);
+        self::assertSame(
+            'Warning log level represents non-critical issues that should be addressed but do not require immediate attention.',
+            $enum->cases[1]->description->value,
+        );
+
+        self::assertSame('Info', $enum->cases[2]->name);
+
+        self::assertSame(DescriptionVariant::Enum, $enum->cases[2]->description->variant);
+        self::assertSame(
+            'Info log level represents errors that are not critical' . PHP_EOL
+             . 'and can be ignored in most cases.',
+            $enum->cases[2]->description->value,
+        );
+
+        self::assertSame('Trace', $enum->cases[3]->name);
+        self::assertSame(null, $enum->cases[3]->value);
+        self::assertSame(null, $enum->cases[3]->description);
+
         self::assertFalse($enum->isDeprecated);
     }
 

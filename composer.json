@@ -6,7 +6,8 @@
         "php": "^8.4",
         "roave/better-reflection": "^6.69",
         "ext-dom": "*",
-        "ext-libxml": "*"
+        "ext-libxml": "*",
+        "phpdocumentor/reflection-docblock": "^6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^12.5.14",
