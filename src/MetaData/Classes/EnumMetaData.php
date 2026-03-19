@@ -146,7 +146,7 @@ final class EnumMetaData
     /**
      * DocBook 5.2 <enumsynopsis> generation
      */
-    public function toEnumSenumsynopsisXML(XMLDocument $document): Element
+    public function toEnumSynopsisXml(XMLDocument $document): Element
     {
         $enumsynopsis = $document->createElement('enumsynopsis');
 
@@ -159,5 +159,23 @@ final class EnumMetaData
         }
 
         return $enumsynopsis;
+    }
+
+    /**
+     * DocBook 5.2 <enumsynopsis> generation or <packagesynopsis> containing <enumsynopsis>
+     */
+    public function toSynopsisXml(XMLDocument $document): Element
+    {
+        $enumSynopsis = $this->toEnumSynopsisXml($document);
+        if ($this->namespace) {
+            $synopsis = $document->createElement('packagesynopsis');
+            $package = $document->createElement('package');
+            $package->textContent = $this->namespace;
+            $synopsis->appendChild($package);
+            $synopsis->appendChild($enumSynopsis);
+            return $synopsis;
+        } else {
+            return $enumSynopsis;
+        }
     }
 }
