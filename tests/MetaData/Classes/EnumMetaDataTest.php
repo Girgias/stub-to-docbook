@@ -350,11 +350,131 @@ XML;
         );
 
         $document = XMLDocument::createEmpty();
-        $newXml = $document->saveXml($enum->toEnumSenumsynopsisXML($document));
+        $newXml = $document->saveXml($enum->toEnumSynopsisXml($document));
 
         self::assertIsString($newXml);
         self::assertXmlStringEqualsXmlString($xml, $newXml);
     }
 
     /* TODO: add parsing tests for attributes, backing type, and deprecated the moment the XML is figured out */
+
+    public function test_global_unit_enum_to_enum_synopsis_from_stub(): void
+    {
+        $stub = <<<'STUB'
+<?php
+enum Suit {
+    case Hearts;
+    case Diamonds;
+    case Clubs;
+    case Spades;
+}
+STUB;
+
+        $xml = <<<'XML'
+<enumsynopsis>
+ <enumname>Suit</enumname>
+
+
+ <enumitem>
+  <enumidentifier>Hearts</enumidentifier>
+  <enumitemdescription/>
+ </enumitem>
+
+ <enumitem>
+  <enumidentifier>Diamonds</enumidentifier>
+  <enumitemdescription/>
+ </enumitem>
+
+ <enumitem>
+  <enumidentifier>Clubs</enumidentifier>
+  <enumitemdescription/>
+ </enumitem>
+
+ <enumitem>
+  <enumidentifier>Spades</enumidentifier>
+  <enumitemdescription/>
+ </enumitem>
+
+</enumsynopsis>
+XML;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $rc = $reflector->reflectClass('Suit');
+        self::assertInstanceOf(ReflectionEnum::class, $rc);
+        $enum = EnumMetaData::fromReflectionData($rc);
+
+        $document = XMLDocument::createEmpty();
+        $element = $enum->toSynopsisXml($document);
+        $document->append($element);
+
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
+
+    public function test_namespaced_unit_enum_to_enum_synopsis_from_stub(): void
+    {
+        $stub = <<<'STUB'
+<?php
+namespace Foo\Bar;
+
+enum Suit {
+    case Hearts;
+    case Diamonds;
+    case Clubs;
+    case Spades;
+}
+STUB;
+
+        $xml = <<<'XML'
+<packagesynopsis>
+ <package>Foo\Bar</package>
+
+ <enumsynopsis>
+  <enumname>Suit</enumname>
+ 
+ 
+  <enumitem>
+   <enumidentifier>Hearts</enumidentifier>
+   <enumitemdescription/>
+  </enumitem>
+ 
+  <enumitem>
+   <enumidentifier>Diamonds</enumidentifier>
+   <enumitemdescription/>
+  </enumitem>
+ 
+  <enumitem>
+   <enumidentifier>Clubs</enumidentifier>
+   <enumitemdescription/>
+  </enumitem>
+ 
+  <enumitem>
+   <enumidentifier>Spades</enumidentifier>
+   <enumitemdescription/>
+  </enumitem>
+ 
+ </enumsynopsis>
+</packagesynopsis>
+XML;
+
+        $astLocator = (new BetterReflection())->astLocator();
+        $reflector = ZendEngineReflector::newZendEngineReflector([
+            new ZendEngineStringSourceLocator($stub, $astLocator),
+        ]);
+        $rc = $reflector->reflectClass('Foo\\Bar\\Suit');
+        self::assertInstanceOf(ReflectionEnum::class, $rc);
+        $enum = EnumMetaData::fromReflectionData($rc);
+
+        $document = XMLDocument::createEmpty();
+        $element = $enum->toSynopsisXml($document);
+        $document->append($element);
+
+        $newXml = $document->saveXml($element);
+        self::assertIsString($newXml);
+        self::assertXmlStringEqualsXmlString($xml, $newXml);
+    }
 }
